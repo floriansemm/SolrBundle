@@ -19,10 +19,13 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('fs_solr');
-
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+		$rootNode->children()
+					->scalarNode('hostname')->defaultValue('localhost')->end()
+					->scalarNode('port')->defaultValue('8983')->end()
+					->scalarNode('login')->end()
+					->scalarNode('password')->end()
+				->end();
+		
 
         return $treeBuilder;
     }

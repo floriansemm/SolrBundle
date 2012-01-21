@@ -26,11 +26,10 @@ class SolrFacade {
 	 */
 	private $entityMapper = null;
 	
-	public function __construct($hostname, $port) {
-		$this->solrClient = new \SolrClient(array(
-				'hostname' => $hostname,
-				'port'	   => $port
-		));
+	private $connection = array();
+	
+	public function __construct($connection) {
+		$this->solrClient = new \SolrClient($connection);
 		
 		$this->entityMapper = new EntityMapper();
 	}	

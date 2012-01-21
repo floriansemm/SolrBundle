@@ -11,16 +11,10 @@
         <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
         <parameter key="solr.index.listener.class">FS\SolrBundle\Doctrine\Listener\IndexListener</parameter>
         <parameter key="solr.command.fresh.class">FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand</parameter>
-        
-        <parameter key="solr.host">192.168.178.31</parameter>
-        <parameter key="solr.port">8080</parameter>
     </parameters>
 
     <services>
-		<service id="solr" class="%solr.class%">
-            <argument>%solr.host%</argument>
-            <argument>%solr.port%</argument>
-        </service>
+		<service id="solr" class="%solr.class%" />
         
         <service id="solr.query" class="%solr.query.facade.class%">
             <argument type="service" id="doctrine" />
