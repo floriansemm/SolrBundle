@@ -1,10 +1,12 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Listener;
 
+use FS\SolrBundle\SolrQueryFacade;
+
 use FS\SolrBundle\SolrFacade;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-class IndexListener {
+class AddDocumentListener {
 	
 	/**
 	 * 
@@ -21,11 +23,6 @@ class IndexListener {
 		
 		$this->solrFacade->addDocument($entity);
 	}
-	
-	public function postUpdate(LifecycleEventArgs $args) {}
-	
-	
-	public function postRemove(LifecycleEventArgs $args) {}	
 }
 
 ?>

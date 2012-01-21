@@ -9,13 +9,16 @@
         <parameter key="solr.query.facade.class">FS\SolrBundle\SolrQueryFacade</parameter>
         <parameter key="solr.command.factory.class">FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory</parameter>
         <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
-        <parameter key="solr.index.listener.class">FS\SolrBundle\Doctrine\Listener\IndexListener</parameter>
+        <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
+        <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
+        <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
         <parameter key="solr.command.fresh.class">FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand</parameter>
+        
     </parameters>
 
     <services>
 		<service id="solr" class="%solr.class%" />
-        
+
         <service id="solr.query" class="%solr.query.facade.class%">
             <argument type="service" id="doctrine" />
             <argument type="service" id="solr.command.factory" />
@@ -23,14 +26,24 @@
 
     	<service id="solr.command.factory" class="%solr.command.factory.class%" public="false" />
     	
-    	<service id="solr.annotation.reader" class="%solr.annotation.reader.class%" />
+    	<service id="solr.annotation.reader" class="%solr.annotation.reader.class%" public="false" />
     	
-    	<service id="solr.index.listener" class="%solr.index.listener.class%">
+    	<service id="solr.add.document.listener" class="%solr.add.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
     		<tag name="doctrine.event_listener" event="postPersist" />
     	</service>
+
+    	<service id="solr.delete.document.listener" class="%solr.delete.document.listener.class%" public="false">
+    		<argument type="service" id="solr" />
+    		<tag name="doctrine.event_listener" event="preRemove" />
+    	</service>
     	
-    	<service id="solr.command.fresh" class="%solr.command.fresh.class%">
+    	<service id="solr.update.document.listener" class="%solr.update.document.listener.class%" public="false">
+    		<argument type="service" id="solr" />
+    		<tag name="doctrine.event_listener" event="postUpdate" />
+    	</service>    	
+    	
+    	<service id="solr.command.fresh" class="%solr.command.fresh.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" action="fresh" />
     	</service>
