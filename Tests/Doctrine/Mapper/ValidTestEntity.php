@@ -16,21 +16,21 @@ class ValidTestEntity {
 	private $id;
 	
 	/**
-	 * @Solr\Type(type="text")
+	 * @Solr\Field(type="text")
 	 * 
 	 * @var text
 	 */
 	private $text;
 	
 	/**
-	 * @Solr\Type(type="string")
+	 * @Solr\Field(type="string")
 	 * 
 	 * @var text
 	 */
 	private $title;
 	
 	/**
-	 * @Solr\Type(type="date")
+	 * @Solr\Field(type="date")
 	 * 
 	 * @var date
 	 */

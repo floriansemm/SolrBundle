@@ -15,7 +15,7 @@ class NoIdEntity {
 	private $id;
 	
 	/**
-	 * @Solr\Type(type="string")
+	 * @Solr\Field(type="string")
 	 * @var string
 	 */
 	private $text;

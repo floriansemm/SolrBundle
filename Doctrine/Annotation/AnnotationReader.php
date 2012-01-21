@@ -10,7 +10,7 @@ class AnnotationReader {
 	 */
 	private $reader;
 	
-	const FIELD_TYPE_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Type';	
+	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
 	
 	public function __construct() {
@@ -45,7 +45,7 @@ class AnnotationReader {
 	 * @return array
 	 */
 	public function getFields($entity) {
-		return $this->getPropertiesByType($entity, self::FIELD_TYPE_CLASS);
+		return $this->getPropertiesByType($entity, self::FIELD_CLASS);
 	}
 	
 	/**
@@ -70,11 +70,11 @@ class AnnotationReader {
 	 * @return array
 	 */
 	public function getFieldMapping($entity) {
-		$fields = $this->getPropertiesByType($entity, self::FIELD_TYPE_CLASS);
+		$fields = $this->getPropertiesByType($entity, self::FIELD_CLASS);
 
 		$mapping = array();
 		foreach ($fields as $field) {
-			if ($field instanceof Type) {
+			if ($field instanceof Field) {
 				$mapping[$field->getNameWithAlias()] = $field->name;
 			}
 		}
