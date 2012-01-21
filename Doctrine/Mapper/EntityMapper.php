@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Mapper\Command\AbstractDocumentCommand;
+
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateDocumentCommandInterface;
@@ -27,7 +29,7 @@ class EntityMapper {
 		$this->annotationReader = new AnnotationReader();
 	}
 
-	public function setMappingCommand(CreateDocumentCommandInterface $command) {
+	public function setMappingCommand(AbstractDocumentCommand $command) {
 		$this->mappingCommand = $command;
 	}
 	
@@ -41,7 +43,7 @@ class EntityMapper {
 			return null;
 		}
 
-		if ($this->mappingCommand instanceof CreateDocumentCommandInterface) {
+		if ($this->mappingCommand instanceof AbstractDocumentCommand) {
 			return $this->mappingCommand->createDocument($entity);
 		}
 		

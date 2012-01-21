@@ -16,23 +16,17 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
  */
 class CreateDeletedDocumentCommandTest extends SolrDocumentTest {
 
-	const DOCUMENT_ID = 1;
-
-
-	public function testCreateDocument_DocumentHasOnlyIdField() {
+	public function testCreateDocument_DocumentHasOnlyIdAndNameField() {
 		$command = new CreateDeletedDocumentCommand(new AnnotationReader());
 		
 		$entity = new ValidTestEntity();
-		$entity->setId(self::DOCUMENT_ID);
+		$entity->setId(2);
 		
-		$actual = $command->createDocument($entity);
-		$this->assertTrue($actual instanceof \SolrInputDocument, 'is a SolrInputDocument');
-		$this->assertEquals(1, $actual->getFieldCount(), 'one field was mapped');
+		$document = $command->createDocument($entity);
 		
-		$this->assertTrue($actual->fieldExists('id'), 'unique key exists');
+		$this->assertEquals(2, $document->getFieldCount(), 'fieldcount is two');
+		$this->assertEquals(2, $document->getField('id')->values[0], 'id is 2');
 		
-		$values = $actual->getField('id')->values;
-		$this->assertTrue(in_array(self::DOCUMENT_ID, $values), 'document id set');
 	}
 
 }

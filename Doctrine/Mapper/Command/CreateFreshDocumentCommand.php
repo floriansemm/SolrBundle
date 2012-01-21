@@ -5,17 +5,7 @@ use FS\SolrBundle\Annotation\Type;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 
-class CreateFreshDocumentCommand implements CreateDocumentCommandInterface {
-
-	/**
-	 * 
-	 * @var \FS\BlogBundle\Solr\Doctrine\Annotation\AnnotationReader
-	 */
-	private $reader;
-	
-	public function __construct(\FS\SolrBundle\Doctrine\Annotation\AnnotationReader $reader) {
-		$this->reader = $reader;
-	}
+class CreateFreshDocumentCommand extends AbstractDocumentCommand {
 	
 	/* (non-PHPdoc)
 	 * @seeFS\SolrBundle\Doctrine\Mapper\Command.CreateDocumentCommandInterface::createDocument()
@@ -27,13 +17,11 @@ class CreateFreshDocumentCommand implements CreateDocumentCommandInterface {
 			return null;
 		}
 		
-		$document = new \SolrInputDocument();
+		$document = parent::createDocument($entity);
 		
 		foreach ($fields as $field) {
 			$document->addField($field->getNameWithAlias(), $field->value);
 		}
-		
-		$document->addField('id', $entity->getId());
 		
 		return $document;
 	}

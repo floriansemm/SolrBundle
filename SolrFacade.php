@@ -1,6 +1,10 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Query\DeleteDocumentQuery;
+
+use FS\SolrBundle\Doctrine\Mapper\Command\CreateDeletedDocumentCommand;
+
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateFromExistingDocumentCommand;
@@ -26,13 +30,27 @@ class SolrFacade {
 	 */
 	private $entityMapper = null;
 	
+	/**
+	 * 
+	 * @var array
+	 */
 	private $connection = array();
+	
+	/**
+	 * 
+	 * @var SolrQueryFacade
+	 */
+	private $queryFacade = null;
 	
 	public function __construct($connection) {
 		$this->solrClient = new \SolrClient($connection);
 		
 		$this->entityMapper = new EntityMapper();
 	}	
+	
+	public function setQueryFacade(SolrQueryFacade $queryFacade) {
+		$this->queryFacade = $queryFacade;
+	}
 	
 	public function updateDocument($entity) {
 		$this->entityMapper->setMappingCommand(new CreateFromExistingDocumentCommand());
@@ -41,9 +59,15 @@ class SolrFacade {
 	}
 	
 	public function removeDocument($entity) {
-		$this->entityMapper->setMappingCommand(new CreateFromExistingDocumentCommand());
+		$this->entityMapper->setMappingCommand(new CreateDeletedDocumentCommand(new AnnotationReader()));
+		$document = $this->entityMapper->toDocument($entity);
 		
-		$this->addDocumentToIndex($entity);
+		$deleteQuery = new DeleteDocumentQuery();
+		$queryString = $deleteQuery->getQueryString($document);
+		
+		$response = $this->solrClient->deleteByQuery($queryString);
+		
+		$this->solrClient->commit();
 	}
 	
 	public function addDocument($entity) {

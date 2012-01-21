@@ -49,10 +49,7 @@ class SolrQueryFacade {
 		$class = $this->getClass($entity);
 		$entity = new $class;
 		
-		$mapper = new EntityMapper();
 		$command = $this->commandFactory->get('fresh');
-		$mapper->setMappingCommand($command);
-		$document = $mapper->toDocument($entity);
 		
 		$query = new SolrQuery();
 		$query->setEntity($entity);
@@ -60,7 +57,7 @@ class SolrQueryFacade {
 		
 		return $query;
 	}
-	
+		
 	private function getClass($entity) {
 		if ($this->classExists($entity)) {
 			return $entity;

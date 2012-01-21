@@ -12,7 +12,7 @@ class CommandFactory {
 		return $this->commands[$command];
 	}
 	
-	public function add(CreateDocumentCommandInterface $command, $commandName) {
+	public function add(AbstractDocumentCommand $command, $commandName) {
 		$this->commands[$commandName] = $command;
 	}
 }

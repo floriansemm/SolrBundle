@@ -30,16 +30,16 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 	
 	private function createConfiguration($namespace) {
 		$configuration = $this->getMock('Doctrine\ORM\Configuration', array(), array(),'',false);
-		$configuration->expects($this->once())
+		$configuration->expects($this->any())
 		->method('getEntityNamespace')
 		->will($this->returnValue($namespace));
 		
 		$em = $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', false);
-		$em->expects($this->once())
+		$em->expects($this->any())
 		->method('getConfiguration')
 		->will($this->returnValue($configuration));
 		
-		$this->registry->expects($this->once())
+		$this->registry->expects($this->any())
 		->method('getEntityManager')
 		->will($this->returnValue($em));
 
@@ -75,5 +75,6 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue($query instanceof SolrQuery);
 		$this->assertEquals(4, count($query->getMappedFields()));
 	}
+	
 }
 
