@@ -21,7 +21,7 @@ Bundle
 
         $bundles = array(
             // ...
-            new FS\SolrBundle\FSSolrPhpBundle(),
+            new FS\SolrBundle\FSSolrBundle(),
             // ...
         );
 
@@ -113,7 +113,7 @@ If no field was explict add, all fields will be mapped.
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
-    	$query = $this->get('solr.query')->createQuery('FSBlogBundle:Post');
+    	$query = $this->get('solr.query')->createQuery('AcmeDemoBundle:Post');
     	$query->queryAllFields('my title);
     		
     	$result = $this->get('solr')->query($query); 	
