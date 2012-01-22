@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory;
+
 use FS\SolrBundle\Query\DeleteDocumentQuery;
 
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateDeletedDocumentCommand;
@@ -14,10 +16,6 @@ use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 
 class SolrFacade {
-	private $hostname;
-	
-	private $port;
-	
 	/**
 	 * 
 	 * @var \SolrClient
@@ -32,34 +30,29 @@ class SolrFacade {
 	
 	/**
 	 * 
-	 * @var array
+	 * @var CommandFactory
 	 */
-	private $connection = array();
-	
-	/**
-	 * 
-	 * @var SolrQueryFacade
-	 */
-	private $queryFacade = null;
-	
-	public function __construct(SolrConnection $connection) {
+	private $commandFactory = null;
+		
+	public function __construct(SolrConnection $connection, CommandFactory $commandFactory) {
 		$this->solrClient = new \SolrClient($connection->getConnection());
+		$this->commandFactory = $commandFactory;
 		
 		$this->entityMapper = new EntityMapper();
-	}	
-	
-	public function setQueryFacade(SolrQueryFacade $queryFacade) {
-		$this->queryFacade = $queryFacade;
 	}
 	
 	public function updateDocument($entity) {
-		$this->entityMapper->setMappingCommand(new CreateFromExistingDocumentCommand());
+		$command = $this->commandFactory->get('fresh');
+		
+		$this->entityMapper->setMappingCommand($command);
 		
 		$this->addDocumentToIndex($entity);		
 	}
 	
 	public function removeDocument($entity) {
-		$this->entityMapper->setMappingCommand(new CreateDeletedDocumentCommand(new AnnotationReader()));
+		$command = $this->commandFactory->get('delete');
+		
+		$this->entityMapper->setMappingCommand($command);
 		$document = $this->entityMapper->toDocument($entity);
 		
 		$deleteQuery = new DeleteDocumentQuery();
@@ -71,7 +64,9 @@ class SolrFacade {
 	}
 	
 	public function addDocument($entity) {
-		$this->entityMapper->setMappingCommand(new CreateFreshDocumentCommand(new AnnotationReader()));
+		$command = $this->commandFactory->get('fresh');
+		
+		$this->entityMapper->setMappingCommand($command);
 		
 		$this->addDocumentToIndex($entity);
 	}
