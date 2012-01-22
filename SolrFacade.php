@@ -42,8 +42,8 @@ class SolrFacade {
 	 */
 	private $queryFacade = null;
 	
-	public function __construct($connection) {
-		$this->solrClient = new \SolrClient($connection);
+	public function __construct(SolrConnection $connection) {
+		$this->solrClient = new \SolrClient($connection->getConnection());
 		
 		$this->entityMapper = new EntityMapper();
 	}	

@@ -6,6 +6,7 @@
 
     <parameters>
         <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
+        <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
         <parameter key="solr.query.facade.class">FS\SolrBundle\SolrQueryFacade</parameter>
         <parameter key="solr.command.factory.class">FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory</parameter>
         <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
@@ -17,7 +18,11 @@
     </parameters>
 
     <services>
-		<service id="solr" class="%solr.class%" />
+		<service id="solr" class="%solr.class%">
+			<argument type="service" id="solr.connection" />
+		</service>
+
+		<service id="solr.connection" class="%solr.connection.class%" />
 
         <service id="solr.query" class="%solr.query.facade.class%">
             <argument type="service" id="doctrine" />

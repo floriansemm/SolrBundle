@@ -24,7 +24,7 @@ class FSSolrExtension extends Extension
     	
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $container->getDefinition('solr')->setArguments(array($config));
+		
+        $container->getDefinition('solr.connection')->setArguments(array($config));
     }
 }
