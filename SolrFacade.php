@@ -53,14 +53,15 @@ class SolrFacade {
 		$command = $this->commandFactory->get('delete');
 		
 		$this->entityMapper->setMappingCommand($command);
-		$document = $this->entityMapper->toDocument($entity);
 		
-		$deleteQuery = new DeleteDocumentQuery();
-		$queryString = $deleteQuery->getQueryString($document);
-		
-		$response = $this->solrClient->deleteByQuery($queryString);
-		
-		$this->solrClient->commit();
+		if ($document = $this->entityMapper->toDocument($entity)) {
+			$deleteQuery = new DeleteDocumentQuery();
+			$queryString = $deleteQuery->getQueryString($document);
+			
+			$response = $this->solrClient->deleteByQuery($queryString);
+			
+			$this->solrClient->commit();
+		}
 	}
 	
 	public function addDocument($entity) {
