@@ -87,9 +87,7 @@ To put an entity to the index, you must add some annotations to your entity:
 			private $created_at = null;
 		}
 	
-If you persist this entity, it will put automaticlly to the index.
-
-Update and delete is not implemented yet.
+If you persist this entity, it will put automaticlly to the index. Update and delete happens automatically too.
 
 To query the index you have to call some services.
 
