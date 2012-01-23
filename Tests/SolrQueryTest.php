@@ -116,7 +116,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 	
 		$query = $this->createQueryWithSearchTerms();
 	
-		$this->assertEquals($expected, $query->getQuery());
+		$this->assertEquals($expected, $query->getQueryString());
 	}
 	
 	public function testGetQuery_TermsConcatWithAnd() {
@@ -125,7 +125,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 		$query = $this->createQueryWithSearchTerms();
 		$query->setStrict(true);
 	
-		$this->assertEquals($expected, $query->getQuery());
+		$this->assertEquals($expected, $query->getQueryString());
 	}
 	
 	public function testGetQuery_SearchInAllFields() {
@@ -134,6 +134,6 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 	
 		$expected = 'title_s:*foo* OR text_t:*foo* OR created_at_dt:*foo*';
 	
-		$this->assertEquals($expected, $solrQuery->getQuery());
+		$this->assertEquals($expected, $solrQuery->getQueryString());
 	}	
 }

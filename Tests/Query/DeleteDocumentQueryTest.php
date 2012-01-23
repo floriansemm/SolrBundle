@@ -25,9 +25,11 @@ class DeleteDocumentQueryTest extends \PHPUnit_Framework_TestCase {
 		$document->addField('document_name_s', 'validtestentity');
 	
 		$expected = 'id:1 AND document_name_s:validtestentity';
-		$query = new DeleteDocumentQuery();
+		$query = new DeleteDocumentQuery($document);
 	
-		$this->assertEquals($expected, $query->getQueryString($document));
+		$queryString = $query->getQueryString();
+		
+		$this->assertEquals($expected, $queryString);
 	}
 	
 }

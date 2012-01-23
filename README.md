@@ -114,5 +114,12 @@ The pervious examples have queried only the field 'title'. You can also query al
     	$query = $this->get('solr.query')->createQuery('AcmeDemoBundle:Post');
     	$query->queryAllFields('my title);
     		
-    	$result = $this->get('solr')->query($query); 	
-		
+    	$result = $this->get('solr')->query($query);
+
+To index your entities manually, you can do it the following way:
+
+		$this->get('solr')->addDocument($entity);
+		$this->get('solr')->updateDocument($entity);
+		$this->get('solr')->deleteDocument($entity);
+
+The delete action needs the id of the entity.		

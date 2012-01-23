@@ -55,8 +55,8 @@ class SolrFacade {
 		$this->entityMapper->setMappingCommand($command);
 		
 		if ($document = $this->entityMapper->toDocument($entity)) {
-			$deleteQuery = new DeleteDocumentQuery();
-			$queryString = $deleteQuery->getQueryString($document);
+			$deleteQuery = new DeleteDocumentQuery($document);
+			$queryString = $deleteQuery->getQueryString();
 			
 			$response = $this->solrClient->deleteByQuery($queryString);
 			

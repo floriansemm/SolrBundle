@@ -1,7 +1,9 @@
 <?php
 namespace FS\SolrBundle;
 
-class SolrQuery {
+use FS\SolrBundle\Query\AbstractQuery;
+
+class SolrQuery extends AbstractQuery {
 	private $mappedFields = array();
 	
 	/**
@@ -96,7 +98,7 @@ class SolrQuery {
 	 * @return \SolrQuery
 	 */
 	public function getSolrQuery() {
-		$searchTerm = $this->getQuery();
+		$searchTerm = $this->getQueryString();
 		if (strlen($searchTerm) > 0) {
 			$this->solrQuery->setQuery($searchTerm);
 		}
@@ -107,7 +109,7 @@ class SolrQuery {
 	/**
 	 * @return string
 	 */
-	public function getQuery() {
+	public function getQueryString() {
 		$term = '';
 		if (count($this->searchTerms) == 0) {
 			return $term;
