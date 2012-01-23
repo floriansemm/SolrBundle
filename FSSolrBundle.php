@@ -3,7 +3,7 @@
 namespace FS\SolrBundle;
 
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use FS\BlogBundle\DependencyInjection\Compiler\AddCreateDocumentCommandPass;
+use FS\SolrBundle\DependencyInjection\Compiler\AddCreateDocumentCommandPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
