@@ -49,7 +49,7 @@ class SolrQueryFacade {
 		$class = $this->getClass($entity);
 		$entity = new $class;
 		
-		$command = $this->commandFactory->get('fresh');
+		$command = $this->commandFactory->get('all');
 		
 		$query = new SolrQuery();
 		$query->setEntity($entity);

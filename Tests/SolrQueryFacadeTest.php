@@ -50,7 +50,7 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 
 	private function createCommandFactory() {
 		$commandFactory = new CommandFactory();
-		$commandFactory->add(new MapAllFieldsCommand(new AnnotationReader()), 'fresh');
+		$commandFactory->add(new MapAllFieldsCommand(new AnnotationReader()), 'all');
 		
 		return $commandFactory;
 	}

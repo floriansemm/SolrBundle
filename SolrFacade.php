@@ -42,7 +42,7 @@ class SolrFacade {
 	}
 	
 	public function updateDocument($entity) {
-		$command = $this->commandFactory->get('fresh');
+		$command = $this->commandFactory->get('all');
 		
 		$this->entityMapper->setMappingCommand($command);
 		
@@ -50,7 +50,7 @@ class SolrFacade {
 	}
 	
 	public function removeDocument($entity) {
-		$command = $this->commandFactory->get('delete');
+		$command = $this->commandFactory->get('identifier');
 		
 		$this->entityMapper->setMappingCommand($command);
 		
@@ -65,7 +65,7 @@ class SolrFacade {
 	}
 	
 	public function addDocument($entity) {
-		$command = $this->commandFactory->get('fresh');
+		$command = $this->commandFactory->get('all');
 		
 		$this->entityMapper->setMappingCommand($command);
 		

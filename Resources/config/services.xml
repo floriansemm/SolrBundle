@@ -51,12 +51,12 @@
     	
     	<service id="solr.command.all" class="%solr.command.all.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
-    		<tag name="solr.document.command" action="fresh" />
+    		<tag name="solr.document.command" command="all" />
     	</service>
     	
     	<service id="solr.command.identifier" class="%solr.command.identifier.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
-    		<tag name="solr.document.command" action="delete" />
+    		<tag name="solr.document.command" command="identifier" />
     	</service>    	
     </services>
 </container>
