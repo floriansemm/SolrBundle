@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper\Command;
 
+use FS\SolrBundle\Doctrine\Mapper\Command\MapIdentifierCommand;
+
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateDeletedDocumentCommand;
@@ -14,10 +16,10 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 /**
  *  test case.
  */
-class CreateDeletedDocumentCommandTest extends SolrDocumentTest {
+class MapIdentifierCommandTest extends SolrDocumentTest {
 
 	public function testCreateDocument_DocumentHasOnlyIdAndNameField() {
-		$command = new CreateDeletedDocumentCommand(new AnnotationReader());
+		$command = new MapIdentifierCommand(new AnnotationReader());
 		
 		$entity = new ValidTestEntity();
 		$entity->setId(2);

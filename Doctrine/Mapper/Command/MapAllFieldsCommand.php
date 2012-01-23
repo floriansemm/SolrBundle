@@ -5,7 +5,7 @@ use FS\SolrBundle\Annotation\Type;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 
-class CreateFreshDocumentCommand extends AbstractDocumentCommand {
+class MapAllFieldsCommand extends AbstractDocumentCommand {
 	
 	/* (non-PHPdoc)
 	 * @seeFS\SolrBundle\Doctrine\Mapper\Command.CreateDocumentCommandInterface::createDocument()

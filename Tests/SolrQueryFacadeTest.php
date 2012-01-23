@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
+use FS\SolrBundle\Doctrine\Mapper\Command\MapAllFieldsCommand;
+
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
@@ -48,7 +50,7 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 
 	private function createCommandFactory() {
 		$commandFactory = new CommandFactory();
-		$commandFactory->add(new CreateFreshDocumentCommand(new AnnotationReader()), 'fresh');
+		$commandFactory->add(new MapAllFieldsCommand(new AnnotationReader()), 'fresh');
 		
 		return $commandFactory;
 	}

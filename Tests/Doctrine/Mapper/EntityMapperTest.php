@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Mapper\Command\MapAllFieldsCommand;
+
 use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
@@ -21,7 +23,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 	
 	public function testToDocument_DocumentIsUpdated() {
 		$mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
-		$mapper->setMappingCommand(new CreateFreshDocumentCommand(new AnnotationReader()));
+		$mapper->setMappingCommand(new MapAllFieldsCommand(new AnnotationReader()));
 		
 		$updatedEntity = new ValidTestEntity();
 		$updatedEntity->setId(123);
@@ -36,7 +38,6 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 			'id' 	=> 1,
 			'title_t'	=> 'foo'		
 		));
-		
 		
 		$targetEntity = new ValidTestEntity();
 		

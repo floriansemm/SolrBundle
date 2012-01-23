@@ -13,8 +13,8 @@
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
-        <parameter key="solr.command.fresh.class">FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand</parameter>
-        <parameter key="solr.command.delete.class">FS\SolrBundle\Doctrine\Mapper\Command\CreateDeletedDocumentCommand</parameter>
+        <parameter key="solr.command.all.class">FS\SolrBundle\Doctrine\Mapper\Command\MapAllFieldsCommandCommand</parameter>
+        <parameter key="solr.command.identifier.class">FS\SolrBundle\Doctrine\Mapper\Command\MapIdentifierCommand</parameter>
     </parameters>
 
     <services>
@@ -49,12 +49,12 @@
     		<tag name="doctrine.event_listener" event="postUpdate" />
     	</service>    	
     	
-    	<service id="solr.command.fresh" class="%solr.command.fresh.class%" public="false">
+    	<service id="solr.command.all" class="%solr.command.all.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" action="fresh" />
     	</service>
     	
-    	<service id="solr.command.delete" class="%solr.command.delete.class%" public="false">
+    	<service id="solr.command.identifier" class="%solr.command.identifier.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" action="delete" />
     	</service>    	
