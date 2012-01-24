@@ -8,19 +8,19 @@
         <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
         <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
         <parameter key="solr.query.facade.class">FS\SolrBundle\SolrQueryFacade</parameter>
-        <parameter key="solr.command.factory.class">FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory</parameter>
+        <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
-        <parameter key="solr.command.all.class">FS\SolrBundle\Doctrine\Mapper\Command\MapAllFieldsCommandCommand</parameter>
-        <parameter key="solr.command.identifier.class">FS\SolrBundle\Doctrine\Mapper\Command\MapIdentifierCommand</parameter>
+        <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
+        <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
     </parameters>
 
     <services>
 		<service id="solr" class="%solr.class%">
 			<argument type="service" id="solr.connection" />
-			<argument type="service" id="solr.command.factory" />
+			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="logger" />
 		</service>
 
@@ -28,10 +28,10 @@
 
         <service id="solr.query" class="%solr.query.facade.class%">
             <argument type="service" id="doctrine" />
-            <argument type="service" id="solr.command.factory" />
+            <argument type="service" id="solr.mapping.factory" />
         </service>
 
-    	<service id="solr.command.factory" class="%solr.command.factory.class%" public="false" />
+    	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
     	
     	<service id="solr.annotation.reader" class="%solr.annotation.reader.class%" public="false" />
     	
@@ -50,12 +50,12 @@
     		<tag name="doctrine.event_listener" event="postUpdate" />
     	</service>    	
     	
-    	<service id="solr.command.all" class="%solr.command.all.class%" public="false">
+    	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" command="all" />
     	</service>
     	
-    	<service id="solr.command.identifier" class="%solr.command.identifier.class%" public="false">
+    	<service id="solr.mapping.identifier" class="%solr.mapping.identifier.class%" public="false">
     		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" command="identifier" />
     	</service>    	

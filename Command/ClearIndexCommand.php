@@ -1,8 +1,6 @@
 <?php
 namespace FS\SolrBundle\Command;
 
-use FS\SolrBundle\SolrQuery;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,8 +15,15 @@ class ClearIndexCommand extends ContainerAwareCommand {
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$solr = $this->getContainer()->get('solr');		
-		$solr->clearIndex();
+		$solr = $this->getContainer()->get('solr');
+
+		try {
+			$solr->clearIndex();
+			
+			$output->writeln('<info>Index successful cleared</info>');
+		} catch (\Exception $e) {
+			$output->writeln('<error>'.$e->getMessage().'</error>');
+		}
 	}
 }
 

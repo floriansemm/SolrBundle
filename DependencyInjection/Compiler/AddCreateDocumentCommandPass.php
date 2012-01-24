@@ -13,7 +13,7 @@ class AddCreateDocumentCommandPass implements CompilerPassInterface {
 	public function process(ContainerBuilder $container) {
 		$definitions = $container->findTaggedServiceIds('solr.document.command');
 		
-		$factory = $container->getDefinition('solr.command.factory');
+		$factory = $container->getDefinition('solr.mapping.factory');
 		
 		foreach ($definitions as $service => $definition) {
 			$factory->addMethodCall('add', array(

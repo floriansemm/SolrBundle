@@ -2,19 +2,9 @@
 namespace FS\SolrBundle;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory;
-
+use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Query\DeleteDocumentQuery;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateDeletedDocumentCommand;
-
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateFromExistingDocumentCommand;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
-
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 
 class SolrFacade {
@@ -78,7 +68,7 @@ class SolrFacade {
 			$this->solrClient->deleteByQuery('*:*');
 			$this->solrClient->commit();
 		} catch (\Exception $e) { 
-			$this->logger->err($e->getMessage());
+			throw new \RuntimeException('could not clear index');
 		}
 	}
 	
