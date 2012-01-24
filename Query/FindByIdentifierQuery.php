@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle\Query;
 
-class DeleteDocumentQuery extends AbstractQuery {
+class FindByIdentifierQuery extends AbstractQuery {
 	
 	/**
 	 * 
@@ -10,6 +10,8 @@ class DeleteDocumentQuery extends AbstractQuery {
 	private $document = null;
 	
 	public function __construct(\SolrInputDocument $document) {
+		parent::__construct();
+		
 		$this->document = $document;
 	}
 	

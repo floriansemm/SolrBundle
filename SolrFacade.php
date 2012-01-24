@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Query\FindByIdentifierQuery;
+
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Query\DeleteDocumentQuery;
@@ -41,11 +43,7 @@ class SolrFacade {
 	}
 	
 	public function updateDocument($entity) {
-		$command = $this->commandFactory->get('all');
-		
-		$this->entityMapper->setMappingCommand($command);
-		
-		$this->addDocumentToIndex($entity);		
+		$this->addDocument($entity);	
 	}
 	
 	public function removeDocument($entity) {
@@ -60,15 +58,6 @@ class SolrFacade {
 			$response = $this->solrClient->deleteByQuery($queryString);
 			
 			$this->solrClient->commit();
-		}
-	}
-	
-	public function clearIndex() {
-		try {
-			$this->solrClient->deleteByQuery('*:*');
-			$this->solrClient->commit();
-		} catch (\Exception $e) { 
-			throw new \RuntimeException('could not clear index');
 		}
 	}
 	
@@ -87,7 +76,11 @@ class SolrFacade {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			
 			$this->solrClient->commit();
-		} catch (\Exception $e) { }		
+		} catch (\Exception $e) { 
+			$this->logger->err($e->getMessage());
+			
+			throw new \RuntimeException('could not index entity');
+		}		
 	}
 	
 	/**
@@ -117,4 +110,17 @@ class SolrFacade {
 		
 		return $mappedEntities;
 	}
+	
+	public function clearIndex() {
+		try {
+			$this->solrClient->deleteByQuery('*:*');
+			$this->solrClient->commit();
+		} catch (\Exception $e) {
+			throw new \RuntimeException('could not clear index');
+		}
+	}
+	
+	public function synchronizeIndex($entity) {
+		$this->updateDocument($entity);
+	}	
 }

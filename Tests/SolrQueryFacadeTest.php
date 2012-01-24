@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
+use FS\SolrBundle\Tests\Util\CommandFactoryStub;
+
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -42,20 +44,13 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 		return $this->registry;
 	}
 
-	private function createCommandFactory() {
-		$commandFactory = new CommandFactory();
-		$commandFactory->add(new MapAllFieldsCommand(new AnnotationReader()), 'all');
-		
-		return $commandFactory;
-	}
-	
 	/**
 	 * @expectedException RuntimeException
 	 * @expectedExceptionMessage Unknown entity InvalidBundle:InvalidEntity
 	 */
 	public function testCreateQuery_EntityIsUnknown() {
 		$registry = $this->createConfiguration('Invalidnamespace');
-		$commandFactory = $this->createCommandFactory();
+		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		
 		$queryFacade = new SolrQueryFacade($registry, $commandFactory);
 		$queryFacade->createQuery('InvalidBundle:InvalidEntity');
@@ -63,7 +58,7 @@ class SolrQueryFacadeTest extends \PHPUnit_Framework_TestCase {
 	
 	public function testCreateQuery_EntityIsDocument() {
 		$registry = $this->createConfiguration('FS\SolrBundle\Tests\Doctrine\Mapper');
-		$commandFactory = $this->createCommandFactory();
+		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		
 		$queryFacade = new SolrQueryFacade($registry, $commandFactory);
 		$query = $queryFacade->createQuery('FSBlogBundle:ValidTestEntity');

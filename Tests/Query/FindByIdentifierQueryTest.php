@@ -2,12 +2,12 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
-use FS\SolrBundle\Query\DeleteDocumentQuery;
+use FS\SolrBundle\Query\FindByIdentifierQuery;
 
 /**
  *  test case.
  */
-class DeleteDocumentQueryTest extends \PHPUnit_Framework_TestCase {
+class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testGetQuery_SearchInAllFields() {
 		$document = new \SolrInputDocument();
@@ -15,7 +15,7 @@ class DeleteDocumentQueryTest extends \PHPUnit_Framework_TestCase {
 		$document->addField('document_name_s', 'validtestentity');
 	
 		$expected = 'id:1 AND document_name_s:validtestentity';
-		$query = new DeleteDocumentQuery($document);
+		$query = new FindByIdentifierQuery($document);
 	
 		$queryString = $query->getQueryString();
 		

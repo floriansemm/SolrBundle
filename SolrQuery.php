@@ -6,12 +6,6 @@ use FS\SolrBundle\Query\AbstractQuery;
 class SolrQuery extends AbstractQuery {
 	private $mappedFields = array();
 	
-	/**
-	 * 
-	 * @var \SolrQuery
-	 */
-	private $solrQuery = null;
-	
 	private $searchTerms = array();
 	
 	private $strict = false;
@@ -21,10 +15,6 @@ class SolrQuery extends AbstractQuery {
 	 * @var object
 	 */
 	private $entity = null;
-	
-	public function __construct() {
-		$this->solrQuery = new \SolrQuery('*:*');
-	}
 	
 	/**
 	 * @return array
@@ -94,18 +84,6 @@ class SolrQuery extends AbstractQuery {
 		return $this;
 	}
 
-	/**
-	 * @return \SolrQuery
-	 */
-	public function getSolrQuery() {
-		$searchTerm = $this->getQueryString();
-		if (strlen($searchTerm) > 0) {
-			$this->solrQuery->setQuery($searchTerm);
-		}
-		
-		return $this->solrQuery;
-	}
-	
 	/**
 	 * @return string
 	 */
