@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle;
 
-use FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory;
+use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\SolrQuery;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use Doctrine\ORM\EntityManager;

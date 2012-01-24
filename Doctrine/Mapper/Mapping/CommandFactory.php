@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Doctrine\Mapper\Command;
+namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 class CommandFactory {
 	private $commands = array();

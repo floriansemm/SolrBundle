@@ -6,10 +6,6 @@ use FS\SolrBundle\Query\DeleteDocumentQuery;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory;
-
 use FS\SolrBundle\SolrQuery;
 
 use FS\SolrBundle\SolrQueryFacade;

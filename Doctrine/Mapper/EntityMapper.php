@@ -1,11 +1,8 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
-use FS\SolrBundle\Doctrine\Mapper\Command\AbstractDocumentCommand;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
+use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateDocumentCommandInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class EntityMapper {

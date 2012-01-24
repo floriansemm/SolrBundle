@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Doctrine\Mapper\Command;
+namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 use FS\SolrBundle\Annotation\Type;
 

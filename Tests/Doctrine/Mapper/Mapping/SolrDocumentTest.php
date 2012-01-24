@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Tests\Doctrine\Mapper\Command;
+namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
 abstract class SolrDocumentTest extends \PHPUnit_Framework_TestCase {
 	const FIELDS_ALWAYS_MAPPED = 2;

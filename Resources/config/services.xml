@@ -21,6 +21,7 @@
 		<service id="solr" class="%solr.class%">
 			<argument type="service" id="solr.connection" />
 			<argument type="service" id="solr.command.factory" />
+			<argument type="service" id="logger" />
 		</service>
 
 		<service id="solr.connection" class="%solr.connection.class%" />

@@ -1,13 +1,9 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Doctrine\Mapper\Command;
+namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
-use FS\SolrBundle\Doctrine\Mapper\Command\MapAllFieldsCommand;
-
+use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-
-use FS\SolrBundle\Doctrine\Mapper\Command\CreateFreshDocumentCommand;
-
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 
 /**
