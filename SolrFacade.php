@@ -53,12 +53,18 @@ class SolrFacade {
 		$this->entityMapper->setMappingCommand($command);
 		
 		if ($document = $this->entityMapper->toDocument($entity)) {
-			$deleteQuery = new DeleteDocumentQuery($document);
+			$deleteQuery = new FindByIdentifierQuery($document);
 			$queryString = $deleteQuery->getQueryString();
 			
+			try {
 			$response = $this->solrClient->deleteByQuery($queryString);
 			
 			$this->solrClient->commit();
+			
+			$this->logger->info(sprintf('delete document with id %s', $entity->getId()));
+			} catch (\Exception $e) {
+				$this->logger->err(sprintf('could not delete document with ID %s, solr-error:'.$e->getMessage(), $entity->getId()));
+			}
 		}
 	}
 	
@@ -77,6 +83,8 @@ class SolrFacade {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			
 			$this->solrClient->commit();
+			
+			$this->logger->info(sprintf('add document with id %s to index', $entity->getId()));
 		} catch (\Exception $e) { 
 			$this->logger->err($e->getMessage());
 			
@@ -93,7 +101,11 @@ class SolrFacade {
 		
 		try {
 			$response = $this->solrClient->query($solrQuery);
+			
+			$this->logger->info(sprintf('query index, query: %s', $query->getQueryString()));
 		} catch (\Exception $e) {
+			$this->logger->err(sprintf('the query %s cased an error', $query->getQueryString()));
+			
 			return null;
 		}
 		
@@ -116,6 +128,8 @@ class SolrFacade {
 		try {
 			$this->solrClient->deleteByQuery('*:*');
 			$this->solrClient->commit();
+			
+			$this->logger->info('clear the index successful');
 		} catch (\Exception $e) {
 			throw new \RuntimeException('could not clear index');
 		}
