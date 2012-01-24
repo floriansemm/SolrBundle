@@ -35,6 +35,18 @@ Bundle
             // ...
         ));
 
+Configuration
+=============
+
+You have to setup the connection options
+
+		# app/config/config.yml
+		
+		fs_solr:
+			hostname: localhost
+			port: 8983 
+
+Multiple connections are planed.
 
 Usage
 =====
@@ -123,3 +135,11 @@ To index your entities manually, you can do it the following way:
 		$this->get('solr')->deleteDocument($entity);
 
 The delete action needs the id of the entity.		
+
+Commands
+========
+
+There are comming two commands with this bundle:
+
+* `solr:index:clear` - delete all documents in the index
+* `solr:synchronize` - synchronize the db with the index. You have to specify an entity.
