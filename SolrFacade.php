@@ -74,9 +74,12 @@ class SolrFacade {
 	
 	private function addDocumentToIndex($entity) {
 		$doc = $this->entityMapper->toDocument($entity);
-		$updateResponse = $this->solrClient->addDocument($doc);
 		
-		$this->solrClient->commit();		
+		try {
+			$updateResponse = $this->solrClient->addDocument($doc);
+			
+			$this->solrClient->commit();
+		} catch (\Exception $e) { }		
 	}
 	
 	/**
@@ -85,7 +88,12 @@ class SolrFacade {
 	 */
 	public function query(SolrQuery $query) {
 		$solrQuery = $query->getSolrQuery();
-		$response = $this->solrClient->query($solrQuery);
+		
+		try {
+			$response = $this->solrClient->query($solrQuery);
+		} catch (\Exception $e) {
+			return null;
+		}
 		
 		$response = $response->getResponse();
 
