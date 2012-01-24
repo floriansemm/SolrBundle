@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
+
 use FS\SolrBundle\Doctrine\Mapper\Command\CommandFactory;
 
 use FS\SolrBundle\Query\DeleteDocumentQuery;
@@ -34,9 +36,16 @@ class SolrFacade {
 	 */
 	private $commandFactory = null;
 		
-	public function __construct(SolrConnection $connection, CommandFactory $commandFactory) {
+	/**
+	 * 
+	 * @var LoggerInterface
+	 */
+	private $logger = null;
+	
+	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, LoggerInterface $logger) {
 		$this->solrClient = new \SolrClient($connection->getConnection());
 		$this->commandFactory = $commandFactory;
+		$this->logger = $logger;
 		
 		$this->entityMapper = new EntityMapper();
 	}
@@ -61,6 +70,15 @@ class SolrFacade {
 			$response = $this->solrClient->deleteByQuery($queryString);
 			
 			$this->solrClient->commit();
+		}
+	}
+	
+	public function clearIndex() {
+		try {
+			$this->solrClient->deleteByQuery('*:*');
+			$this->solrClient->commit();
+		} catch (\Exception $e) { 
+			$this->logger->err($e->getMessage());
 		}
 	}
 	
