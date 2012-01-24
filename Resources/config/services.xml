@@ -24,7 +24,7 @@
 			<argument type="service" id="logger" />
 		</service>
 
-		<service id="solr.connection" class="%solr.connection.class%" />
+		<service id="solr.connection" class="%solr.connection.class%" public="false" />
 
         <service id="solr.query" class="%solr.query.facade.class%">
             <argument type="service" id="doctrine" />
