@@ -1,13 +1,9 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Solr\Query;
-
-use FS\SolrBundle\Query\DeleteDocumentQuery;
+namespace FS\SolrBundle\Tests\Query;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-
-use FS\SolrBundle\SolrQuery;
-
+use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrQueryFacade;
 
 /**

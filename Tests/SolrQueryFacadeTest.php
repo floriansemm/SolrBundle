@@ -7,7 +7,7 @@ use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
-use FS\SolrBundle\SolrQuery;
+use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrQueryFacade;
 
 /**

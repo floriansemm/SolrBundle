@@ -1,7 +1,5 @@
 <?php
-namespace FS\SolrBundle;
-
-use FS\SolrBundle\Query\AbstractQuery;
+namespace FS\SolrBundle\Query;
 
 class SolrQuery extends AbstractQuery {
 	private $mappedFields = array();

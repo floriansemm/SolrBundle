@@ -1,11 +1,12 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Query\SolrQuery;
+
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
-use FS\SolrBundle\Query\DeleteDocumentQuery;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 

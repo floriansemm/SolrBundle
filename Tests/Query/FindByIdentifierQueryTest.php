@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Solr;
+namespace FS\SolrBundle\Tests\Query;
 
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 
