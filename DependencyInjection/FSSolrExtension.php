@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Reference;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -25,6 +27,11 @@ class FSSolrExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 		
-        $container->getDefinition('solr.connection')->setArguments(array($config));
+        $container->getDefinition('solr.connection')->setArguments(array($config['solr']));
+        
+        $container->getDefinition('solr')->addMethodCall(
+        	'setDoctrineConfiguration',
+        	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
+        );
     }
 }

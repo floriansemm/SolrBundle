@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\SolrFacade;
+
 class SolrQuery extends AbstractQuery {
 	private $mappedFields = array();
 	
@@ -13,6 +15,22 @@ class SolrQuery extends AbstractQuery {
 	 * @var object
 	 */
 	private $entity = null;
+	
+	/**
+	 * 
+	 * @var SolrFacade
+	 */
+	private $solrFacade = null;
+	
+	public function __construct(SolrFacade $solr) {
+		parent::__construct();
+		
+		$this->solrFacade = $solr;
+	}
+	
+	public function getResult() {
+		return $this->solrFacade->query($this);		
+	}
 	
 	/**
 	 * @return array

@@ -7,7 +7,6 @@
     <parameters>
         <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
         <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
-        <parameter key="solr.query.facade.class">FS\SolrBundle\SolrQueryFacade</parameter>
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
@@ -22,14 +21,11 @@
 			<argument type="service" id="solr.connection" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="logger" />
+			<argument type="service" id="doctrine.orm.default_configuration" />
+			
 		</service>
 
 		<service id="solr.connection" class="%solr.connection.class%" public="false" />
-
-        <service id="solr.query" class="%solr.query.facade.class%">
-            <argument type="service" id="doctrine" />
-            <argument type="service" id="solr.mapping.factory" />
-        </service>
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
     	

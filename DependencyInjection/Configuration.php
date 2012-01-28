@@ -20,10 +20,15 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('fs_solr');
 		$rootNode->children()
-					->scalarNode('hostname')->defaultValue('localhost')->end()
-					->scalarNode('port')->defaultValue('8983')->end()
-					->scalarNode('login')->end()
-					->scalarNode('password')->end()
+					->arrayNode('solr')
+						->children()
+							->scalarNode('hostname')->defaultValue('localhost')->end()
+							->scalarNode('port')->defaultValue('8983')->end()
+							->scalarNode('login')->end()
+							->scalarNode('password')->end()
+						->end()
+					->end()
+					->scalarNode('entity_manager')->defaultValue('default')->end()	
 				->end();
 		
 

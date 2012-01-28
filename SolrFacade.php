@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use Doctrine\ORM\Configuration;
+
 use FS\SolrBundle\Query\SolrQuery;
 
 use FS\SolrBundle\Query\FindByIdentifierQuery;
@@ -35,12 +37,50 @@ class SolrFacade {
 	 */
 	private $logger = null;
 	
+	/**
+	 * 
+	 * @var Configuration
+	 */
+	private $doctrineConfiguration = null;
+	
 	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, LoggerInterface $logger) {
-		$this->solrClient = new \SolrClient($connection->getConnection());
+		$this->solrClient = $connection->getClient();
 		$this->commandFactory = $commandFactory;
 		$this->logger = $logger;
 		
 		$this->entityMapper = new EntityMapper();
+	}
+	
+	public function setDoctrineConfiguration(Configuration $doctrineConfiguration) {
+		$this->doctrineConfiguration = $doctrineConfiguration;
+	}
+	
+	public function createQuery($entity) {
+		$class = $this->getClass($entity);
+		$entity = new $class;
+		
+		$query = new SolrQuery($this);
+		$query->setEntity($entity);
+		
+		$command = $this->commandFactory->get('all');
+		$query->setMappedFields($command->getAnnotationReader()->getFieldMapping($entity));
+		
+		return $query;
+	}
+	
+	private function getClass($entity) {
+		if (class_exists($entity)) {
+			return $entity;
+		}
+	
+		list($namespaceAlias, $simpleClassName) = explode(':', $entity);
+		$realClassName = $this->doctrineConfiguration->getEntityNamespace($namespaceAlias) . '\\' . $simpleClassName;
+	
+		if (!class_exists($realClassName)) {
+			throw new \RuntimeException(sprintf('Unknown entity %s', $entity));
+		}
+	
+		return $realClassName;
 	}
 	
 	public function updateDocument($entity) {
@@ -57,11 +97,11 @@ class SolrFacade {
 			$queryString = $deleteQuery->getQueryString();
 			
 			try {
-			$response = $this->solrClient->deleteByQuery($queryString);
-			
-			$this->solrClient->commit();
-			
-			$this->logger->info(sprintf('delete document with id %s', $entity->getId()));
+				$response = $this->solrClient->deleteByQuery($queryString);
+				
+				$this->solrClient->commit();
+				
+				$this->logger->info(sprintf('delete document with id %s', $entity->getId()));
 			} catch (\Exception $e) {
 				$this->logger->err(sprintf('could not delete document with ID %s, solr-error:'.$e->getMessage(), $entity->getId()));
 			}
@@ -91,10 +131,10 @@ class SolrFacade {
 			throw new \RuntimeException('could not index entity');
 		}		
 	}
-	
+		
 	/**
 	 * 
-	 * @return \SolrResponse
+	 * @return array
 	 */
 	public function query(SolrQuery $query) {
 		$solrQuery = $query->getSolrQuery();
@@ -106,7 +146,7 @@ class SolrFacade {
 		} catch (\Exception $e) {
 			$this->logger->err(sprintf('the query %s cased an error', $query->getQueryString()));
 			
-			return null;
+			return array();
 		}
 		
 		$response = $response->getResponse();

@@ -9,8 +9,16 @@ class SolrConnection {
 	 */
 	private $connection = array();
 	
+	/**
+	 * 
+	 * @var \SolrClient
+	 */
+	private $client = null;
+	
 	public function __construct(array $connection = array()) {
 		$this->connection = $connection;
+		
+		$this->client = new \SolrClient($this->connection);
 	}
 	
 	/**
@@ -19,6 +27,14 @@ class SolrConnection {
 	 */
 	public function getConnection() {
 		return $this->connection;
+	}
+	
+	/**
+	 * 
+	 * @return \SolrClient
+	 */
+	public function getClient() {
+		return $this->client;
 	}
 }
 
