@@ -43,8 +43,10 @@ You have to setup the connection options
 		# app/config/config.yml
 		
 		fs_solr:
-			hostname: localhost
-			port: 8983 
+			solr:
+				hostname: localhost
+				port: 8983
+			entity_manager: default 
 
 Multiple connections are planed.
 
@@ -103,12 +105,12 @@ If you persist this entity, it will put automaticlly to the index. Update and de
 
 To query the index you have to call some services.
 
-		$query = $this->get('solr.query')->createQuery('AcmeDemoBundle:Post');
+		$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
 		$query->addSearchTerm('title', 'my title');
 		$query->addField('id');
 		$query->addField('text');
 		
-		$result = $this->get('solr')->query($query);
+		$result = $query->getResult();
 		
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
 to your entity for you. In this case only the fields id and text will be mapped (addField()), so title and created_at will be
@@ -116,17 +118,17 @@ empty. If nothing was found $result is empty.
 
 If no field was explict add, all fields will be mapped.
 
-		$query = $this->get('solr.query')->createQuery('AcmeDemoBundle:Post');
+		$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
 		$query->addSearchTerm('title', 'my title');
 		
-		$result = $this->get('solr')->query($query);
+		$result = $result = $query->getResult();
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
-    	$query = $this->get('solr.query')->createQuery('AcmeDemoBundle:Post');
+    	$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
     	$query->queryAllFields('my title);
     		
-    	$result = $this->get('solr')->query($query);
+    	$result = $query->getResult();
 
 To index your entities manually, you can do it the following way:
 
