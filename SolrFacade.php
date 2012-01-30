@@ -1,6 +1,10 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Query\AbstractQuery;
+
+use FS\SolrBundle\Repository\Repository;
+
 use Doctrine\ORM\Configuration;
 
 use FS\SolrBundle\Query\SolrQuery;
@@ -51,10 +55,28 @@ class SolrFacade {
 		$this->entityMapper = new EntityMapper();
 	}
 	
+	/**
+	 * @return EntityMapper
+	 */
+	public function getMapper() {
+		return $this->entityMapper;
+	}
+	
+	/**
+	 * @return CommandFactory
+	 */
+	public function getCommandFactory() {
+		return $this->commandFactory;
+	}
+	
 	public function setDoctrineConfiguration(Configuration $doctrineConfiguration) {
 		$this->doctrineConfiguration = $doctrineConfiguration;
 	}
 	
+	/**
+	 * 
+	 * @param SolrQuery $entity
+	 */
 	public function createQuery($entity) {
 		$class = $this->getClass($entity);
 		$entity = new $class;
@@ -68,8 +90,19 @@ class SolrFacade {
 		return $query;
 	}
 	
+	/**
+	 * 
+	 * @param RepositoryInterface $entity
+	 */
+	public function getRepository($entityAlias) {
+		$class = $this->getClass($entityAlias);
+		$entity = new $class;
+
+		return new Repository($this, $entity);
+	}
+	
 	private function getClass($entity) {
-		if (class_exists($entity)) {
+		if (is_object($entity) || class_exists($entity)) {
 			return $entity;
 		}
 	
@@ -136,7 +169,7 @@ class SolrFacade {
 	 * 
 	 * @return array
 	 */
-	public function query(SolrQuery $query) {
+	public function query(AbstractQuery $query) {
 		$solrQuery = $query->getSolrQuery();
 		
 		try {

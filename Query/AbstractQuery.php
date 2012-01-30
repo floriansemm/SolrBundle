@@ -9,9 +9,29 @@ abstract class AbstractQuery {
 	 */
 	protected $solrQuery = null;
 	
+	/**
+	 *
+	 * @var object
+	 */
+	private $entity = null;	
+	
 	public function __construct() {
 		$this->solrQuery = new \SolrQuery('*:*');
 	}
+	
+	/**
+	 * @return the $entity
+	 */
+	public function getEntity() {
+		return $this->entity;
+	}
+	
+	/**
+	 * @param object $entity
+	 */
+	public function setEntity($entity) {
+		$this->entity = $entity;
+	}	
 	
 	/**
 	 * @return \SolrQuery

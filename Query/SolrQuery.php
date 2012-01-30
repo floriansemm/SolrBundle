@@ -10,11 +10,7 @@ class SolrQuery extends AbstractQuery {
 	
 	private $strict = false;
 	
-	/**
-	 * 
-	 * @var object
-	 */
-	private $entity = null;
+
 	
 	/**
 	 * 
@@ -77,20 +73,6 @@ class SolrQuery extends AbstractQuery {
 		return $this;
 	}
 	
-	/**
-	 * @return the $entity
-	 */
-	public function getEntity() {
-		return $this->entity;
-	}
-
-	/**
-	 * @param object $entity
-	 */
-	public function setEntity($entity) {
-		$this->entity = $entity;
-	}
-
 	public function addField($field) {
 		$documentFieldsAsValues = array_flip($this->mappedFields);
 		if (array_key_exists($field, $documentFieldsAsValues)) {
