@@ -29,11 +29,11 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	public function testCreateQuery_ValidEntity() {
 		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
-		$logger = $this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface', array(), array(), '', false);
+		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 		
 		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Mapper');
 		
-		$solr = new SolrFacade($configMock, $commandFactory, $logger);
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
 		$solr->setDoctrineConfiguration($doctrineConfiguration);
 		
 		$query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
@@ -50,11 +50,11 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	public function testCreateQuery_EntityIsUnknown() {
 		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
-		$logger = $this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface', array(), array(), '', false);
+		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 		
 		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Mapper');
 		
-		$solr = new SolrFacade($configMock, $commandFactory, $logger);
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
 		$solr->setDoctrineConfiguration($doctrineConfiguration);
 	
 		$solr->createQuery('InvalidBundle:InvalidEntity');

@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Event\EventManager;
+
 use FS\SolrBundle\Query\AbstractQuery;
 
 use FS\SolrBundle\Repository\Repository;
@@ -47,10 +49,16 @@ class SolrFacade {
 	 */
 	private $doctrineConfiguration = null;
 	
-	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, LoggerInterface $logger) {
+	/**
+	 * 
+	 * @var EventManager
+	 */
+	private $manager = null;
+	
+	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, EventManager $manager) {
 		$this->solrClient = $connection->getClient();
 		$this->commandFactory = $commandFactory;
-		$this->logger = $logger;
+		$this->manager = $manager;
 		
 		$this->entityMapper = new EntityMapper();
 	}
@@ -116,10 +124,6 @@ class SolrFacade {
 		return $realClassName;
 	}
 	
-	public function updateDocument($entity) {
-		$this->addDocument($entity);	
-	}
-	
 	public function removeDocument($entity) {
 		$command = $this->commandFactory->get('identifier');
 		
@@ -128,18 +132,20 @@ class SolrFacade {
 		if ($document = $this->entityMapper->toDocument($entity)) {
 			$deleteQuery = new FindByIdentifierQuery($document);
 			$queryString = $deleteQuery->getQueryString();
-			
+
 			try {
 				$response = $this->solrClient->deleteByQuery($queryString);
 				
 				$this->solrClient->commit();
-				
-				$this->logger->info(sprintf('delete document with id %s', $entity->getId()));
-			} catch (\Exception $e) {
-				$this->logger->err(sprintf('could not delete document with ID %s, solr-error:'.$e->getMessage(), $entity->getId()));
-			}
+			} catch (\Exception $e) {}
+			
+			$this->manager->handle(EventManager::DELETE, $doc);
 		}
 	}
+	
+	public function updateDocument($entity) {
+		$this->addDocument($entity);
+	}	
 	
 	public function addDocument($entity) {
 		$command = $this->commandFactory->get('all');
@@ -152,15 +158,14 @@ class SolrFacade {
 	private function addDocumentToIndex($entity) {
 		$doc = $this->entityMapper->toDocument($entity);
 		
+		$this->manager->handle(EventManager::INSERT, $doc);
+		
 		try {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			
 			$this->solrClient->commit();
 			
-			$this->logger->info(sprintf('add document with id %s to index', $entity->getId()));
 		} catch (\Exception $e) { 
-			$this->logger->err($e->getMessage());
-			
 			throw new \RuntimeException('could not index entity');
 		}		
 	}
@@ -174,11 +179,7 @@ class SolrFacade {
 		
 		try {
 			$response = $this->solrClient->query($solrQuery);
-			
-			$this->logger->info(sprintf('query index, query: %s', $query->getQueryString()));
 		} catch (\Exception $e) {
-			$this->logger->err(sprintf('the query %s cased an error', $query->getQueryString()));
-			
 			return array();
 		}
 		
@@ -202,7 +203,6 @@ class SolrFacade {
 			$this->solrClient->deleteByQuery('*:*');
 			$this->solrClient->commit();
 			
-			$this->logger->info('clear the index successful');
 		} catch (\Exception $e) {
 			throw new \RuntimeException('could not clear index');
 		}
