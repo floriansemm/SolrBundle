@@ -139,27 +139,40 @@ class SolrFacade {
 				$this->solrClient->commit();
 			} catch (\Exception $e) {}
 			
-			$this->manager->handle(EventManager::DELETE, $doc);
+			$this->manager->handle(EventManager::DELETE, $document);
 		}
 	}
 	
 	public function updateDocument($entity) {
-		$this->addDocument($entity);
+		$doc = $this->mapEntityToDocument($entity);
+		
+		$this->manager->handle(EventManager::UPDATE, $doc);
+		
+		$this->addDocumentToIndex($doc);
 	}	
 	
 	public function addDocument($entity) {
-		$command = $this->commandFactory->get('all');
-		
-		$this->entityMapper->setMappingCommand($command);
-		
-		$this->addDocumentToIndex($entity);
-	}
-	
-	private function addDocumentToIndex($entity) {
-		$doc = $this->entityMapper->toDocument($entity);
+		$doc = $this->mapEntityToDocument($entity);
 		
 		$this->manager->handle(EventManager::INSERT, $doc);
 		
+		$this->addDocumentToIndex($doc);
+	}
+
+	/**
+	 * 
+	 * @param object $entity
+	 * @return Ambigous <SolrInputDocument, NULL>
+	 */
+	private function mapEntityToDocument($entity) {
+		$command = $this->commandFactory->get('all');
+		$this->entityMapper->setMappingCommand($command);
+		$doc = $this->entityMapper->toDocument($entity);
+
+		return $doc;
+	}
+	
+	private function addDocumentToIndex($doc) {
 		try {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			

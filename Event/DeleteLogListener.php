@@ -3,7 +3,7 @@ namespace FS\SolrBundle\Event;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
-class LogListener implements EventListenerInterface {
+class DeleteLogListener implements EventListenerInterface {
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ class LogListener implements EventListenerInterface {
 	 * @see FS\SolrBundle\Event.EventListenerInterface::notify()
 	 */
 	public function notify(\SolrInputDocument $document) {
-		$this->logger->info('document was updated');
+		$this->logger->info('document was deleted');
 		
 	}
 
