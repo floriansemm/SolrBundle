@@ -3,9 +3,8 @@
 namespace FS\SolrBundle\Tests\Solr;
 
 use FS\SolrBundle\SolrFacade;
-
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
-
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -58,6 +57,35 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		$solr->setDoctrineConfiguration($doctrineConfiguration);
 	
 		$solr->createQuery('InvalidBundle:InvalidEntity');
+	}
+	
+	public function testGetRepository_UserdefinedRepository() {
+		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
+		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
+		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+		
+		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Annotation\Entities');
+		
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
+		$solr->setDoctrineConfiguration($doctrineConfiguration);		
+		$actual = $solr->getRepository('Tests:EntityWithRepository');
+		
+		$this->assertTrue($actual instanceof ValidEntityRepository);
+	}
+	
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testGetRepository_UserdefinedInvalidRepository() {
+		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
+		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
+		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+	
+		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Annotation\Entities');
+	
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
+		$solr->setDoctrineConfiguration($doctrineConfiguration);
+		$solr->getRepository('Tests:EntityWithInvalidRepository');
 	}	
 }
 

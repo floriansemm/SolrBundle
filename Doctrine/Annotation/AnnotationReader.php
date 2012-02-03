@@ -10,6 +10,7 @@ class AnnotationReader {
 	 */
 	private $reader;
 	
+	const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
 	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
 	
@@ -62,6 +63,23 @@ class AnnotationReader {
 		}
 		
 		return reset($id);
+	}
+	
+	/**
+	 * 
+	 * @param object $entity
+	 * @return object
+	 */
+	public function getRepository($entity) {
+		$reflectionClass = new \ReflectionClass($entity);
+
+		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_CLASS);
+		
+		if ($annotation instanceof Document) {
+			return $annotation->repository;
+		}
+		
+		return '';
 	}
 	
 	/**

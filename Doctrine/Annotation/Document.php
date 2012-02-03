@@ -7,7 +7,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  */
 class Document extends Annotation {
-
+	public $repository = '';
 }
 
 ?>

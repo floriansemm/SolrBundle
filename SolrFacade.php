@@ -100,12 +100,25 @@ class SolrFacade {
 	
 	/**
 	 * 
-	 * @param RepositoryInterface $entity
+	 * @param RepositoryInterface repositoryClassity
 	 */
 	public function getRepository($entityAlias) {
 		$class = $this->getClass($entityAlias);
 		$entity = new $class;
 
+		$annotationReader = new AnnotationReader();
+		$repositoryClass = $annotationReader->getRepository($entity);
+		
+		if (class_exists($repositoryClass)) {
+			$repositoryInstance = new $repositoryClass($this, $entity);
+			
+			if ($repositoryInstance instanceof Repository) {
+				return $repositoryInstance;
+			}
+			
+			throw new \RuntimeException(sprintf('%s must extends the FS\SolrBundle\Repository\Repository', $repositoryClass));
+		}
+		
 		return new Repository($this, $entity);
 	}
 	

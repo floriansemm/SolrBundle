@@ -5,7 +5,8 @@ namespace FS\SolrBundle\Tests\Doctrine\Annotation;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity;
 
 class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
@@ -62,5 +63,23 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue(array_key_exists('title_s', $fields));
 		$this->assertTrue(array_key_exists('id', $fields));
 	}
+	
+	public function testGetRepository_ValidRepositoryDeclared() {
+		$reader = new AnnotationReader();
+		$repository = $reader->getRepository(new EntityWithRepository());
+		
+		$expected = 'FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository';
+		$actual = $repository;
+		$this->assertEquals($expected, $actual, 'wrong declared repository');
+	}
+	
+	public function testGetRepository_NoRepositoryAttributSet() {
+		$reader = new AnnotationReader();
+		$repository = $reader->getRepository(new ValidTestEntity());
+	
+		$expected = '';
+		$actual = $repository;
+		$this->assertEquals($expected, $actual, 'no repository was declared');
+	}	
 }
 
