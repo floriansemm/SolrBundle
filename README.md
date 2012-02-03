@@ -145,7 +145,7 @@ like Doctrine-Repositories:
 	$myRepository = $this->get('solr')->getRepository('AcmeDemoBundle:Post');
 	$result = $myRepository->mySpecialFindMethod();
 	
-If you haven't declared a concrete repository in your entity and you call `getRepository('AcmeDemoBundle:Post')`, you will
+If you haven't declared a concrete repository in your entity and you call `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
 Commands
