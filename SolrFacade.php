@@ -110,7 +110,8 @@ class SolrFacade {
 	
 	/**
 	 * 
-	 * @param RepositoryInterface repositoryClassity
+	 * @param string repositoryClassity
+	 * @return RepositoryInterface
 	 */
 	public function getRepository($entityAlias) {
 		$metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
@@ -132,6 +133,10 @@ class SolrFacade {
 		return new Repository($this, $entity);
 	}
 	
+	/**
+	 * 
+	 * @param object $entity
+	 */
 	public function removeDocument($entity) {
 		$command = $this->commandFactory->get('identifier');
 		
@@ -152,7 +157,11 @@ class SolrFacade {
 			$this->eventManager->handle(EventManager::DELETE, $document);
 		}
 	}
-	
+
+	/**
+	 *
+	 * @param object $entity
+	 */
 	public function updateDocument($entity) {
 		$doc = $this->mapEntityToDocument($entity);
 		
@@ -161,6 +170,10 @@ class SolrFacade {
 		$this->addDocumentToIndex($doc);
 	}	
 	
+	/**
+	 * 
+	 * @param object $entity
+	 */
 	public function addDocument($entity) {
 		$doc = $this->mapEntityToDocument($entity);
 		
