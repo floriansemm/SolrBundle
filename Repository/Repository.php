@@ -35,7 +35,9 @@ class Repository implements RepositoryInterface {
 		
 		$mapper = $this->solr->getMapper();
 		$mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
-		$document = $mapper->toDocument($this->entity);
+		$metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
+		
+		$document = $mapper->toDocument($metaInformation);
 		
 		$query = new FindByIdentifierQuery($document);
 		$query->setEntity($this->entity);
@@ -54,8 +56,9 @@ class Repository implements RepositoryInterface {
 	public function findAll() {
 		$mapper = $this->solr->getMapper();
 		$mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
+		$metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
 		
-		$document = $mapper->toDocument($this->entity);
+		$document = $mapper->toDocument($metaInformation);
 		
 		if (null === $document) {
 			return null;

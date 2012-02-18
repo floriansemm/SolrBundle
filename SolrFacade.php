@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+
 use FS\SolrBundle\Event\EventManager;
 
 use FS\SolrBundle\Query\AbstractQuery;
@@ -45,20 +47,28 @@ class SolrFacade {
 	
 	/**
 	 * 
-	 * @var Configuration
+	 * @var EventManager
 	 */
-	private $doctrineConfiguration = null;
+	private $eventManager = null;
 	
 	/**
 	 * 
-	 * @var EventManager
+	 * @var MetaInformationFactory
 	 */
-	private $manager = null;
+	private $metaInformationFactory = null;
 	
-	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, EventManager $manager) {
+	/**
+	 * 
+	 * @param SolrConnection $connection
+	 * @param CommandFactory $commandFactory
+	 * @param EventManager $manager
+	 * @param MetaInformationFactory $metaInformationFactory
+	 */
+	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, EventManager $manager, MetaInformationFactory $metaInformationFactory) {
 		$this->solrClient = $connection->getClient();
 		$this->commandFactory = $commandFactory;
-		$this->manager = $manager;
+		$this->eventManager = $manager;
+		$this->metaInformationFactory = $metaInformationFactory;
 		
 		$this->entityMapper = new EntityMapper();
 	}
@@ -76,24 +86,30 @@ class SolrFacade {
 	public function getCommandFactory() {
 		return $this->commandFactory;
 	}
-	
-	public function setDoctrineConfiguration(Configuration $doctrineConfiguration) {
-		$this->doctrineConfiguration = $doctrineConfiguration;
+		
+	/**
+	 * 
+	 * @return MetaInformationFactory
+	 */
+	public function getMetaFactory() {
+		return $this->metaInformationFactory;
 	}
 	
 	/**
 	 * 
-	 * @param SolrQuery $entity
+	 * @param object $entity
+	 * @return SolrQuery
 	 */
 	public function createQuery($entity) {
-		$class = $this->getClass($entity);
+		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
+		$class = $metaInformation->getClassName();
 		$entity = new $class;
 		
 		$query = new SolrQuery($this);
 		$query->setEntity($entity);
 		
 		$command = $this->commandFactory->get('all');
-		$query->setMappedFields($command->getAnnotationReader()->getFieldMapping($entity));
+		$query->setMappedFields($metaInformation->getFieldMapping());
 		
 		return $query;
 	}
@@ -103,12 +119,12 @@ class SolrFacade {
 	 * @param RepositoryInterface repositoryClassity
 	 */
 	public function getRepository($entityAlias) {
-		$class = $this->getClass($entityAlias);
+		$metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
+		$class = $metaInformation->getClassName();
+		
 		$entity = new $class;
 
-		$annotationReader = new AnnotationReader();
-		$repositoryClass = $annotationReader->getRepository($entity);
-		
+		$repositoryClass = $metaInformation->getRepository();
 		if (class_exists($repositoryClass)) {
 			$repositoryInstance = new $repositoryClass($this, $entity);
 			
@@ -122,27 +138,14 @@ class SolrFacade {
 		return new Repository($this, $entity);
 	}
 	
-	private function getClass($entity) {
-		if (is_object($entity) || class_exists($entity)) {
-			return $entity;
-		}
-	
-		list($namespaceAlias, $simpleClassName) = explode(':', $entity);
-		$realClassName = $this->doctrineConfiguration->getEntityNamespace($namespaceAlias) . '\\' . $simpleClassName;
-	
-		if (!class_exists($realClassName)) {
-			throw new \RuntimeException(sprintf('Unknown entity %s', $entity));
-		}
-	
-		return $realClassName;
-	}
-	
 	public function removeDocument($entity) {
 		$command = $this->commandFactory->get('identifier');
 		
 		$this->entityMapper->setMappingCommand($command);
 		
-		if ($document = $this->entityMapper->toDocument($entity)) {
+		$metaInformations = $this->metaInformationFactory->loadInformation($entity);
+		
+		if ($document = $this->entityMapper->toDocument($metaInformations)) {
 			$deleteQuery = new FindByIdentifierQuery($document);
 			$queryString = $deleteQuery->getQueryString();
 
@@ -152,14 +155,14 @@ class SolrFacade {
 				$this->solrClient->commit();
 			} catch (\Exception $e) {}
 			
-			$this->manager->handle(EventManager::DELETE, $document);
+			$this->eventManager->handle(EventManager::DELETE, $document);
 		}
 	}
 	
 	public function updateDocument($entity) {
 		$doc = $this->mapEntityToDocument($entity);
 		
-		$this->manager->handle(EventManager::UPDATE, $doc);
+		$this->eventManager->handle(EventManager::UPDATE, $doc);
 		
 		$this->addDocumentToIndex($doc);
 	}	
@@ -167,7 +170,7 @@ class SolrFacade {
 	public function addDocument($entity) {
 		$doc = $this->mapEntityToDocument($entity);
 		
-		$this->manager->handle(EventManager::INSERT, $doc);
+		$this->eventManager->handle(EventManager::INSERT, $doc);
 		
 		$this->addDocumentToIndex($doc);
 	}
@@ -179,8 +182,11 @@ class SolrFacade {
 	 */
 	private function mapEntityToDocument($entity) {
 		$command = $this->commandFactory->get('all');
+
+		$metaInformations = $this->metaInformationFactory->loadInformation($entity);
+		
 		$this->entityMapper->setMappingCommand($command);
-		$doc = $this->entityMapper->toDocument($entity);
+		$doc = $this->entityMapper->toDocument($metaInformations);
 
 		return $doc;
 	}

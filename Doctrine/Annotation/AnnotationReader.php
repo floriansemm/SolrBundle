@@ -13,9 +13,11 @@ class AnnotationReader {
 	const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
 	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
+	const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
 	
 	public function __construct() {
 		$this->reader = new Reader();
+		$this->reader->setIgnoreNotImportedAnnotations(true);
 	}
 	
 	private function getPropertiesByType($entity, $type) {
@@ -68,7 +70,7 @@ class AnnotationReader {
 	/**
 	 * 
 	 * @param object $entity
-	 * @return object
+	 * @return string classname of repository
 	 */
 	public function getRepository($entity) {
 		$reflectionClass = new \ReflectionClass($entity);
@@ -83,6 +85,8 @@ class AnnotationReader {
 	}
 	
 	/**
+	 * 
+	 * return all fields and field for idendification 
 	 * 
 	 * @param object $entity
 	 * @return array
@@ -102,6 +106,19 @@ class AnnotationReader {
 		
 		return $mapping;
 	}
+	
+	/**
+	 * 
+	 * @param object $entity
+	 * @return boolean
+	 */
+	public function hasDocumentDeclaration($entity) {
+		$reflectionClass = new \ReflectionClass($entity);
+	
+			$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_INDEX_CLASS);
+		
+		return $annotation !== null;
+	}	
 }
 
 ?>

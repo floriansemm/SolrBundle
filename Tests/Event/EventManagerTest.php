@@ -4,6 +4,11 @@ namespace FS\SolrBundle\Tests\Solr\Event;
 
 use FS\SolrBundle\Event\EventManager;
 
+/**
+ * 
+ * @author fs
+ * @group eventmanager
+ */
 class EventManagerTest extends \PHPUnit_Framework_TestCase {
 	
 	public function testAddListener_OneAdded() {

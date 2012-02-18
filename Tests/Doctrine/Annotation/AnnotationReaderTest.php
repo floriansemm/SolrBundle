@@ -9,17 +9,11 @@ use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity;
 
+/**
+ * 
+ * @group annotation
+ */
 class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
-
-	/**
-	 * Prepares the environment before running a test.
-	 */
-	protected function setUp() {
-		parent::setUp();
-
-		// TODO Auto-generated AnnotationReaderTest::setUp()
-
-	}
 
 	public function testGetFields_NoFieldsDected() {
 		$reader = new AnnotationReader();

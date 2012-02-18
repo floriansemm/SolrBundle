@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Solr\Repository;
 
+use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 
 use FS\SolrBundle\Query\SolrQuery;
@@ -13,7 +15,7 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\SolrFacade;
 
 /**
- *  test case.
+ *  @group repository
  */
 class RepositoryTest extends \PHPUnit_Framework_TestCase {
 	
@@ -21,6 +23,11 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase {
 		$document = new \SolrInputDocument();
 		$document->addField('id', 2);
 		$document->addField('document_name_s', 'post');
+		
+		$metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+		$metaFactory->expects($this->once())
+					->method('loadInformation')
+					->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 		
 		$mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper');
 		$mapper->expects($this->once())
@@ -33,8 +40,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase {
 			 ->will($this->returnValue($mapper));
 		
 		$solr->expects($this->once())
-		->method('getCommandFactory')
-		->will($this->returnValue(CommandFactoryStub::getFactoryWithAllMappingCommand()));		
+			 ->method('getCommandFactory')
+			 ->will($this->returnValue(CommandFactoryStub::getFactoryWithAllMappingCommand()));		
+		
+		$solr->expects($this->once())
+			 ->method('getMetaFactory')
+			 ->will($this->returnValue($metaFactory));
 		
 		$entity = new ValidTestEntity();
 		$solr->expects($this->once())
@@ -52,6 +63,11 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase {
 		$document->addField('id', 2);
 		$document->addField('document_name_s', 'post');
 		
+		$metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+		$metaFactory->expects($this->once())
+					->method('loadInformation')
+					->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));		
+		
 		$mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper');
 		$mapper->expects($this->once())
 			   ->method('toDocument')
@@ -65,6 +81,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase {
 		$solr->expects($this->once())
 			 ->method('getCommandFactory')
 			 ->will($this->returnValue(CommandFactoryStub::getFactoryWithAllMappingCommand()));
+		
+		$solr->expects($this->once())
+			 ->method('getMetaFactory')
+			 ->will($this->returnValue($metaFactory));		
 		
 		$entity = new ValidTestEntity();
 		$solr->expects($this->once())

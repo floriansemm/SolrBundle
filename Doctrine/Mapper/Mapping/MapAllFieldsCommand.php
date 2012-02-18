@@ -1,37 +1,31 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+
 use FS\SolrBundle\Annotation\Type;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class MapAllFieldsCommand extends AbstractDocumentCommand {
 	
-	/* (non-PHPdoc)
-	 * @seeFS\SolrBundle\Doctrine\Mapper\Command.CreateDocumentCommandInterface::createDocument()
+	/**
+	 * (non-PHPdoc)
+	 * @see FS\SolrBundle\Doctrine\Mapper\Mapping.AbstractDocumentCommand::createDocument()
 	 */
-	public function createDocument($entity) {
-		$fields = $this->reader->getFields($entity);
-		
+	public function createDocument(MetaInformation $meta) {
+		$fields = $meta->getFields();
 		if (count($fields) == 0) {
 			return null;
 		}
 		
-		$document = parent::createDocument($entity);
+		$document = parent::createDocument($meta);
 		
 		foreach ($fields as $field) {
 			$document->addField($field->getNameWithAlias(), $field->value);
 		}
 		
 		return $document;
-	}
-	
-	/**
-	 * 
-	 * @return FS\SolrBundle\Doctrine\Annotation\AnnotationReader
-	 */
-	public function getAnnotationReader() {
-		return $this->reader;
 	}
 }
 

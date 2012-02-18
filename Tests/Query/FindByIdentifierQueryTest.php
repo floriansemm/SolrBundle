@@ -5,7 +5,7 @@ namespace FS\SolrBundle\Tests\Query;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 
 /**
- *  test case.
+ *  @group query
  */
 class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase {
 

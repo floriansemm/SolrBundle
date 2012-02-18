@@ -6,26 +6,12 @@ use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class EntityMapper {
-	private $solrFacade;
-	
-	/**
-	 * 
-	 * @var AnnotationReader;
-	 */
-	private $annotationReader = null;
-	
 	/**
 	 * 
 	 * @var CreateDocumentCommandInterface
 	 */
 	private $mappingCommand = null;
 	
-	const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
-	
-	public function __construct() {
-		$this->annotationReader = new AnnotationReader();
-	}
-
 	public function setMappingCommand(AbstractDocumentCommand $command) {
 		$this->mappingCommand = $command;
 	}
@@ -35,25 +21,13 @@ class EntityMapper {
 	 * @param object $entity
 	 * @return \SolrInputDocument
 	 */
-	public function toDocument($entity) {
-		if (false === $this->putEntityToIndex($entity)) {
-			return null;
-		}
-
+	public function toDocument(MetaInformation $meta) {
 		if ($this->mappingCommand instanceof AbstractDocumentCommand) {
-			return $this->mappingCommand->createDocument($entity);
+			return $this->mappingCommand->createDocument($meta);
 		}
 		
 		return null;
 	}
-	
-	private function putEntityToIndex($entity) {
-		$reflectionClass = new \ReflectionClass($entity);
-		
-		$annotation = $this->annotationReader->getClassAnnotation($reflectionClass, self::DOCUMENT_INDEX_CLASS);
-		
-		return $annotation !== null;
-	} 
 	
 	/**
 	 * 

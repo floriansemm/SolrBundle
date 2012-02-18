@@ -2,6 +2,12 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
+
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+
+use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+
 use FS\SolrBundle\SolrFacade;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
@@ -16,6 +22,12 @@ use FS\SolrBundle\SolrQueryFacade;
  */
 class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 
+	private $metaFactory = null;
+	
+	public function setUp() {
+		$this->metaFactory = $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+	}
+	
 	private function setupDoctrine($namespace) {
 		$doctrineConfiguration = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
 		$doctrineConfiguration->expects($this->any())
@@ -25,15 +37,24 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		return $doctrineConfiguration;
 	}
 	
+	private function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null) {
+		if (null === $metaInformation) {
+			$metaInformation = MetaTestInformationFactory::getMetaInformation();
+		}
+		
+		$this->metaFactory->expects($this->once())
+						  ->method('loadInformation')
+						  ->will($this->returnValue($metaInformation));		
+	}
+	
 	public function testCreateQuery_ValidEntity() {
 		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 		
-		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Mapper');
+		$this->setupMetaFactoryLoadOneCompleteInformation();
 		
-		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
-		$solr->setDoctrineConfiguration($doctrineConfiguration);
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager, $this->metaFactory);
 		
 		$query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 		
@@ -43,20 +64,19 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException RuntimeException
-	 * @expectedExceptionMessage Unknown entity InvalidBundle:InvalidEntity
+	 * expectedException RuntimeException
+	 * expectedExceptionMessage Unknown entity InvalidBundle:InvalidEntity
 	 */
 	public function testCreateQuery_EntityIsUnknown() {
-		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
-		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
-		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+// 		$configMock = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
+// 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
+// 		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 		
-		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Mapper');
+// 		$this->setupMetaFactoryLoadOneCompleteInformation();	
 		
-		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
-		$solr->setDoctrineConfiguration($doctrineConfiguration);
+// 		$solr = new SolrFacade($configMock, $commandFactory, $eventManager, $this->metaFactory);
 	
-		$solr->createQuery('InvalidBundle:InvalidEntity');
+// 		$solr->createQuery('InvalidBundle:InvalidEntity');
 	}
 	
 	public function testGetRepository_UserdefinedRepository() {
@@ -64,10 +84,13 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 		
-		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Annotation\Entities');
+		$metaInformation = new MetaInformation();
+		$metaInformation->setClassName(get_class(new EntityWithRepository()));
+		$metaInformation->setRepository('FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository');
 		
-		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
-		$solr->setDoctrineConfiguration($doctrineConfiguration);		
+		$this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);	
+		
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager, $this->metaFactory);
 		$actual = $solr->getRepository('Tests:EntityWithRepository');
 		
 		$this->assertTrue($actual instanceof ValidEntityRepository);
@@ -81,10 +104,13 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		$commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		$eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 	
-		$doctrineConfiguration = $this->setupDoctrine('FS\SolrBundle\Tests\Doctrine\Annotation\Entities');
-	
-		$solr = new SolrFacade($configMock, $commandFactory, $eventManager);
-		$solr->setDoctrineConfiguration($doctrineConfiguration);
+		$metaInformation = new MetaInformation();
+		$metaInformation->setClassName(get_class(new EntityWithRepository()));
+		$metaInformation->setRepository('FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidEntityRepository');
+		
+		$this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);	
+		
+		$solr = new SolrFacade($configMock, $commandFactory, $eventManager, $this->metaFactory);
 		$solr->getRepository('Tests:EntityWithInvalidRepository');
 	}	
 }

@@ -1,6 +1,11 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
+use FS\SolrBundle\Doctrine\Annotation\Field;
+
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+
 abstract class SolrDocumentTest extends \PHPUnit_Framework_TestCase {
 	const FIELDS_ALWAYS_MAPPED = 2;
 	

@@ -7,7 +7,8 @@ use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrQueryFacade;
 
 /**
- *  test case.
+ *  
+ *  @group query
  */
 class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 

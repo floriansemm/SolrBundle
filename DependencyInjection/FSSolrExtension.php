@@ -29,7 +29,7 @@ class FSSolrExtension extends Extension
 		
         $container->getDefinition('solr.connection')->setArguments(array($config['solr']));
         
-        $container->getDefinition('solr')->addMethodCall(
+        $container->getDefinition('solr.meta.information.factory')->addMethodCall(
         	'setDoctrineConfiguration',
         	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
         );

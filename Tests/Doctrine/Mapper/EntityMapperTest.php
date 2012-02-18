@@ -2,18 +2,24 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 
+/**
+ * 
+ * @group mapper
+ */
 class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 
 	public function testToDocument_EntityMayNotIndexed() {
 		$mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
 		
-		$actual = $mapper->toDocument(new NotIndexedEntity());
+		$actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
 		$this->assertNull($actual);
 	}
 	
@@ -21,10 +27,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 		$mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
 		$mapper->setMappingCommand(new MapAllFieldsCommand(new AnnotationReader()));
 		
-		$updatedEntity = new ValidTestEntity();
-		$updatedEntity->setId(123);
-		
-		$actual = $mapper->toDocument($updatedEntity);
+		$actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
 		$this->assertTrue($actual instanceof \SolrInputDocument);
 		$this->assertTrue($actual->fieldExists('id'));
 	}

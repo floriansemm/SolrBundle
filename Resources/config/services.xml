@@ -8,7 +8,7 @@
         <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
         <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
-        <parameter key="solr.annotation.reader.class">FS\SolrBundle\Doctrine\Annotation\AnnotationReader</parameter>
+        <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
@@ -25,14 +25,14 @@
 			<argument type="service" id="solr.connection" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="solr.event_manager" />
-			
+			<argument type="service" id="solr.meta.information.factory" />
 		</service>
+
+		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
 
 		<service id="solr.connection" class="%solr.connection.class%" public="false" />
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
-    	
-    	<service id="solr.annotation.reader" class="%solr.annotation.reader.class%" public="false" />
     	
     	<service id="solr.add.document.listener" class="%solr.add.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
@@ -50,12 +50,10 @@
     	</service>    	
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
-    		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" command="all" />
     	</service>
     	
     	<service id="solr.mapping.identifier" class="%solr.mapping.identifier.class%" public="false">
-    		<argument type="service" id="solr.annotation.reader" />
     		<tag name="solr.document.command" command="identifier" />
     	</service>    	
     	
