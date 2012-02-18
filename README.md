@@ -61,9 +61,9 @@ To put an entity to the index, you must add some annotations to your entity:
 		use FS\SolrBundle\Doctrine\Annotation as Solr;
 		
 		/**
-		 * FS\BlogBundle\Entity\Post
+		 * 
 		 *
-		 * @Solr\Document()
+		 * @Solr\Document(repository="Full\Qualified\Class\Name")
 		 * @ORM\Table()
 		 */
 		class Post
@@ -137,6 +137,16 @@ To index your entities manually, you can do it the following way:
 		$this->get('solr')->deleteDocument($entity);
 
 The delete action needs the id of the entity.		
+
+
+If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The useage is the same
+like Doctrine-Repositories:
+
+	$myRepository = $this->get('solr')->getRepository('AcmeDemoBundle:Post');
+	$result = $myRepository->mySpecialFindMethod();
+	
+If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
+get an instance of `FS\SolrBundle\Repository\Repository`.
 
 Commands
 ========
