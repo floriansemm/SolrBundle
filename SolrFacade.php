@@ -41,12 +41,6 @@ class SolrFacade {
 		
 	/**
 	 * 
-	 * @var LoggerInterface
-	 */
-	private $logger = null;
-	
-	/**
-	 * 
 	 * @var EventManager
 	 */
 	private $eventManager = null;
