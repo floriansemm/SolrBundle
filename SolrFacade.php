@@ -185,7 +185,7 @@ class SolrFacade {
 	/**
 	 * 
 	 * @param object $entity
-	 * @return Ambigous <SolrInputDocument, NULL>
+	 * @return SolrInputDocument|null
 	 */
 	private function mapEntityToDocument($entity) {
 		$command = $this->commandFactory->get('all');
