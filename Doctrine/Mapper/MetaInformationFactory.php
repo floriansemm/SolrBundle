@@ -57,6 +57,7 @@ class MetaInformationFactory {
 		$metaInformation->setEntity($entity);
 		$metaInformation->setClassName($className);
 		$metaInformation->setDocumentName($this->getDocumentName($className));
+		$metaInformation->setFieldMapping($this->annotationReader->getFieldMapping($entity));
 		$metaInformation->setFields($this->annotationReader->getFields($entity));
 		$metaInformation->setRepository($this->annotationReader->getRepository($entity));
 		$metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));

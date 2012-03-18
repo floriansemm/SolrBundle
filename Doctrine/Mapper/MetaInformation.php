@@ -93,6 +93,26 @@ class MetaInformation {
 	public function setFields($fields) {
 		$this->fields = $fields;
 	}
+	
+	public function hasField($field) {
+		if (count($this->fields) == 0) {
+			return false;
+		}
+		
+		return isset($this->fields[$field]);
+	}
+	
+	public function setFieldValue($field, $value) {	
+		$this->fields[$field]->value = $value;
+	}
+	
+	public function getField($field) {
+		if (!$this->hasField($field)) {
+			return null;
+		}
+		
+		return $this->fields[$field];
+	}
 
 	/**
 	 * @param string $repository
