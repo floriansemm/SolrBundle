@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Event;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
 class DeleteLogListener implements EventListenerInterface {
@@ -18,7 +19,7 @@ class DeleteLogListener implements EventListenerInterface {
 	/* (non-PHPdoc)
 	 * @see FS\SolrBundle\Event.EventListenerInterface::notify()
 	 */
-	public function notify(\SolrInputDocument $document) {
+	public function notify(MetaInformation $metaInformation) {
 		$this->logger->info('document was deleted');
 		
 	}

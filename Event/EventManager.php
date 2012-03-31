@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Event;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+
 class EventManager {
 	
 	private $listener = array();
@@ -17,11 +19,11 @@ class EventManager {
 		return $this->listener;
 	}
 	
-	public function handle($event, \SolrInputDocument $document) {
+	public function handle($event, MetaInformation $metaInformation) {
 		if (array_key_exists($event, $this->listener)) {
 			foreach ($this->listener[$event] as $listener) {
 				if ($listener instanceof EventListenerInterface) {
-					$listener->notify($document);
+					$listener->notify($metaInformation);
 				}
 			}
 		}

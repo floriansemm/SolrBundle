@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 
 use FS\SolrBundle\Event\EventManager;
@@ -154,7 +156,7 @@ class SolrFacade {
 				$this->solrClient->commit();
 			} catch (\Exception $e) {}
 			
-			$this->eventManager->handle(EventManager::DELETE, $document);
+			$this->eventManager->handle(EventManager::DELETE, $metaInformations);
 		}
 	}
 
@@ -163,9 +165,10 @@ class SolrFacade {
 	 * @param object $entity
 	 */
 	public function updateDocument($entity) {
-		$doc = $this->mapEntityToDocument($entity);
+		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
+		$doc = $this->toDocument($metaInformation);
 		
-		$this->eventManager->handle(EventManager::UPDATE, $doc);
+		$this->eventManager->handle(EventManager::UPDATE, $metaInformation);
 		
 		$this->addDocumentToIndex($doc);
 	}	
@@ -175,25 +178,24 @@ class SolrFacade {
 	 * @param object $entity
 	 */
 	public function addDocument($entity) {
-		$doc = $this->mapEntityToDocument($entity);
+		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
+		$doc = $this->toDocument($metaInformation);
 		
-		$this->eventManager->handle(EventManager::INSERT, $doc);
+		$this->eventManager->handle(EventManager::INSERT, $metaInformation);
 		
 		$this->addDocumentToIndex($doc);
 	}
-
+	
 	/**
 	 * 
-	 * @param object $entity
+	 * @param MetaInformation metaInformationsy
 	 * @return SolrInputDocument|null
 	 */
-	private function mapEntityToDocument($entity) {
+	private function toDocument(MetaInformation $metaInformation) {
 		$command = $this->commandFactory->get('all');
-
-		$metaInformations = $this->metaInformationFactory->loadInformation($entity);
 		
 		$this->entityMapper->setMappingCommand($command);
-		$doc = $this->entityMapper->toDocument($metaInformations);
+		$doc = $this->entityMapper->toDocument($metaInformation);
 
 		return $doc;
 	}
