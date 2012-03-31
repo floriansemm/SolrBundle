@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Annotation\Field;
+
 class MetaInformation {
 	private $identifier = '';
 	
@@ -46,7 +48,7 @@ class MetaInformation {
 	}
 
 	/**
-	 * @return the $fields
+	 * @return array With instances of FS\SolrBundle\Doctrine\Annotation\Field
 	 */
 	public function getFields() {
 		return $this->fields;

@@ -15,9 +15,9 @@
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
         <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
-        <parameter key="solr.log_listener.insert.class">FS\SolrBundle\Event\InsertLogListener</parameter>
-        <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\UpdateLogListener</parameter>
-        <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\DeleteLogListener</parameter>
+        <parameter key="solr.log_listener.insert.class">FS\SolrBundle\Event\Listener\InsertLogListener</parameter>
+        <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
+        <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
     </parameters>
 
     <services>
