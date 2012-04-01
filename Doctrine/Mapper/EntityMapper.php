@@ -40,14 +40,11 @@ class EntityMapper {
 			throw new \InvalidArgumentException('$targetEntity should not be null');
 		}
 		
+		$reflectionClass = new \ReflectionClass($targetEntity);
 		foreach ($document as $property => $value) {
-			$property = $this->removeFieldSuffix($property);
-			
-			$setter = 'set'. ucfirst($property);
-			
-			if (method_exists($targetEntity, $setter)) {
-				$targetEntity->$setter($value);
-			}
+			$classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
+			$classProperty->setAccessible(true);
+			$classProperty->setValue($targetEntity, $value);
 		}
 		
 		return $targetEntity;
