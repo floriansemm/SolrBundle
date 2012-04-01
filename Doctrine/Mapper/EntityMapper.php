@@ -42,7 +42,12 @@ class EntityMapper {
 		
 		$reflectionClass = new \ReflectionClass($targetEntity);
 		foreach ($document as $property => $value) {
-			$classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
+			try {
+				$classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
+			} catch (\ReflectionException $e) { 
+				continue;
+			}
+			
 			$classProperty->setAccessible(true);
 			$classProperty->setValue($targetEntity, $value);
 		}
