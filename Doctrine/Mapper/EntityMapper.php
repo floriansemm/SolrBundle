@@ -35,10 +35,12 @@ class EntityMapper {
 	 * @param object $targetEntity
 	 * @return object
 	 */
-	public function toEntity(\ArrayAccess $document, $targetEntity) {
-		if (null === $targetEntity) {
-			throw new \InvalidArgumentException('$targetEntity should not be null');
+	public function toEntity(\ArrayAccess $document, $sourceTargetEntity) {
+		if (null === $sourceTargetEntity) {
+			throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
 		}
+		
+		$targetEntity = clone $sourceTargetEntity;
 		
 		$reflectionClass = new \ReflectionClass($targetEntity);
 		foreach ($document as $property => $value) {
@@ -47,7 +49,7 @@ class EntityMapper {
 			} catch (\ReflectionException $e) { 
 				continue;
 			}
-			
+
 			$classProperty->setAccessible(true);
 			$classProperty->setValue($targetEntity, $value);
 		}

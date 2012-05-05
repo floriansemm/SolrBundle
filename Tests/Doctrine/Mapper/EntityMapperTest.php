@@ -45,8 +45,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertTrue($entity instanceof $targetEntity);
 		
-		$this->assertEquals(1, $targetEntity->getId());
-		$this->assertEquals('foo', $targetEntity->getTitle());
+		$this->assertEquals(1, $entity->getId());
+		$this->assertEquals('foo', $entity->getTitle());
 	}
 }
 
