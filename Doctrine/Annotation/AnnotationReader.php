@@ -17,7 +17,7 @@ class AnnotationReader {
 	
 	public function __construct() {
 		$this->reader = new Reader();
-		$this->reader->setIgnoreNotImportedAnnotations(true);
+// 		$this->reader->setIgnoreNotImportedAnnotations(true);
 	}
 	
 	private function getPropertiesByType($entity, $type) {
