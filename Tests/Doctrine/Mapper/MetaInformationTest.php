@@ -54,7 +54,6 @@ class MetaInformationTest extends \PHPUnit_Framework_TestCase {
 		
 		$expectedValue = 'newFieldValue';
 		$information->setFieldValue('field2', $expectedValue);
-		print_r($information->getField('field2'));
 		
 		$this->assertEquals($expectedValue, $information->getField('field2')->value, 'field2 should have new value');
 	}
