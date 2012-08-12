@@ -21,7 +21,9 @@ class UpdateDocumentListener {
 	public function postUpdate(LifecycleEventArgs $args) {
 		$entity = $args->getEntity();
 		
-		$this->solrFacade->updateDocument($entity);
+		try {
+			$this->solrFacade->updateDocument($entity);
+		} catch (\RuntimeException $e) {}
 	}
 }
 

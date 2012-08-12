@@ -21,7 +21,9 @@ class DeleteDocumentListener {
 	public function preRemove(LifecycleEventArgs $args) {
 		$entity = $args->getEntity();
 		
-		$this->solrFacade->removeDocument($entity);		
+		try {
+			$this->solrFacade->removeDocument($entity);
+		} catch (\RuntimeException $e) {}		
 	}
 }
 

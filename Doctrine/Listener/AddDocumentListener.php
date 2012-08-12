@@ -21,7 +21,9 @@ class AddDocumentListener {
 	public function postPersist(LifecycleEventArgs $args) {
 		$entity = $args->getEntity();
 		
-		$this->solrFacade->addDocument($entity);
+		try {
+			$this->solrFacade->addDocument($entity);
+		} catch (\RuntimeException $e) {}
 	}
 }
 
