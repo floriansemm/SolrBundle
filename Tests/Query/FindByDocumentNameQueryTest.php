@@ -27,4 +27,18 @@ class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('document_name_s:validtestentity', $actualFilterQuery, 'filter query');
 	}
 	
+	public function testGetQuery_DocumentnameMissing() {
+		$document = new \SolrInputDocument();
+	
+		$query = new FindByDocumentNameQuery($document);
+	
+		try {
+			$queryString = $query->getQueryString();
+			
+			$this->fail('an exception should be thrown');
+		} catch (\RuntimeException $e) {
+			$this->assertTrue(true);			
+		}
+	}	
+	
 }
