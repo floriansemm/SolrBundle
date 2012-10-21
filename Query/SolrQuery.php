@@ -104,9 +104,9 @@ class SolrQuery extends AbstractQuery {
 	 * @return SolrQuery
 	 */
 	public function addField($field) {
-		$documentFieldsAsValues = array_flip($this->mappedFields);
-		if (array_key_exists($field, $documentFieldsAsValues)) {
-			$this->solrQuery->addField($documentFieldsAsValues[$field]);
+		$entityFieldNames = array_flip($this->mappedFields);
+		if (array_key_exists($field, $entityFieldNames)) {
+			$this->solrQuery->addField($entityFieldNames[$field]);
 		}
 		
 		return $this;
