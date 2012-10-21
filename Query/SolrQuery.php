@@ -4,13 +4,21 @@ namespace FS\SolrBundle\Query;
 use FS\SolrBundle\SolrFacade;
 
 class SolrQuery extends AbstractQuery {
+	
+	/**
+	 * @var array
+	 */
 	private $mappedFields = array();
 	
+	/**
+	 * @var array
+	 */
 	private $searchTerms = array();
 	
+	/**
+	 * @var bool
+	 */
 	private $strict = false;
-	
-
 	
 	/**
 	 * 
@@ -18,12 +26,18 @@ class SolrQuery extends AbstractQuery {
 	 */
 	private $solrFacade = null;
 	
+	/**
+	 * @param SolrFacade $solr
+	 */
 	public function __construct(SolrFacade $solr) {
 		parent::__construct();
 		
 		$this->solrFacade = $solr;
 	}
 	
+	/**
+	 * @return array
+	 */
 	public function getResult() {
 		return $this->solrFacade->query($this);		
 	}
@@ -42,6 +56,9 @@ class SolrQuery extends AbstractQuery {
 		$this->mappedFields = $mappedFields;
 	}
 	
+	/**
+	 * @param bool $strict
+	 */
 	public function setStrict($strict) {
 		$this->strict = $strict;
 	}
@@ -53,6 +70,9 @@ class SolrQuery extends AbstractQuery {
 		return $this->searchTerms;
 	}
 
+	/**
+	 * @param array $value
+	 */
 	public function queryAllFields($value) {
 		$this->setStrict(false);
 		
@@ -61,6 +81,12 @@ class SolrQuery extends AbstractQuery {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param string $field
+	 * @param string $value
+	 * @return SolrQuery
+	 */
 	public function addSearchTerm($field, $value) {
 		$documentFieldsAsValues = array_flip($this->mappedFields);
 		
@@ -73,6 +99,10 @@ class SolrQuery extends AbstractQuery {
 		return $this;
 	}
 	
+	/**
+	 * @param string $field
+	 * @return SolrQuery
+	 */
 	public function addField($field) {
 		$documentFieldsAsValues = array_flip($this->mappedFields);
 		if (array_key_exists($field, $documentFieldsAsValues)) {

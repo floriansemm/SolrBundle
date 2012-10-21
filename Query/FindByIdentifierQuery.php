@@ -4,17 +4,23 @@ namespace FS\SolrBundle\Query;
 class FindByIdentifierQuery extends AbstractQuery {
 	
 	/**
-	 * 
 	 * @var \SolrInputDocument
 	 */
 	private $document = null;
 	
+	/**
+	 * @param \SolrInputDocument $document
+	 */
 	public function __construct(\SolrInputDocument $document) {
 		parent::__construct();
 		
 		$this->document = $document;
 	}
-	
+
+	/**
+	 * (non-PHPdoc)
+	 * @see \FS\SolrBundle\Query\AbstractQuery::getQueryString()
+	 */
 	public function getQueryString() {
 		$idField = $this->document->getField('id');
 		$documentNameField = $this->document->getField('document_name_s');

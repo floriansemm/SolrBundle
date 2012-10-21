@@ -212,7 +212,6 @@ class SolrFacade {
 	}
 		
 	/**
-	 * 
 	 * @return array
 	 */
 	public function query(AbstractQuery $query) {

@@ -4,17 +4,18 @@ namespace FS\SolrBundle;
 class SolrConnection {
 	
 	/**
-	 * 
 	 * @var array
 	 */
 	private $connection = array();
 	
 	/**
-	 * 
 	 * @var \SolrClient
 	 */
 	private $client = null;
 	
+	/**
+	 * @param array $connection
+	 */
 	public function __construct(array $connection = array()) {
 		$this->connection = $connection;
 		
@@ -22,7 +23,6 @@ class SolrConnection {
 	}
 	
 	/**
-	 * 
 	 * @return array
 	 */
 	public function getConnection() {
@@ -30,7 +30,6 @@ class SolrConnection {
 	}
 	
 	/**
-	 * 
 	 * @return \SolrClient
 	 */
 	public function getClient() {

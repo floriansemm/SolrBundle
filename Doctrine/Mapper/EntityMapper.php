@@ -7,17 +7,18 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 class EntityMapper {
 	/**
-	 * 
 	 * @var CreateDocumentCommandInterface
 	 */
 	private $mappingCommand = null;
 	
+	/**
+	 * @param AbstractDocumentCommand $command
+	 */
 	public function setMappingCommand(AbstractDocumentCommand $command) {
 		$this->mappingCommand = $command;
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return \SolrInputDocument
 	 */
@@ -30,7 +31,6 @@ class EntityMapper {
 	}
 	
 	/**
-	 * 
 	 * @param \ArrayAccess $document
 	 * @param object $targetEntity
 	 * @return object
@@ -57,6 +57,14 @@ class EntityMapper {
 		return $targetEntity;
 	}
 	
+	/**
+	 * returns the clean fieldname without type-suffix
+	 * 
+	 * eg: title_s => title
+	 * 
+	 * @param string $property
+	 * @return string
+	 */
 	private function removeFieldSuffix($property) {
 		if ($pos = strpos($property, '_')) {
 			return substr($property, 0, $pos);

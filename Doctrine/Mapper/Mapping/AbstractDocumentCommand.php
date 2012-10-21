@@ -8,7 +8,6 @@ use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 abstract class AbstractDocumentCommand {
 	
 	/**
-	 *
 	 * @param object $entity
 	 * @return \SolrDocument
 	 */
