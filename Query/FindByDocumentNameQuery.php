@@ -21,9 +21,9 @@ class FindByDocumentNameQuery extends AbstractQuery {
 			throw new \RuntimeException('documentName should not be null');
 		}
 	
-		$query = 'document_name_s:'.$documentNameField->values[0];
-	
-		return $query;
+		$this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField->values[0]));
+		
+		return '';
 	}
 }
 

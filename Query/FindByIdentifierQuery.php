@@ -27,7 +27,9 @@ class FindByIdentifierQuery extends AbstractQuery {
 			throw new \RuntimeException('documentName should not be null');
 		}		
 		
-		$query = 'id:'.$idField->values[0].' AND document_name_s:'.$documentNameField->values[0];
+		$this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField->values[0]));
+		
+		$query = sprintf('id:%s', $idField->values[0]);
 		
 		return $query;
 	}

@@ -2,29 +2,29 @@
 
 namespace FS\SolrBundle\Tests\Query;
 
+use FS\SolrBundle\Query\FindByDocumentNameQuery;
+
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 
 /**
  *  @group query
  */
-class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase {
+class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testGetQuery_SearchInAllFields() {
 		$document = new \SolrInputDocument();
-		$document->addField('id', '1');
 		$document->addField('document_name_s', 'validtestentity');
 	
-		$expectedQuery = 'id:1';
-		$query = new FindByIdentifierQuery($document);
+		$expectedQuery = '';
+		$query = new FindByDocumentNameQuery($document);
 	
 		$filterQueries = $query->getSolrQuery()->getFilterQueries();
-		
 		$queryString = $query->getQueryString();
 		
-		$this->assertEquals($expectedQuery, $queryString);
+		$this->assertEquals($expectedQuery, $queryString, 'query');
 		$this->assertEquals(1, count($filterQueries));
 		$actualFilterQuery = array_pop($filterQueries);
-		$this->assertEquals('document_name_s:validtestentity', $actualFilterQuery);
+		$this->assertEquals('document_name_s:validtestentity', $actualFilterQuery, 'filter query');
 	}
 	
 }
