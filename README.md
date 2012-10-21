@@ -1,6 +1,6 @@
 This Bundle provides a simple API to index and query a Solr Index. 
 
-Installtion
+Installation
 ============
 
 Solr-Server
