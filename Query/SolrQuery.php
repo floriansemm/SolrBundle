@@ -59,7 +59,7 @@ class SolrQuery extends AbstractQuery {
 	/**
 	 * @param bool $strict
 	 */
-	public function setStrict($strict) {
+	public function setUseAndOperator($strict) {
 		$this->useAndOperator = $strict;
 	}
 	
@@ -74,7 +74,7 @@ class SolrQuery extends AbstractQuery {
 	 * @param array $value
 	 */
 	public function queryAllFields($value) {
-		$this->setStrict(false);
+		$this->setUseAndOperator(false);
 		
 		foreach ($this->mappedFields as $documentField => $entityField) {
 			$this->searchTerms[$documentField] = $value;			

@@ -128,7 +128,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 		$expected = 'title_s:*foo* AND text_t:*bar*';
 	
 		$query = $this->createQueryWithSearchTerms();
-		$query->setStrict(true);
+		$query->setUseAndOperator(true);
 	
 		$this->assertEquals($expected, $query->getQueryString());
 	}
