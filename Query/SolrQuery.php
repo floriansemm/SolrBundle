@@ -18,7 +18,7 @@ class SolrQuery extends AbstractQuery {
 	/**
 	 * @var bool
 	 */
-	private $strict = false;
+	private $useAndOperator = false;
 	
 	/**
 	 * 
@@ -60,7 +60,7 @@ class SolrQuery extends AbstractQuery {
 	 * @param bool $strict
 	 */
 	public function setStrict($strict) {
-		$this->strict = $strict;
+		$this->useAndOperator = $strict;
 	}
 	
 	/**
@@ -121,16 +121,16 @@ class SolrQuery extends AbstractQuery {
 			return $term;
 		}
 		
-		$concat = 'AND';
-		if (!$this->strict) {
-			$concat = 'OR';
+		$logicOperator = 'AND';
+		if (!$this->useAndOperator) {
+			$logicOperator = 'OR';
 		}		
 		
 		$termCount = 1;
 		foreach ($this->searchTerms as $fieldName => $fieldValue) {
 			$term .= $fieldName .':*'.$fieldValue.'*';
 			if ($termCount < count($this->searchTerms)) {
-				$term .= ' '. $concat .' ';
+				$term .= ' '. $logicOperator .' ';
 			}
 			
 			$termCount++;
