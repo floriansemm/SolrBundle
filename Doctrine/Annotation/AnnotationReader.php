@@ -4,8 +4,8 @@ namespace FS\SolrBundle\Doctrine\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader as Reader;
 
 class AnnotationReader {
+
 	/**
-	 * 
 	 * @var Reader
 	 */
 	private $reader;
@@ -17,9 +17,15 @@ class AnnotationReader {
 	
 	public function __construct() {
 		$this->reader = new Reader();
-// 		$this->reader->setIgnoreNotImportedAnnotations(true);
 	}
 	
+	/**
+	 * reads the entity and returns a set of annotations
+	 * 
+	 * @param string $entity
+	 * @param string $type
+	 * @return array
+	 */
 	private function getPropertiesByType($entity, $type) {
 		$reflectionClass = new \ReflectionClass($entity);
 		$properties = $reflectionClass->getProperties();
@@ -43,7 +49,6 @@ class AnnotationReader {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return array
 	 */
@@ -52,7 +57,6 @@ class AnnotationReader {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return Type
 	 * @throws \RuntimeException
@@ -68,7 +72,6 @@ class AnnotationReader {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return string classname of repository
 	 */
@@ -85,8 +88,7 @@ class AnnotationReader {
 	}
 	
 	/**
-	 * 
-	 * return all fields and field for idendification 
+	 * returns all fields and field for idendification 
 	 * 
 	 * @param object $entity
 	 * @return array
@@ -108,14 +110,13 @@ class AnnotationReader {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return boolean
 	 */
 	public function hasDocumentDeclaration($entity) {
 		$reflectionClass = new \ReflectionClass($entity);
 	
-			$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_INDEX_CLASS);
+		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_INDEX_CLASS);
 		
 		return $annotation !== null;
 	}	

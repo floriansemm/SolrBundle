@@ -4,13 +4,11 @@ namespace FS\SolrBundle\Query;
 abstract class AbstractQuery {
 	
 	/**
-	 * 
 	 * @var \SolrQuery
 	 */
 	protected $solrQuery = null;
 	
 	/**
-	 *
 	 * @var object
 	 */
 	private $entity = null;	

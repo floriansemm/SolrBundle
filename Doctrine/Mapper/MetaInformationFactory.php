@@ -12,19 +12,16 @@ use Doctrine\ORM\Configuration;
 class MetaInformationFactory {
 	
 	/**
-	 * 
 	 * @var MetaInformation
 	 */
 	private $metaInformations = null;
 	
 	/**
-	 * 
 	 * @var AnnotationReader
 	 */
 	private $annotationReader = null;
 	
 	/**
-	 *
 	 * @var Configuration
 	 */
 	private $doctrineConfiguration = null;	
@@ -33,12 +30,14 @@ class MetaInformationFactory {
 		$this->annotationReader = new AnnotationReader(); 		
 	}
 	
+	/**
+	 * @param Configuration $doctrineConfiguration
+	 */
 	public function setDoctrineConfiguration(Configuration $doctrineConfiguration) {
 		$this->doctrineConfiguration = $doctrineConfiguration;
 	}	
 	
 	/**
-	 * 
 	 * @param string|object entityAlias
 	 * @return MetaInformation
 	 */
@@ -65,6 +64,11 @@ class MetaInformationFactory {
 		return $metaInformation;
 	}
 	
+	/**
+	 * @param object $entity
+	 * @throws \RuntimeException
+	 * @return string
+	 */
 	private function getClass($entity) {
 		if (is_object($entity)) {
 			return get_class($entity);
@@ -84,6 +88,10 @@ class MetaInformationFactory {
 		return $realClassName;
 	}	
 	
+	/**
+	 * @param string $fullClassName
+	 * @return string
+	 */
 	private function getDocumentName($fullClassName) {
 		$className = substr($fullClassName, (strrpos($fullClassName, '\\') + 1));
 	

@@ -9,15 +9,20 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 class DeleteDocumentListener {
 	
 	/**
-	 * 
 	 * @var SolrFacade
 	 */
 	private $solrFacade = null;
-	
+
+	/**
+	 * @param SolrFacade $solrFacade
+	 */
 	public function __construct(SolrFacade $solrFacade) {
 		$this->solrFacade = $solrFacade;
 	}
 	
+	/**
+	 * @param LifecycleEventArgs $args
+	 */
 	public function preRemove(LifecycleEventArgs $args) {
 		$entity = $args->getEntity();
 		

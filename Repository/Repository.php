@@ -10,17 +10,19 @@ use FS\SolrBundle\SolrFacade;
 class Repository implements RepositoryInterface {
 	
 	/**
-	 * 
 	 * @var SolrFacade
 	 */
 	private $solr = null;
 	
 	/**
-	 * 
 	 * @var object
 	 */
 	private $entity = null;
 		
+	/**
+	 * @param SolrFacade $solr
+	 * @param object $entity
+	 */
 	public function __construct(SolrFacade $solr, $entity) {
 		$this->solr = $solr;
 		
