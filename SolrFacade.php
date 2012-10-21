@@ -202,7 +202,7 @@ class SolrFacade {
 	}
 		
 	/**
-	 * @return array
+	 * @return array found entities
 	 */
 	public function query(AbstractQuery $query) {
 		$solrQuery = $query->getSolrQuery();
@@ -215,14 +215,18 @@ class SolrFacade {
 		
 		$response = $response->getResponse();
 
+		if (!array_key_exists('response', $response)) {
+			return array();	
+		}	
+			
+		if ($response['response']['docs'] == false) {
+			return array();	
+		}
+
 		$targetEntity = $query->getEntity();
 		$mappedEntities = array();
-		if (array_key_exists('response', $response)) {
-			if ($response['response']['docs'] !== false) {
-				foreach ($response['response']['docs'] as $document) {
-					$mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
-				}
-			}
+		foreach ($response['response']['docs'] as $document) {
+			$mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
 		}
 		
 		return $mappedEntities;
