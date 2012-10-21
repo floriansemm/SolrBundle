@@ -2,6 +2,14 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
+use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
+
+use FS\SolrBundle\Tests\SolrResponseFake;
+
+use FS\SolrBundle\Query\FindByDocumentNameQuery;
+
+use FS\SolrBundle\Query\FindByIdentifierQuery;
+
 use FS\SolrBundle\Event\EventManager;
 
 use FS\SolrBundle\Tests\SolrClientFake;
@@ -152,6 +160,67 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		$solr->removeDocument(new ValidTestEntity());
 	
 		$this->assertTrue($solrClientFake->isCommited(), 'commit was never called');
+	}
+
+	public function testQuery_NoResponseKeyInResponseSet() {
+		$solrClientFake = new SolrClientFake();
+		$solrClientFake->setResponse(new SolrResponseFake());
+		
+		$this->config->expects($this->once())
+					 ->method('getClient')
+					 ->will($this->returnValue($solrClientFake));		
+		
+		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+
+		$document = new \SolrInputDocument();
+		$document->addField('document_name_s', 'name');
+		$query = new FindByDocumentNameQuery($document);
+		
+		$entities = $solr->query($query);
+		$this->assertEquals(0, count($entities));
+	}
+	
+	public function testQuery_NoDocumentsFound() {
+		$solrClientFake = new SolrClientFake();
+		
+		$responseArray = array('response' => array('docs'=>false));
+		$solrClientFake->setResponse(new SolrResponseFake($responseArray));
+	
+		$this->config->expects($this->once())
+		->method('getClient')
+		->will($this->returnValue($solrClientFake));
+	
+		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+	
+		$document = new \SolrInputDocument();
+		$document->addField('document_name_s', 'name');
+		$query = new FindByDocumentNameQuery($document);
+	
+		$entities = $solr->query($query);
+		$this->assertEquals(0, count($entities));
+	}	
+	
+	public function testQuery_OneDocumentFound() {
+		$solrClientFake = new SolrClientFake();
+	
+		$arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
+		
+		$responseArray['response']['docs'][] = $arrayObj;
+		$solrClientFake->setResponse(new SolrResponseFake($responseArray));
+	
+		$this->config->expects($this->once())
+					 ->method('getClient')
+					 ->will($this->returnValue($solrClientFake));
+	
+		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+	
+		$document = new \SolrInputDocument();
+		$document->addField('document_name_s', 'name');
+		$query = new FindByDocumentNameQuery($document);
+		$query->setEntity(new ValidTestEntity());
+		
+		$entities = $solr->query($query);
+		$this->assertEquals(1, count($entities));
 	}	
 }
 

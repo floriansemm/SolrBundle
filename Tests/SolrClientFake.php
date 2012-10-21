@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Tests;
 class SolrClientFake {
 	private $commit = false;
+	private $response = array();
 	
 	public function addDocument($doc) {}
 	
@@ -13,5 +14,13 @@ class SolrClientFake {
 	
 	public function isCommited() {
 		return $this->commit;
+	}
+	
+	public function query() {
+		return $this->response;
+	}
+	
+	public function setResponse(SolrResponseFake $response) {
+		$this->response = $response;
 	}
 }
