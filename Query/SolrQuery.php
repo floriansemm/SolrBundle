@@ -18,7 +18,7 @@ class SolrQuery extends AbstractQuery {
 	/**
 	 * @var bool
 	 */
-	private $strict = false;
+	private $useAndOperator = false;
 	
 	/**
 	 * 
@@ -59,8 +59,8 @@ class SolrQuery extends AbstractQuery {
 	/**
 	 * @param bool $strict
 	 */
-	public function setStrict($strict) {
-		$this->strict = $strict;
+	public function setUseAndOperator($strict) {
+		$this->useAndOperator = $strict;
 	}
 	
 	/**
@@ -74,7 +74,7 @@ class SolrQuery extends AbstractQuery {
 	 * @param array $value
 	 */
 	public function queryAllFields($value) {
-		$this->setStrict(false);
+		$this->setUseAndOperator(false);
 		
 		foreach ($this->mappedFields as $documentField => $entityField) {
 			$this->searchTerms[$documentField] = $value;			
@@ -104,9 +104,9 @@ class SolrQuery extends AbstractQuery {
 	 * @return SolrQuery
 	 */
 	public function addField($field) {
-		$documentFieldsAsValues = array_flip($this->mappedFields);
-		if (array_key_exists($field, $documentFieldsAsValues)) {
-			$this->solrQuery->addField($documentFieldsAsValues[$field]);
+		$entityFieldNames = array_flip($this->mappedFields);
+		if (array_key_exists($field, $entityFieldNames)) {
+			$this->solrQuery->addField($entityFieldNames[$field]);
 		}
 		
 		return $this;
@@ -121,16 +121,16 @@ class SolrQuery extends AbstractQuery {
 			return $term;
 		}
 		
-		$concat = 'AND';
-		if (!$this->strict) {
-			$concat = 'OR';
+		$logicOperator = 'AND';
+		if (!$this->useAndOperator) {
+			$logicOperator = 'OR';
 		}		
 		
 		$termCount = 1;
 		foreach ($this->searchTerms as $fieldName => $fieldValue) {
 			$term .= $fieldName .':*'.$fieldValue.'*';
 			if ($termCount < count($this->searchTerms)) {
-				$term .= ' '. $concat .' ';
+				$term .= ' '. $logicOperator .' ';
 			}
 			
 			$termCount++;

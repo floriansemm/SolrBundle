@@ -70,7 +70,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, count($fields));
 		$this->assertTrue(in_array('title_s', $fields));
 	}
-	
+
 	public function testGetSolrQuery_QueryTermShouldCorrect() {
 		$expected = 'title_s:*foo* OR text_t:*bar*';
 	
@@ -106,6 +106,16 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, count($terms));
 	}
 	
+	public function testAddSearchTerm_UnknownField() {
+		$solrQuery = $this->createQueryWithFieldMapping();
+	
+		$solrQuery->addSearchTerm('unknownfield', 'foo');
+	
+		$terms = $solrQuery->getSearchTerms();
+	
+		$this->assertEquals(0, count($terms));
+	}	
+	
 	public function testGetQuery_TermsConcatWithOr() {
 		$expected = 'title_s:*foo* OR text_t:*bar*';
 	
@@ -118,7 +128,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase {
 		$expected = 'title_s:*foo* AND text_t:*bar*';
 	
 		$query = $this->createQueryWithSearchTerms();
-		$query->setStrict(true);
+		$query->setUseAndOperator(true);
 	
 		$this->assertEquals($expected, $query->getQueryString());
 	}

@@ -16,45 +16,39 @@ use Doctrine\ORM\Configuration;
 use FS\SolrBundle\Query\SolrQuery;
 
 use FS\SolrBundle\Query\FindByIdentifierQuery;
-
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 
 class SolrFacade {
+	
 	/**
-	 * 
 	 * @var \SolrClient
 	 */
 	private $solrClient = null;
 	
 	/**
-	 * 
 	 * @var EntityMapper
 	 */
 	private $entityMapper = null;
 	
 	/**
-	 * 
 	 * @var CommandFactory
 	 */
 	private $commandFactory = null;
 		
 	/**
-	 * 
 	 * @var EventManager
 	 */
 	private $eventManager = null;
 	
 	/**
-	 * 
 	 * @var MetaInformationFactory
 	 */
 	private $metaInformationFactory = null;
 	
 	/**
-	 * 
 	 * @param SolrConnection $connection
 	 * @param CommandFactory $commandFactory
 	 * @param EventManager $manager
@@ -84,7 +78,6 @@ class SolrFacade {
 	}
 		
 	/**
-	 * 
 	 * @return MetaInformationFactory
 	 */
 	public function getMetaFactory() {
@@ -92,7 +85,6 @@ class SolrFacade {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 * @return SolrQuery
 	 */
@@ -111,7 +103,6 @@ class SolrFacade {
 	}
 	
 	/**
-	 * 
 	 * @param string repositoryClassity
 	 * @return RepositoryInterface
 	 */
@@ -136,7 +127,6 @@ class SolrFacade {
 	}
 	
 	/**
-	 * 
 	 * @param object $entity
 	 */
 	public function removeDocument($entity) {
@@ -161,7 +151,6 @@ class SolrFacade {
 	}
 
 	/**
-	 *
 	 * @param object $entity
 	 */
 	public function updateDocument($entity) {
@@ -174,7 +163,6 @@ class SolrFacade {
 	}	
 	
 	/**
-	 * 
 	 * @param object $entity
 	 */
 	public function addDocument($entity) {
@@ -187,9 +175,8 @@ class SolrFacade {
 	}
 	
 	/**
-	 * 
 	 * @param MetaInformation metaInformationsy
-	 * @return SolrInputDocument|null
+	 * @return \SolrInputDocument|null
 	 */
 	private function toDocument(MetaInformation $metaInformation) {
 		$command = $this->commandFactory->get('all');
@@ -200,12 +187,15 @@ class SolrFacade {
 		return $doc;
 	}
 	
+	/**
+	 * @param \SolrInputDocument $doc
+	 * @throws \RuntimeException if the client can't index the entity
+	 */
 	private function addDocumentToIndex($doc) {
 		try {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			
 			$this->solrClient->commit();
-			
 		} catch (\Exception $e) { 
 			throw new \RuntimeException('could not index entity');
 		}		
@@ -238,6 +228,9 @@ class SolrFacade {
 		return $mappedEntities;
 	}
 	
+	/**
+	 * @throws \RuntimeException if the client can't clear the index 
+	 */
 	public function clearIndex() {
 		try {
 			$this->solrClient->deleteByQuery('*:*');
@@ -248,6 +241,9 @@ class SolrFacade {
 		}
 	}
 	
+	/**
+	 * @param object $entity
+	 */
 	public function synchronizeIndex($entity) {
 		$this->updateDocument($entity);
 	}	
