@@ -20,7 +20,7 @@ class SolrClientFake {
 		return $this->response;
 	}
 	
-	public function setResponse($response) {
+	public function setResponse(SolrResponseFake $response) {
 		$this->response = $response;
 	}
 }

@@ -225,7 +225,7 @@ class SolrFacade {
 
 		$targetEntity = $query->getEntity();
 		$mappedEntities = array();
-		foreach ($response['response']['docs'] as $document) {
+		foreach ($response['response']['docs'] as $document) {print_r($document);
 			$mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
 		}
 		

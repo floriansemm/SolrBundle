@@ -5,7 +5,7 @@ class SolrResponseFake {
 	private $response = array();
 	
 	public function __construct(array $response = array()) {
-		$this->response = array();
+		$this->response = $response;
 	}
 	
 	/**
