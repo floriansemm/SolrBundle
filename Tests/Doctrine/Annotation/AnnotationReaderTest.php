@@ -2,8 +2,11 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Annotation;
 
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFloatBoost;
 
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost;
+
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
@@ -75,5 +78,31 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
 		$actual = $repository;
 		$this->assertEquals($expected, $actual, 'no repository was declared');
 	}	
+	
+	public function testGetBoost() {
+		$reader = new AnnotationReader();
+		$boost = $reader->getEntityBoost(new ValidTestEntity());
+
+		$this->assertEquals(1, $boost);
+	}
+	
+	public function testGetBoost_BoostNotNumeric() {
+		$reader = new AnnotationReader();
+		
+		try {
+			$boost = $reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
+			
+			$this->fail();
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('Invalid boost value aaaa for entity FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost', $e->getMessage());
+		}	
+	}
+
+	public function testGetBoost_BoostIsNumberic() {
+		$reader = new AnnotationReader();
+		$boost = $reader->getEntityBoost(new ValidTestEntityFloatBoost());
+	
+		$this->assertEquals(1.4, $boost);
+	}
 }
 

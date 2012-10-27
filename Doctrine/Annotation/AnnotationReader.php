@@ -14,6 +14,7 @@ class AnnotationReader {
 	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
 	const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
+	const DOCUMENT_BOOST_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Boost';
 	
 	public function __construct() {
 		$this->reader = new Reader();
@@ -54,6 +55,25 @@ class AnnotationReader {
 	 */
 	public function getFields($entity) {
 		return $this->getPropertiesByType($entity, self::FIELD_CLASS);
+	}
+	
+	public function getEntityBoost($entity) {
+		$reflectionClass = new \ReflectionClass($entity);
+
+		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_BOOST_CLASS);
+		
+		if (!$annotation instanceof Boost) {
+			return 0;
+		}
+		
+		$boostValue = $annotation->getBoost();
+		if (!is_numeric($boostValue)) {
+			throw new \InvalidArgumentException(sprintf('Invalid boost value %s for entity %s', $boostValue, get_class($entity)));
+		}
+		
+		$boostFloatValue = floatval($boostValue);
+		
+		return $boostFloatValue;
 	}
 	
 	/**

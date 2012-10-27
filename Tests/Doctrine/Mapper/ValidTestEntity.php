@@ -7,6 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
  * 
  * @author Florian
  * @Solr\Document
+ * @Solr\Boost(1)
  */
 class ValidTestEntity {
 	
