@@ -53,7 +53,25 @@ class Field extends Annotation {
 	/**
 	 * @return string
 	 */
+	public function getValue() {
+		return $this->value;
+	}
+	
+	/**
+	 * @return string
+	 */
 	public function __toString() {
 		return $this->name;
 	}
+	
+	/**
+	 * @throws \InvalidArgumentException if boost is not a number
+	 * @return number
+	 */
+	public function getBoost() {
+		if (!is_numeric($this->boost)) {
+			throw new \InvalidArgumentException(sprintf('Invalid boost value %s', $this->boost));
+		}
+		return floatval($this->boost);
+	}	
 }

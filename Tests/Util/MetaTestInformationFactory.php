@@ -17,9 +17,9 @@ class MetaTestInformationFactory {
 	
 		$metaInformation = new MetaInformation();
 	
-		$title = new Field(array('name'=>'title','type'=>'string'));
+		$title = new Field(array('name'=>'title','type'=>'string','boost'=>'1.8'));
 		$text = new Field(array('name'=>'text','type'=>'text'));
-		$createdAt = new Field(array('name'=>'created_at','type'=>'date'));
+		$createdAt = new Field(array('name'=>'created_at','type'=>'date','boost'=>'1'));
 	
 		$metaInformation->setFields(array($title, $text, $createdAt));
 		
@@ -29,6 +29,7 @@ class MetaTestInformationFactory {
 			'text_t'	=> 'text',
 			'created_at_dt'=> 'created_at'		
 		);
+		$metaInformation->setBoost(1);
 		$metaInformation->setFieldMapping($fieldMapping);
 		$metaInformation->setEntity($entity);
 		$metaInformation->setDocumentName('validtestentity');

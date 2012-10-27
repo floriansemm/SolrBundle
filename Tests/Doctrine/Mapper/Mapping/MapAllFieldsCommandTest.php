@@ -22,6 +22,12 @@ class MapAllFieldsCommandTest extends SolrDocumentTest {
 		$this->assertTrue($actual instanceof \SolrInputDocument, 'is a SolrInputDocument');
 		$this->assertFieldCount(3, $actual, 'three fields are mapped');
 		
+		
+		$this->assertEquals(1, $actual->getBoost(), 'document boost should be 1');
+		
+		$boostTitleField = $actual->getField('title_s')->boost;
+		$this->assertEquals(1.8, $boostTitleField, 'boost value of field title_s should be 1.8');
+		
 		$this->assertHasDocumentFields($actual, self::$MAPPED_FIELDS);
 	}	
 }

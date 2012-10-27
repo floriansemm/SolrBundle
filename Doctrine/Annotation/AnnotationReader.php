@@ -67,15 +67,14 @@ class AnnotationReader {
 		if (!$annotation instanceof Document) {
 			return 0;
 		}
-		
-		$boostValue = $annotation->getBoost();
-		if (!is_numeric($boostValue)) {
-			throw new \InvalidArgumentException(sprintf('Invalid boost value %s for entity %s', $boostValue, get_class($entity)));
+
+		try {
+			$boostValue = $annotation->getBoost();
+		} catch (\InvalidArgumentException $e) {
+			throw new \InvalidArgumentException(sprintf($e->getMessage().' for entity %s', get_class($entity)));
 		}
 		
-		$boostFloatValue = floatval($boostValue);
-		
-		return $boostFloatValue;
+		return $boostValue;
 	}
 	
 	/**
