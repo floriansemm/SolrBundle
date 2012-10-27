@@ -17,6 +17,11 @@ class Field extends Annotation {
 	 * @var string
 	 */
 	public $name;
+
+	/**
+	 * @var numeric
+	 */
+	public $boost = 0;
 	
 	/**
 	 * @var array

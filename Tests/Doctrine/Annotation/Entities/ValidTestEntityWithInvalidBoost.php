@@ -5,8 +5,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
  * 
- * @Solr\Document
- * @Solr\Boost("aaaa")
+ * @Solr\Document(boost="aaaa")
  */
 class ValidTestEntityWithInvalidBoost {
 	

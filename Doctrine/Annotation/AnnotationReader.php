@@ -14,7 +14,6 @@ class AnnotationReader {
 	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
 	const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
-	const DOCUMENT_BOOST_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Boost';
 	
 	public function __construct() {
 		$this->reader = new Reader();
@@ -63,9 +62,9 @@ class AnnotationReader {
 	 * @return number
 	 */
 	public function getEntityBoost($entity) {
-		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_BOOST_CLASS);
+		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
 		
-		if (!$annotation instanceof Boost) {
+		if (!$annotation instanceof Document) {
 			return 0;
 		}
 		

@@ -8,6 +8,11 @@ use Doctrine\Common\Annotations\Annotation;
  */
 class Document extends Annotation {
 	public $repository = '';
+	public $boost = 0;
+	
+	public function getBoost() {
+		return $this->boost;
+	}
 }
 
 ?>

@@ -5,9 +5,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
  * 
- * @author Florian
- * @Solr\Document
- * @Solr\Boost(1)
+ * @Solr\Document(boost="1")
  */
 class ValidTestEntity {
 	
@@ -17,7 +15,7 @@ class ValidTestEntity {
 	private $id;
 	
 	/**
-	 * @Solr\Field(type="text")
+	 * @Solr\Field(type="text", boost="1.3")
 	 * 
 	 * @var text
 	 */
