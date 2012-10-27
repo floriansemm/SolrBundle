@@ -56,11 +56,14 @@ class AnnotationReader {
 	public function getFields($entity) {
 		return $this->getPropertiesByType($entity, self::FIELD_CLASS);
 	}
-	
-	public function getEntityBoost($entity) {
-		$reflectionClass = new \ReflectionClass($entity);
 
-		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_BOOST_CLASS);
+	/**
+	 * @param object $entity
+	 * @throws \InvalidArgumentException if the boost value is not numeric
+	 * @return number
+	 */
+	public function getEntityBoost($entity) {
+		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_BOOST_CLASS);
 		
 		if (!$annotation instanceof Boost) {
 			return 0;
@@ -96,9 +99,7 @@ class AnnotationReader {
 	 * @return string classname of repository
 	 */
 	public function getRepository($entity) {
-		$reflectionClass = new \ReflectionClass($entity);
-
-		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_CLASS);
+		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS);
 		
 		if ($annotation instanceof Document) {
 			return $annotation->repository;
@@ -134,12 +135,16 @@ class AnnotationReader {
 	 * @return boolean
 	 */
 	public function hasDocumentDeclaration($entity) {
-		$reflectionClass = new \ReflectionClass($entity);
-	
-		$annotation = $this->reader->getClassAnnotation($reflectionClass, self::DOCUMENT_INDEX_CLASS);
+		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
 		
 		return $annotation !== null;
 	}	
+	
+	private function getClassAnnotation($entity, $annotation) {
+		$reflectionClass = new \ReflectionClass($entity);
+	
+		return $this->reader->getClassAnnotation($reflectionClass, $annotation);
+	}
 }
 
 ?>
