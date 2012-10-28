@@ -26,12 +26,25 @@ class FSSolrExtension extends Extension
     	
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-		
-        $container->getDefinition('solr.connection')->setArguments(array($config['solr']));
+
+        $this->setupConnections($config, $container);
         
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
         	'setDoctrineConfiguration',
         	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
         );
     }
+    
+    private function setupConnections(array $config, ContainerBuilder $container) {
+    	$connectionParameters = $config['solr'];
+    	
+    	if (count($config['solr']['path']) > 0) {
+    		$defaultPath = reset($config['solr']['path']);
+    		
+    		$connectionParameters['path'] = $defaultPath;
+    	}
+    	
+    	$container->getDefinition('solr.connection')->setArguments(array($connectionParameters));
+    }
+    
 }

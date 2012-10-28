@@ -64,6 +64,13 @@ class SolrFacade {
 	}
 	
 	/**
+	 * @param SolrConnection $connection
+	 */
+	public function setConnection(SolrConnection $connection) {
+		$this->solrClient = $connection->getClient();
+	}
+	
+	/**
 	 * @return EntityMapper
 	 */
 	public function getMapper() {
