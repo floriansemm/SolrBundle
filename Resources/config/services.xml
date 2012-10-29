@@ -12,6 +12,9 @@
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
+        <parameter key="solr.add.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\AddDocumentListener</parameter>
+        <parameter key="solr.delete.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\DeleteDocumentListener</parameter>
+        <parameter key="solr.update.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\UpdateDocumentListener</parameter>
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
         <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
@@ -39,15 +42,30 @@
     		<tag name="doctrine.event_listener" event="postPersist" />
     	</service>
 
+        <service id="solr.add.document.mongodb.listener" class="%solr.add.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" />
+        </service>
+
     	<service id="solr.delete.document.listener" class="%solr.delete.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
     		<tag name="doctrine.event_listener" event="preRemove" />
     	</service>
+
+        <service id="solr.delete.document.mongodb.listener" class="%solr.delete.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" />
+        </service>
     	
     	<service id="solr.update.document.listener" class="%solr.update.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
     		<tag name="doctrine.event_listener" event="postUpdate" />
     	</service>    	
+
+        <service id="solr.update.document.mongodb.listener" class="%solr.update.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" />
+        </service>      
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<tag name="solr.document.command" command="all" />
