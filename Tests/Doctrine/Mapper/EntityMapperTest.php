@@ -48,5 +48,15 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, $entity->getId());
 		$this->assertEquals('foo', $entity->getTitle());
 	}
+
+	public function testToCamelCase() {
+		$mapper = new EntityMapper();
+
+		$meta = new \ReflectionClass($mapper);
+		$method = $meta->getMethod('toCamelCase');
+		$method->setAccessible(true);
+		$calmelCased = $method->invoke($mapper, 'test_underline');
+		$this->assertEquals('testUnderline', $calmelCased);
+	}
 }
 

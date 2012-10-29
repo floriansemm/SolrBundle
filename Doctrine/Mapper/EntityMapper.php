@@ -47,7 +47,11 @@ class EntityMapper {
 			try {
 				$classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
 			} catch (\ReflectionException $e) { 
-				continue;
+				try {
+					$classProperty = $reflectionClass->getProperty($this->toCamelCase($this->removeFieldSuffix($property)));
+				} catch (\ReflectionException $e) {
+					continue;
+				}
 			}
 
 			$classProperty->setAccessible(true);
@@ -71,6 +75,21 @@ class EntityMapper {
 		}
 		
 		return $property;
+	}
+
+	/**
+	 * returns field name camelcased if it has underlines
+	 * 
+	 * eg: user_id => userId
+	 *
+	 * @param string $fieldname
+	 * @return string
+	 */
+	private function toCamelCase($fieldname) {
+		$words = str_replace('_', ' ', $fieldname);
+		$words = ucwords($words);
+		$pascalCased = str_replace(' ', '', $words);
+		return lcfirst($pascalCased);
 	}
 }
 
