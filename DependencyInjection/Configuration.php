@@ -29,6 +29,7 @@ class Configuration implements ConfigurationInterface
 							->scalarNode('password')->end()
 						->end()
 					->end()
+					->booleanNode('auto_index')->defaultValue(true)->end()
 					->scalarNode('entity_manager')->defaultValue('default')->end()	
 				->end();
 		

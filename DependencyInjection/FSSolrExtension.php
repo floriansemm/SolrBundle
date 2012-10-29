@@ -28,6 +28,10 @@ class FSSolrExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->setupConnections($config, $container);
+
+        $container->setParameter('solr.auto_index', $config['auto_index']);
+        
+        $this->setupDoctrineListener($config, $container);
         
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
         	'setDoctrineConfiguration',
@@ -35,6 +39,10 @@ class FSSolrExtension extends Extension
         );
     }
     
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
     private function setupConnections(array $config, ContainerBuilder $container) {
     	$connectionParameters = $config['solr'];
     	
@@ -45,6 +53,18 @@ class FSSolrExtension extends Extension
     	}
     	
     	$container->getDefinition('solr.connection')->setArguments(array($connectionParameters));
+    }
+    
+    private function setupDoctrineListener(array $config, ContainerBuilder $container) {
+    	$autoIndexing = $container->getParameter('solr.auto_index');
+    	
+    	if ($autoIndexing == false) {
+    		return;
+    	}
+    	
+    	$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+    	$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    	$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
     }
     
 }

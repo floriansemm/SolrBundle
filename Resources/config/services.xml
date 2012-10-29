@@ -36,17 +36,14 @@
     	
     	<service id="solr.add.document.listener" class="%solr.add.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="postPersist" />
     	</service>
 
     	<service id="solr.delete.document.listener" class="%solr.delete.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="preRemove" />
     	</service>
     	
     	<service id="solr.update.document.listener" class="%solr.update.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="postUpdate" />
     	</service>    	
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
