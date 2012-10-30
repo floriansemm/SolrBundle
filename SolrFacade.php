@@ -2,19 +2,12 @@
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
-
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
-
 use FS\SolrBundle\Event\EventManager;
-
 use FS\SolrBundle\Query\AbstractQuery;
-
 use FS\SolrBundle\Repository\Repository;
-
 use Doctrine\ORM\Configuration;
-
 use FS\SolrBundle\Query\SolrQuery;
-
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -49,16 +42,23 @@ class SolrFacade {
 	private $metaInformationFactory = null;
 	
 	/**
+	 * @var SolrConnectionFactory
+	 */
+	private $connectionFactory = null;
+	
+	/**
 	 * @param SolrConnection $connection
 	 * @param CommandFactory $commandFactory
 	 * @param EventManager $manager
 	 * @param MetaInformationFactory $metaInformationFactory
 	 */
-	public function __construct(SolrConnection $connection, CommandFactory $commandFactory, EventManager $manager, MetaInformationFactory $metaInformationFactory) {
+	public function __construct(SolrConnectionFactory $connectionFactory, CommandFactory $commandFactory, EventManager $manager, MetaInformationFactory $metaInformationFactory) {
+		$connection = $connectionFactory->getDefaultConnection();
 		$this->solrClient = $connection->getClient();
 		$this->commandFactory = $commandFactory;
 		$this->eventManager = $manager;
 		$this->metaInformationFactory = $metaInformationFactory;
+		$this->connectionFactory = $connectionFactory;
 		
 		$this->entityMapper = new EntityMapper();
 	}
@@ -89,6 +89,17 @@ class SolrFacade {
 	 */
 	public function getMetaFactory() {
 		return $this->metaInformationFactory;
+	}
+	
+	/**
+	 * @param string $coreName
+	 * @return SolrFacade
+	 */
+	public function core($coreName) {
+		$connection = $this->connectionFactory->getConnection($coreName);
+		$this->solrClient = $connection->getClient();
+		
+		return $this;
 	}
 	
 	/**

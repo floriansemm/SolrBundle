@@ -46,13 +46,19 @@ class FSSolrExtension extends Extension
     private function setupConnections(array $config, ContainerBuilder $container) {
     	$connectionParameters = $config['solr'];
     	
-    	if (count($config['solr']['path']) > 0) {
-    		$defaultPath = reset($config['solr']['path']);
-    		
-    		$connectionParameters['path'] = $defaultPath;
+    	$cores = $config['solr']['path'];
+    	$connections = array();
+    	if (count($cores) > 0) {
+    		foreach ($cores as $coreName => $path) {
+    			$connectionParameters['path'] = $path;
+    			$connections[$coreName] = $connectionParameters;
+    		}
+    	} else {
+    		$connectionParameters['path'] = '/solr';
+			$connections['default'] = $connectionParameters;    		
     	}
     	
-    	$container->getDefinition('solr.connection')->setArguments(array($connectionParameters));
+    	$container->getDefinition('solr.connection_factory')->setArguments(array($connections));
     }
     
     private function setupDoctrineListener(array $config, ContainerBuilder $container) {

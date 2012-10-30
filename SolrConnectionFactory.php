@@ -34,6 +34,23 @@ class SolrConnectionFactory {
 		
 		return new SolrConnection($connectionParams);;
 	}
+	
+	/**
+	 * first connection in connections-stack is default connection
+	 * 
+	 * @throws \RuntimeException if there no connection in the stack
+	 * @return SolrConnection
+	 */
+	public function getDefaultConnection() {
+		$keysAsValues = array_keys($this->connections);
+		$firstConnectionName = array_pop($keysAsValues);
+		
+		if ($firstConnectionName == '') {
+			throw new \RuntimeException('Can not find default connection!');
+		}
+		
+		return $this->getConnection($firstConnectionName);
+	}
 }
 
 ?>
