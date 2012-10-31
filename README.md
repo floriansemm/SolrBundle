@@ -46,9 +46,11 @@ You have to setup the connection options
 			solr:
 				hostname: localhost
 				port: 8983
+                path:
+                    core0: /solr/core0
+                    core1: /solr/core1
+            auto_index: true|false
 			entity_manager: default 
-
-Multiple connections are planed.
 
 Usage
 =====
@@ -147,6 +149,27 @@ like Doctrine-Repositories:
 	
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
+
+Use multiple Cores
+==================
+
+Solr supports multiple indexies. If you have different languages in your application, use can index your documents in different indexies.
+
+The setup is easy:
+
+Under the `path` option, you can specify your different indexies.
+
+
+            path:
+                    core0: /solr/core0
+                    core1: /solr/core1
+
+In this case the default core is `core0`. If you use multiple core, then the auto-index functionality should be disabled. In other case all document will index in one core. To disable use the flag `auto_index` in your config (default value is `true`). 
+
+To index documents with the `addDocument` method requires a concrete core:
+
+        $this->get('solr')->core('core0')->addDocument($document);
+
 
 Commands
 ========

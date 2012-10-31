@@ -26,12 +26,51 @@ class FSSolrExtension extends Extension
     	
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-		
-        $container->getDefinition('solr.connection')->setArguments(array($config['solr']));
+
+        $this->setupConnections($config, $container);
+
+        $container->setParameter('solr.auto_index', $config['auto_index']);
+        
+        $this->setupDoctrineListener($config, $container);
         
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
         	'setDoctrineConfiguration',
         	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
         );
     }
+    
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function setupConnections(array $config, ContainerBuilder $container) {
+    	$connectionParameters = $config['solr'];
+    	
+    	$cores = $config['solr']['path'];
+    	$connections = array();
+    	if (count($cores) > 0) {
+    		foreach ($cores as $coreName => $path) {
+    			$connectionParameters['path'] = $path;
+    			$connections[$coreName] = $connectionParameters;
+    		}
+    	} else {
+    		$connectionParameters['path'] = '/solr';
+			$connections['default'] = $connectionParameters;    		
+    	}
+    	
+    	$container->getDefinition('solr.connection_factory')->setArguments(array($connections));
+    }
+    
+    private function setupDoctrineListener(array $config, ContainerBuilder $container) {
+    	$autoIndexing = $container->getParameter('solr.auto_index');
+    	
+    	if ($autoIndexing == false) {
+    		return;
+    	}
+    	
+    	$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+    	$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    	$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
+    }
+    
 }
