@@ -44,7 +44,6 @@
 
         <service id="solr.add.document.mongodb.listener" class="%solr.add.document.mongodb.listener.class%" public="false">
             <argument type="service" id="solr" />
-            <tag name="doctrine_mongodb.odm.event_listener" event="postPersist" />
         </service>
 
     	<service id="solr.delete.document.listener" class="%solr.delete.document.listener.class%" public="false">
@@ -53,7 +52,6 @@
 
         <service id="solr.delete.document.mongodb.listener" class="%solr.delete.document.mongodb.listener.class%" public="false">
             <argument type="service" id="solr" />
-            <tag name="doctrine_mongodb.odm.event_listener" event="preRemove" />
         </service>
     	
     	<service id="solr.update.document.listener" class="%solr.update.document.listener.class%" public="false">
@@ -62,7 +60,6 @@
 
         <service id="solr.update.document.mongodb.listener" class="%solr.update.document.mongodb.listener.class%" public="false">
             <argument type="service" id="solr" />
-            <tag name="doctrine_mongodb.odm.event_listener" event="postUpdate" />
         </service>      
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">

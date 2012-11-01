@@ -71,6 +71,10 @@ class FSSolrExtension extends Extension
     	$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
     	$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
     	$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
+    	
+    	$container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    	$container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
+    	$container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
     }
     
 }
