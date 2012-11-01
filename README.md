@@ -150,6 +150,12 @@ like Doctrine-Repositories:
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
+MongoDB
+=======
+
+All this functionality is also avaiable for mongo-db entities. The entity configuration via annotations is absolutly the same.
+
+
 Use multiple Cores
 ==================
 
