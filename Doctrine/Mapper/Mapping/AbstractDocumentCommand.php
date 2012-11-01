@@ -16,6 +16,7 @@ abstract class AbstractDocumentCommand {
 		
 		$document->addField('id', $meta->getEntityId());
 		$document->addField('document_name_s', $meta->getDocumentName());
+		$document->setBoost($meta->getBoost());
 		
 		return $document;
 	}	

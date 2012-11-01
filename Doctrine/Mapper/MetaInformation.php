@@ -4,54 +4,59 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 
 class MetaInformation {
-	
+
 	/**
 	 * @var string
 	 */
 	private $identifier = '';
-	
+
 	/**
 	 * @var string
-	 */	
+	 */ 
 	private $className = '';
-	
+
 	/**
 	 * @var string
-	 */	
+	 */ 
 	private $documentName = '';
 
 	/**
 	 * @var array
-	 */	
+	 */ 
 	private $fields = array();
-	
+
 	/**
 	 * @var array
-	 */	
+	 */ 
 	private $fieldMapping = array();
-	
+
 	/**
 	 * @var string
-	 */	
+	 */ 
 	private $repository = '';
-	
+
 	/**
 	 * @var object
-	 */	
+	 */ 
 	private $entity = null;
-	
+
+	/**
+	 * @var number
+	 */
+	private $boost = 0;
+
 	/**
 	 * 
 	 * @return number
-	 */	
+	 */ 
 	public function getEntityId() {
 		if ($this->entity !== null) {
 			return $this->entity->getId();
 		}
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -121,7 +126,7 @@ class MetaInformation {
 	public function setFields($fields) {
 		$this->fields = $fields;
 	}
-	
+
 	/**
 	 * @param string $field
 	 * @return boolean
@@ -130,18 +135,18 @@ class MetaInformation {
 		if (count($this->fields) == 0) {
 			return false;
 		}
-		
+
 		return isset($this->fields[$field]);
 	}
-	
+
 	/**
 	 * @param string $field
 	 * @param string $value
 	 */
-	public function setFieldValue($field, $value) {	
+	public function setFieldValue($field, $value) {
 		$this->fields[$field]->value = $value;
 	}
-	
+
 	/**
 	 * @param unknown_type $field
 	 * @return Field|null
@@ -150,7 +155,7 @@ class MetaInformation {
 		if (!$this->hasField($field)) {
 			return null;
 		}
-		
+
 		return $this->fields[$field];
 	}
 
@@ -167,7 +172,7 @@ class MetaInformation {
 	public function setEntity($entity) {
 		$this->entity = $entity;
 	}
-	
+
 	/**
 	 * @return array
 	 */
@@ -181,6 +186,21 @@ class MetaInformation {
 	public function setFieldMapping($fieldMapping) {
 		$this->fieldMapping = $fieldMapping;
 	}
+
+	/**
+	 * @return number
+	 */
+	public function getBoost() {
+		return $this->boost;
+	}
+
+	/**
+	 * @param number $boost
+	 */
+	public function setBoost($boost) {
+		$this->boost = $boost;
+	}
+
 }
 
 ?>

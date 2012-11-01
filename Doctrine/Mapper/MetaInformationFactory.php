@@ -60,6 +60,7 @@ class MetaInformationFactory {
 		$metaInformation->setFields($this->annotationReader->getFields($entity));
 		$metaInformation->setRepository($this->annotationReader->getRepository($entity));
 		$metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
+		$metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
 		
 		return $metaInformation;
 	}

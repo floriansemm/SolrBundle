@@ -12,9 +12,13 @@
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
+        <parameter key="solr.add.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\AddDocumentListener</parameter>
+        <parameter key="solr.delete.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\DeleteDocumentListener</parameter>
+        <parameter key="solr.update.document.mongodb.listener.class">FS\SolrBundle\Doctrine\MongoDB\Listener\UpdateDocumentListener</parameter>
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
         <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
+        <parameter key="solr.connection_factory.class">FS\SolrBundle\SolrConnectionFactory</parameter>
         <parameter key="solr.log_listener.insert.class">FS\SolrBundle\Event\Listener\InsertLogListener</parameter>
         <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
         <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
@@ -22,7 +26,7 @@
 
     <services>
 		<service id="solr" class="%solr.class%">
-			<argument type="service" id="solr.connection" />
+			<argument type="service" id="solr.connection_factory" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="solr.event_manager" />
 			<argument type="service" id="solr.meta.information.factory" />
@@ -36,18 +40,27 @@
     	
     	<service id="solr.add.document.listener" class="%solr.add.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="postPersist" />
     	</service>
+
+        <service id="solr.add.document.mongodb.listener" class="%solr.add.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>
 
     	<service id="solr.delete.document.listener" class="%solr.delete.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="preRemove" />
     	</service>
+
+        <service id="solr.delete.document.mongodb.listener" class="%solr.delete.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>
     	
     	<service id="solr.update.document.listener" class="%solr.update.document.listener.class%" public="false">
     		<argument type="service" id="solr" />
-    		<tag name="doctrine.event_listener" event="postUpdate" />
     	</service>    	
+
+        <service id="solr.update.document.mongodb.listener" class="%solr.update.document.mongodb.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>      
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<tag name="solr.document.command" command="all" />
@@ -58,6 +71,8 @@
     	</service>    	
     	
     	<service id="solr.event_manager" class="%solr.event_manager.class%" public="false" />
+    	
+    	<service id="solr.connection_factory" class="%solr.connection_factory.class%" public="false" />
     	
     	<service id="solr.log_listener.insert" class="%solr.log_listener.insert.class%" public="false">
     		<argument type="service" id="logger" />

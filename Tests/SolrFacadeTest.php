@@ -40,12 +40,29 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	private $config = null;
 	private $commandFactory = null;
 	private $eventManager = null;
+	private $connectionFactory = null;
+	
+	/**
+	 * @var SolrClientFake
+	 */
+	private $solrClientFake = null;
 	
 	public function setUp() {
 		$this->metaFactory = $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
 		$this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
 		$this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
 		$this->eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+		$this->connectionFactory = $this->getMock('FS\SolrBundle\SolrConnectionFactory', array(), array(), '', false);
+		
+		$this->solrClientFake = new SolrClientFake();
+		
+		$this->config->expects($this->once())
+					 ->method('getClient')
+					 ->will($this->returnValue($this->solrClientFake));		
+		
+		$this->connectionFactory->expects($this->any())
+								->method('getDefaultConnection')
+								->will($this->returnValue($this->config));
 	}
 	
 	private function setupDoctrine($namespace) {
@@ -70,7 +87,7 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	public function testCreateQuery_ValidEntity() {
 		$this->setupMetaFactoryLoadOneCompleteInformation();
 		
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);		
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);		
 		$query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 		
 		$this->assertTrue($query instanceof SolrQuery);
@@ -85,7 +102,7 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);	
 		
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 		$actual = $solr->getRepository('Tests:EntityWithRepository');
 		
 		$this->assertTrue($actual instanceof ValidEntityRepository);
@@ -101,76 +118,53 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);	
 		
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 		$solr->getRepository('Tests:EntityWithInvalidRepository');
 	}
 	
 	public function testAddDocument() {
-		$solrClientFake = new SolrClientFake();
-		
-		$this->config->expects($this->once())
-				   	 ->method('getClient')
-				   	 ->will($this->returnValue($solrClientFake));
-		
 		$this->eventManager->expects($this->once())
 					 	   ->method('handle')
 					 	   ->with(EventManager::INSERT);					 
 		
 		$this->setupMetaFactoryLoadOneCompleteInformation();
 		
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 		$solr->addDocument(new ValidTestEntity());
 		
-		$this->assertTrue($solrClientFake->isCommited(), 'commit was never called');
+		$this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
 	}
 	
 	public function testUpdateDocument() {
-		$solrClientFake = new SolrClientFake();
-	
-		$this->config->expects($this->once())
-					 ->method('getClient')
-					 ->will($this->returnValue($solrClientFake));
-	
 		$this->eventManager->expects($this->once())
 			 			   ->method('handle')
 						   ->with(EventManager::UPDATE);
 	
 		$this->setupMetaFactoryLoadOneCompleteInformation();
 	
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 		$solr->updateDocument(new ValidTestEntity());
 	
-		$this->assertTrue($solrClientFake->isCommited(), 'commit was never called');
+		$this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
 	}	
 	
 	public function testRemoveDocument() {
-		$solrClientFake = new SolrClientFake();
-	
-		$this->config->expects($this->once())
-					 ->method('getClient')
-					 ->will($this->returnValue($solrClientFake));
-	
 		$this->eventManager->expects($this->once())
 						   ->method('handle')
 						   ->with(EventManager::DELETE);
 	
 		$this->setupMetaFactoryLoadOneCompleteInformation();
 	
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 		$solr->removeDocument(new ValidTestEntity());
 	
-		$this->assertTrue($solrClientFake->isCommited(), 'commit was never called');
+		$this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
 	}
 
 	public function testQuery_NoResponseKeyInResponseSet() {
-		$solrClientFake = new SolrClientFake();
-		$solrClientFake->setResponse(new SolrResponseFake());
+		$this->solrClientFake->setResponse(new SolrResponseFake());
 		
-		$this->config->expects($this->once())
-					 ->method('getClient')
-					 ->will($this->returnValue($solrClientFake));		
-		
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
 		$document = new \SolrInputDocument();
 		$document->addField('document_name_s', 'name');
@@ -181,16 +175,10 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	public function testQuery_NoDocumentsFound() {
-		$solrClientFake = new SolrClientFake();
-		
 		$responseArray = array('response' => array('docs'=>false));
-		$solrClientFake->setResponse(new SolrResponseFake($responseArray));
+		$this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
 	
-		$this->config->expects($this->once())
-		->method('getClient')
-		->will($this->returnValue($solrClientFake));
-	
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 	
 		$document = new \SolrInputDocument();
 		$document->addField('document_name_s', 'name');
@@ -201,18 +189,12 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 	}	
 	
 	public function testQuery_OneDocumentFound() {
-		$solrClientFake = new SolrClientFake();
-	
 		$arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
 		
 		$responseArray['response']['docs'][] = $arrayObj;
-		$solrClientFake->setResponse(new SolrResponseFake($responseArray));
+		$this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
 	
-		$this->config->expects($this->once())
-					 ->method('getClient')
-					 ->will($this->returnValue($solrClientFake));
-	
-		$solr = new SolrFacade($this->config, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 	
 		$document = new \SolrInputDocument();
 		$document->addField('document_name_s', 'name');

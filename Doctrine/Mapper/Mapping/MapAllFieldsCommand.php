@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
+use FS\SolrBundle\Doctrine\Annotation\Field;
+
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 use FS\SolrBundle\Annotation\Type;
@@ -22,7 +24,11 @@ class MapAllFieldsCommand extends AbstractDocumentCommand {
 		$document = parent::createDocument($meta);
 		
 		foreach ($fields as $field) {
-			$document->addField($field->getNameWithAlias(), $field->value);
+			if (!$field instanceof Field) {
+				continue;
+			}
+			
+			$document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
 		}
 		
 		return $document;
