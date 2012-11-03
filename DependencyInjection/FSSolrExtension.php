@@ -32,21 +32,8 @@ class FSSolrExtension extends Extension
         $container->setParameter('solr.auto_index', $config['auto_index']);
         
         $this->setupDoctrineListener($config, $container);
-        
-        if (!$this->isMongoDbConfigured($container)) {
-        	$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
-        		new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
-        	));
-        } else {
-        	$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
-        		new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
-        	));        	
-        }
-        
-        $container->getDefinition('solr.meta.information.factory')->addMethodCall(
-        	'setDoctrineConfiguration',
-        	array(new Reference('solr.doctrine.configuration'))
-        );        
+        $this->setupDoctrineConfiguration($config, $container);
+       
     }
     
     /**
@@ -71,6 +58,37 @@ class FSSolrExtension extends Extension
     	$container->getDefinition('solr.connection_factory')->setArguments(array($connections));
     }
     
+    /**
+     * if mongo_db is not configured, then use the doctrine_orm configuration
+     * 
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function setupDoctrineConfiguration(array $config, ContainerBuilder $container) {
+    	if (!$this->isMongoDbConfigured($container)) {
+    		$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+    			new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
+    		));
+    	} else {
+    		$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+    			new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
+    		));
+    	}
+    	
+    	$container->getDefinition('solr.meta.information.factory')->addMethodCall(
+    			'setDoctrineConfiguration',
+    			array(new Reference('solr.doctrine.configuration'))
+    	);    	
+    }
+    
+    /**
+     * doctrine_orm and doctrine_mongoDB can't be used together. mongo_db wins when it is configured.
+     * 
+     * listener-methods expecting different types of events
+     * 
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
     private function setupDoctrineListener(array $config, ContainerBuilder $container) {
     	$autoIndexing = $container->getParameter('solr.auto_index');
     	

@@ -3,8 +3,14 @@ namespace FS\SolrBundle\Doctrine;
 
 class Configuration {
 	
+	/**
+	 * @var mixed
+	 */
 	private $doctrineConfiguration = null;
 	
+	/**
+	 * @param mixed $configuration
+	 */
 	public function __construct($configuration = null) {
 		$this->doctrineConfiguration = $configuration;
 	}
@@ -19,7 +25,7 @@ class Configuration {
 		
 		if ($this->doctrineConfiguration instanceof \Doctrine\ODM\MongoDB\Configuration) {
 			return $this->doctrineConfiguration->getDocumentNamespace($entity);
-		}		
+		}
 	}
 }
 
