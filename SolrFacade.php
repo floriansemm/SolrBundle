@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Event\Event;
+
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Event\EventManager;
@@ -187,7 +189,7 @@ class SolrFacade {
 		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
 		$doc = $this->toDocument($metaInformation);
 		
-		$this->eventManager->handle(EventManager::INSERT, $metaInformation);
+		$this->eventManager->handle(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
 		
 		$this->addDocumentToIndex($doc);
 	}
