@@ -10,10 +10,10 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
  */
 class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase {
 	private function setupDoctrine($namespace) {
-		$doctrineConfiguration = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
+		$doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\Configuration', array(), array(), '', false);
 		$doctrineConfiguration->expects($this->any())
-		->method('getEntityNamespace')
-		->will($this->returnValue($namespace));
+							  ->method('getNamespace')
+							  ->will($this->returnValue($namespace));
 	
 		return $doctrineConfiguration;
 	}	

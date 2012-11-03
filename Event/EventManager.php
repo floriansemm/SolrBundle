@@ -30,17 +30,17 @@ class EventManager {
 	}
 	
 	/**
-	 * @param string $event
-	 * @param MetaInformation $metaInformation
+	 * @param string $eventName
+	 * @param Event $event
 	 */
-	public function handle($event, MetaInformation $metaInformation) {
-		if (!array_key_exists($event, $this->listener)) {
+	public function handle($eventName, Event $event) {
+		if (!array_key_exists($eventName, $this->listener)) {
 			return;
 		}
 		
-		foreach ($this->listener[$event] as $listener) {
+		foreach ($this->listener[$eventName] as $listener) {
 			if ($listener instanceof EventListenerInterface) {
-				$listener->notify($metaInformation);
+				$listener->notify($event);
 			}
 		}
 	}

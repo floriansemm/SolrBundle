@@ -2,7 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-use Doctrine\ORM\Configuration;
+use FS\SolrBundle\Doctrine\Configuration;
 
 /**
  * 
@@ -80,7 +80,7 @@ class MetaInformationFactory {
 		}
 	
 		list($namespaceAlias, $simpleClassName) = explode(':', $entity);
-		$realClassName = $this->doctrineConfiguration->getEntityNamespace($namespaceAlias) . '\\' . $simpleClassName;
+		$realClassName = $this->doctrineConfiguration->getNamespace($namespaceAlias) . '\\' . $simpleClassName;
 	
 		if (!class_exists($realClassName)) {
 			throw new \RuntimeException(sprintf('Unknown entity %s', $entity));

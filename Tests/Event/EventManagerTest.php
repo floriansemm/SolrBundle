@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Solr\Event;
 
+use FS\SolrBundle\Event\Event;
+
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 use FS\SolrBundle\Event\EventManager;
@@ -35,7 +37,9 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase {
 		
 		$manager->addListener(EventManager::INSERT, $listener);
 		
-		$manager->handle(EventManager::INSERT, new MetaInformation());
+		$client = $this->getMock('\SolrClient', array(), array(), '', false);
+		
+		$manager->handle(EventManager::INSERT, new Event($client, new MetaInformation()));
 	}
 	
 }

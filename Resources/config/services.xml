@@ -9,6 +9,7 @@
         <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
+        <parameter key="solr.doctrine.configuration.class">FS\SolrBundle\Doctrine\Configuration</parameter>
         <parameter key="solr.add.document.listener.class">FS\SolrBundle\Doctrine\Listener\AddDocumentListener</parameter>
         <parameter key="solr.delete.document.listener.class">FS\SolrBundle\Doctrine\Listener\DeleteDocumentListener</parameter>
         <parameter key="solr.update.document.listener.class">FS\SolrBundle\Doctrine\Listener\UpdateDocumentListener</parameter>
@@ -37,6 +38,8 @@
 		<service id="solr.connection" class="%solr.connection.class%" public="false" />
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
+    	
+    	<service id="solr.doctrine.configuration" class="%solr.doctrine.configuration.class%" public="false" />    	
     	
     	<service id="solr.add.document.listener" class="%solr.add.document.listener.class%" public="false">
     		<argument type="service" id="solr" />

@@ -4,7 +4,11 @@ namespace FS\SolrBundle\Event;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 interface EventListenerInterface {
-	public function notify(MetaInformation $metaInformation);
+	
+	/**
+	 * @param Event $event
+	 */
+	public function notify(Event $event);
 }
 
 ?>

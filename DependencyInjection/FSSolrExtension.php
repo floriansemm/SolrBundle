@@ -32,11 +32,8 @@ class FSSolrExtension extends Extension
         $container->setParameter('solr.auto_index', $config['auto_index']);
         
         $this->setupDoctrineListener($config, $container);
-        
-        $container->getDefinition('solr.meta.information.factory')->addMethodCall(
-        	'setDoctrineConfiguration',
-        	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
-        );
+        $this->setupDoctrineConfiguration($config, $container);
+       
     }
     
     /**
@@ -61,20 +58,57 @@ class FSSolrExtension extends Extension
     	$container->getDefinition('solr.connection_factory')->setArguments(array($connections));
     }
     
+    /**
+     * if mongo_db is not configured, then use the doctrine_orm configuration
+     * 
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function setupDoctrineConfiguration(array $config, ContainerBuilder $container) {
+    	if (!$this->isMongoDbConfigured($container)) {
+    		$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+    			new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
+    		));
+    	} else {
+    		$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+    			new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
+    		));
+    	}
+    	
+    	$container->getDefinition('solr.meta.information.factory')->addMethodCall(
+    			'setDoctrineConfiguration',
+    			array(new Reference('solr.doctrine.configuration'))
+    	);    	
+    }
+    
+    /**
+     * doctrine_orm and doctrine_mongoDB can't be used together. mongo_db wins when it is configured.
+     * 
+     * listener-methods expecting different types of events
+     * 
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
     private function setupDoctrineListener(array $config, ContainerBuilder $container) {
     	$autoIndexing = $container->getParameter('solr.auto_index');
     	
     	if ($autoIndexing == false) {
     		return;
     	}
-    	
-    	$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
-    	$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
-    	$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
-    	
-    	$container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
-    	$container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
-    	$container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+		
+		if ($this->isMongoDbConfigured($container)) {
+    		$container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    		$container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
+    		$container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+    	} else {
+    		$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+    		$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    		$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));    		
+    	}
+    }
+    
+    private function isMongoDbConfigured(ContainerBuilder $container) {
+    	return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
     
 }
