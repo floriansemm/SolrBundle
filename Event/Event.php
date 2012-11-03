@@ -6,7 +6,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 class Event {
 	
 	/**
-	 * @var \SolrClient
+	 * @var object
 	 */
 	private $client = null;
 	
@@ -16,10 +16,10 @@ class Event {
 	private $metainformation = null;
 
 	/**
-	 * @param \SolrClient $client
+	 * @param object $client
 	 * @param MetaInformation $metainformation
 	 */
-	public function __construct(\SolrClient $client, MetaInformation $metainformation) {
+	public function __construct($client, MetaInformation $metainformation) {
 		$this->client = $client;
 		$this->metainformation = $metainformation;
 	}

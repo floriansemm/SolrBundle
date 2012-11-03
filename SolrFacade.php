@@ -166,7 +166,7 @@ class SolrFacade {
 				$this->solrClient->commit();
 			} catch (\Exception $e) {}
 			
-			$this->eventManager->handle(EventManager::DELETE, $metaInformations);
+			$this->eventManager->handle(EventManager::DELETE, new Event($this->solrClient, $metaInformations));
 		}
 	}
 
@@ -174,10 +174,10 @@ class SolrFacade {
 	 * @param object $entity
 	 */
 	public function updateDocument($entity) {
-		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
-		$doc = $this->toDocument($metaInformation);
+		$metaInformations = $this->metaInformationFactory->loadInformation($entity);
+		$doc = $this->toDocument($metaInformations);
 		
-		$this->eventManager->handle(EventManager::UPDATE, $metaInformation);
+		$this->eventManager->handle(EventManager::UPDATE, new Event($this->solrClient, $metaInformations));
 		
 		$this->addDocumentToIndex($doc);
 	}	

@@ -23,4 +23,8 @@ class SolrClientFake {
 	public function setResponse(SolrResponseFake $response) {
 		$this->response = $response;
 	}
+	
+	public function getOptions() {
+		return array();
+	}
 }
