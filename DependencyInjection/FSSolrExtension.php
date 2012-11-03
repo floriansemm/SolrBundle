@@ -33,10 +33,20 @@ class FSSolrExtension extends Extension
         
         $this->setupDoctrineListener($config, $container);
         
+        if (!$this->isMongoDbConfigured($container)) {
+        	$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+        		new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
+        	));
+        } else {
+        	$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
+        		new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
+        	));        	
+        }
+        
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
         	'setDoctrineConfiguration',
-        	array(new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager'])))
-        );
+        	array(new Reference('solr.doctrine.configuration'))
+        );        
     }
     
     /**
@@ -80,7 +90,7 @@ class FSSolrExtension extends Extension
     }
     
     private function isMongoDbConfigured(ContainerBuilder $container) {
-    	return $container->has('doctrine_mongodb');
+    	return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
     
 }
