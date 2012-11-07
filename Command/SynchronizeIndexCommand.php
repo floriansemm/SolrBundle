@@ -13,15 +13,22 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 	protected function configure() {
 		$this->setName('solr:synchronize')
 			 ->addArgument('entity', InputArgument::REQUIRED, 'The entity you want to index')
+			 ->addOption('source', null, InputArgument::VALUE_OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', 'relational');
 			 ->setDescription('Index all entities');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$entity = $input->getArgument('entity');
+		$source = $input->getOption('source');
 
-		$doctrine = $this->getContainer()->get('doctrine');
-		$entities = $doctrine->getRepository($entity)->findAll();
-		
+		if($source == 'relational') {
+			$objectManager = $this->getContainer()->get('doctrine');
+		} else if($source == 'mongodb') {
+			$objectManager = $this->getContainer()->get('doctrine_mongodb');
+		}
+
+		$entities = $objectManager->getRepository($entity)->findAll();
+
 		if (count($entities) == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 		} else {
