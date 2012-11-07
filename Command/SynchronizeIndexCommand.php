@@ -13,7 +13,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 	protected function configure() {
 		$this->setName('solr:synchronize')
 			 ->addArgument('entity', InputArgument::REQUIRED, 'The entity you want to index')
-			 ->addOption('source', null, InputArgument::VALUE_OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', 'relational');
+			 ->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', 'relational')
 			 ->setDescription('Index all entities');
 	}
 	
