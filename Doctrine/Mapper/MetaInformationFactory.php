@@ -61,6 +61,7 @@ class MetaInformationFactory {
 		$metaInformation->setRepository($this->annotationReader->getRepository($entity));
 		$metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
 		$metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
+		$metaInformation->setSynchronizationFilter($this->annotationReader->hasSynchronizationFilter($entity));
 		
 		return $metaInformation;
 	}

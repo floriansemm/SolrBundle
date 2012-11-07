@@ -46,6 +46,11 @@ class MetaInformation {
 	private $boost = 0;
 
 	/**
+	 * @var boolean
+	 */
+	private $synchronizationFilter = false;
+
+	/**
 	 * 
 	 * @return number
 	 */ 
@@ -201,6 +206,13 @@ class MetaInformation {
 		$this->boost = $boost;
 	}
 
+	public function setSynchronizationFilter($syncFilter) {
+		$this->synchronizationFilter = $syncFilter;
+	}
+
+	public function hasSynchronizationFilter() {
+		return $this->synchronizationFilter;
+	}
 }
 
 ?>
