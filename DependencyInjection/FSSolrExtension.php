@@ -97,9 +97,10 @@ class FSSolrExtension extends Extension
     	}
 		
 		if ($this->isMongoDbConfigured($container)) {
-    		$container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
-    		$container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));
-    		$container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+            $container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'preRemove'));
+            $container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postUpdate'));
+            $container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postPersist'));
+
     	} else {
     		$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
     		$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
