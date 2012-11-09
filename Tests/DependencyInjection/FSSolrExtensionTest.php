@@ -84,6 +84,10 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue($this->container->has('solr.delete.document.listener'), 'delete listener');
 		$this->assertTrue($this->container->has('solr.add.document.listener'), 'insert listener');
 		
+		$this->assertDefinitionHasTag('solr.update.document.listener', 'doctrine.event_listener');
+		$this->assertDefinitionHasTag('solr.delete.document.listener', 'doctrine.event_listener');
+		$this->assertDefinitionHasTag('solr.add.document.listener', 'doctrine.event_listener');
+		
 		$arguments = array_pop($this->container->getDefinition('solr.doctrine.configuration')->getArguments());
 		$doctrineConfiguration = $arguments;
 		
@@ -101,11 +105,19 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue($this->container->has('solr.update.document.mongodb.listener'), 'update listener');
 		$this->assertTrue($this->container->has('solr.delete.document.mongodb.listener'), 'delete listener');
 		$this->assertTrue($this->container->has('solr.add.document.mongodb.listener'), 'insert listener');
-	
+
+		$this->assertDefinitionHasTag('solr.update.document.mongodb.listener', 'doctrine_mongodb.odm.event_listener');
+		$this->assertDefinitionHasTag('solr.delete.document.mongodb.listener', 'doctrine_mongodb.odm.event_listener');
+		$this->assertDefinitionHasTag('solr.add.document.mongodb.listener', 'doctrine_mongodb.odm.event_listener');
+		
 		$arguments = array_pop($this->container->getDefinition('solr.doctrine.configuration')->getArguments());
 		$doctrineConfiguration = $arguments;
 	
 		$this->assertEquals('doctrine_mongodb.odm.default_configuration',$doctrineConfiguration);
-	}	
+	}
+	
+	private function assertDefinitionHasTag($definition, $tag) {
+		$this->assertTrue($this->container->getDefinition($definition)->hasTag($tag), sprintf('%s with %s tag', $definition, $tag));
+	}
 }
 
