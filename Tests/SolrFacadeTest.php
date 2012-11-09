@@ -32,7 +32,8 @@ use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrQueryFacade;
 
 /**
- *  test case.
+ * 
+ * @group facade
  */
 class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 

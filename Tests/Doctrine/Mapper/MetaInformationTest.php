@@ -3,6 +3,10 @@ namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
+/**
+ *
+ * @group mapper
+ */
 class MetaInformationTest extends \PHPUnit_Framework_TestCase {
 	private function createFieldObject($name, $value) {
 		$value = new \stdClass();

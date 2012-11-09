@@ -10,7 +10,6 @@ use FS\SolrBundle\Event\EventManager;
 
 /**
  * 
- * @author fs
  * @group eventmanager
  */
 class EventManagerTest extends \PHPUnit_Framework_TestCase {
