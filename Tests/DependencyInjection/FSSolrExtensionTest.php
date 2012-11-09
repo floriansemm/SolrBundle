@@ -8,6 +8,10 @@ use Symfony\Component\DependencyInjection\Scope;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use FS\SolrBundle\DependencyInjection\FSSolrExtension;
 
+/**
+ * 
+ * @group extension
+ */
 class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 
 	/**

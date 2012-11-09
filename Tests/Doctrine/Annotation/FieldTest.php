@@ -3,6 +3,10 @@ namespace FS\SolrBundle\Tests\Doctrine\Annotation;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 
+/**
+ *
+ * @group annotation
+ */
 class FieldTest extends \PHPUnit_Framework_TestCase {
     public function testGetNameWithAlias_String() {
         $field = new Field(array('name' => 'test', 'type' => 'string'));
