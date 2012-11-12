@@ -186,6 +186,7 @@ class SolrFacade {
 		$this->eventManager->handle(EventManager::UPDATE, new Event($this->solrClient, $metaInformations));
 		
 		$this->addDocumentToIndex($doc);
+		return true;
 	}	
 	
 	/**
@@ -193,6 +194,12 @@ class SolrFacade {
 	 */
 	public function addDocument($entity) {
 		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+		# Synchronization Filter
+		if($metaInformations->hasSynchronizationFilter())
+			if(!$entity->shouldBeIndexed())
+				return false;
+
 		$doc = $this->toDocument($metaInformation);
 		
 		$this->eventManager->handle(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
