@@ -14,6 +14,7 @@ class AnnotationReader {
 	const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';	
 	const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
 	const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
+	const SYNCHRONIZATION_FILTER = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
 	
 	public function __construct() {
 		$this->reader = new Reader();
@@ -135,6 +136,12 @@ class AnnotationReader {
 	public function hasDocumentDeclaration($entity) {
 		$annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
 		
+		return $annotation !== null;
+	}
+
+	public function hasSynchronizationFilter($entity) {
+		$annotation = $this->getClassAnnotation($entity, self::SYNCHRONIZATION_FILTER);
+
 		return $annotation !== null;
 	}	
 	
