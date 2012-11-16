@@ -1,5 +1,5 @@
 <?php
-$file = __DIR__.'/../app/bootstrap.php.cache';
+$file = __DIR__.'/../vendor/autoload.php';
 
 
 
