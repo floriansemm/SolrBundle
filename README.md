@@ -1,5 +1,7 @@
 This Bundle provides a simple API to index and query a Solr Index. 
 
+Please use the `developing` branch for pull-request.
+
 Installation
 ============
 
