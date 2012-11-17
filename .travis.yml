@@ -7,3 +7,4 @@ before_script:
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
     - yes | sudo pecl install solr-beta
+    - echo "extension=solr.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
