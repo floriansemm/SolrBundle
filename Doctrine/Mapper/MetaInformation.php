@@ -45,6 +45,9 @@ class MetaInformation {
 	 */
 	private $boost = 0;
 
+	/**
+	 * @var string
+	 */
 	private $synchronizationCallback = '';
 	
 	/**
@@ -203,6 +206,9 @@ class MetaInformation {
 		$this->boost = $boost;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function hasSynchronizationFilter() {
 		if ($this->synchronizationCallback == '') {
 			return false;

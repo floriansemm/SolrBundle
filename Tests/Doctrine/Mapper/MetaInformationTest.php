@@ -62,12 +62,18 @@ class MetaInformationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($expectedValue, $information->getField('field2')->value, 'field2 should have new value');
 	}
 	
-	public function testHasCallback() {
+	public function testHasCallback_CallbackSet() {
 		$information = new MetaInformation();
 		$information->setSynchronizationCallback('function');
 		
 		$this->assertTrue($information->hasSynchronizationFilter(), 'has callback');
 	}
+	
+	public function testHasCallback_NoCallbackSet() {
+		$information = new MetaInformation();
+	
+		$this->assertFalse($information->hasSynchronizationFilter(), 'has no callback');
+	}	
 }
 
 ?>
