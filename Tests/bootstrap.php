@@ -11,6 +11,6 @@ if (!file_exists($file)) {
 }
 
 AnnotationDriver::registerAnnotationClasses();
-AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+AnnotationRegistry::registerLoader(array($file, 'loadClass'));
 
 require_once $file;
