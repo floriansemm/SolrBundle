@@ -11,10 +11,12 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 class ValidTestEntityFiltered {
 	private $shouldBeIndexedWasCalled = false;
 	
+	public $shouldIndex = false;
+	
 	public function shouldBeIndex() {
 		$this->shouldBeIndexedWasCalled = true;
 	
-		return false;
+		return $this->shouldIndex;
 	}
 	
 	public function getShouldBeIndexedWasCalled() {

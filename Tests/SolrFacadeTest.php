@@ -227,6 +227,25 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		$this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');	
 	}
 	
+	public function testAddEntity_ShouldIndexEntity() {
+		$this->eventManager->expects($this->once())
+					 	   ->method('handle')
+					 	   ->with(EventManager::INSERT);
+	
+		$entity = new ValidTestEntityFiltered();
+		$entity->shouldIndex = true;
+		
+		$information = new MetaInformation();
+		$information->setSynchronizationCallback('shouldBeIndex');
+		$this->setupMetaFactoryLoadOneCompleteInformation($information);
+	
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr->addDocument($entity);
+	
+		$this->assertTrue($this->solrClientFake->isCommited(), 'commit was called');
+		$this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
+	}	
+	
 	public function testAddEntity_FilteredEntityWithUnknownCallback() {
 		$this->eventManager->expects($this->never())
 						   ->method('handle');
