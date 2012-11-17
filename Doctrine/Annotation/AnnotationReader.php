@@ -139,11 +139,15 @@ class AnnotationReader {
 		return $annotation !== null;
 	}
 
-	public function hasSynchronizationFilter($entity) {
+	public function getSynchronizationCallback($entity) {
 		$annotation = $this->getClassAnnotation($entity, self::SYNCHRONIZATION_FILTER);
 
-		return $annotation !== null;
-	}	
+		if (!$annotation) {
+			return '';
+		}
+		
+		return $annotation->callback;
+	}
 	
 	private function getClassAnnotation($entity, $annotation) {
 		$reflectionClass = new \ReflectionClass($entity);

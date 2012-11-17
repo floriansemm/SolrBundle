@@ -2,6 +2,10 @@
 
 namespace FS\SolrBundle\Tests\Solr;
 
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
+
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
+
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 
 use FS\SolrBundle\Tests\SolrResponseFake;
@@ -204,6 +208,41 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase {
 		
 		$entities = $solr->query($query);
 		$this->assertEquals(1, count($entities));
+	}
+	
+	public function testAddEntity_ShouldNotIndexEntity() {
+		$this->eventManager->expects($this->never())
+						   ->method('handle');
+		
+		$entity = new ValidTestEntityFiltered();
+		
+		$information = new MetaInformation();
+		$information->setSynchronizationCallback('shouldBeIndex');
+		$this->setupMetaFactoryLoadOneCompleteInformation($information);
+		
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		$solr->addDocument($entity);
+		
+		$this->assertFalse($this->solrClientFake->isCommited(), 'commit was called');	
+		$this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');	
+	}
+	
+	public function testAddEntity_FilteredEntityWithUnknownCallback() {
+		$this->eventManager->expects($this->never())
+						   ->method('handle');
+	
+		$information = new MetaInformation();
+		$information->setSynchronizationCallback('shouldBeIndex');
+		$this->setupMetaFactoryLoadOneCompleteInformation($information);
+	
+		$solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+		try {
+			$solr->addDocument(new InvalidTestEntityFiltered());
+			
+			$this->fail('BadMethodCallException expected');
+		} catch (\BadMethodCallException $e) {
+			$this->assertTrue(true);
+		}
 	}	
 }
 

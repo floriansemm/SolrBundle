@@ -8,4 +8,5 @@ use Doctrine\Common\Annotations\Annotation;
  * @Target("CLASS")
  */
 class SynchronizationFilter extends Annotation {
+	public $callback = '';
 }

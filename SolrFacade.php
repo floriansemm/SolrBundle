@@ -195,16 +195,34 @@ class SolrFacade {
 	public function addDocument($entity) {
 		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
-		# Synchronization Filter
-		if($metaInformations->hasSynchronizationFilter())
-			if(!$entity->shouldBeIndexed())
-				return false;
-
+		if (!$this->addToIndex($metaInformation, $entity)) {
+			return;
+		}
+		
 		$doc = $this->toDocument($metaInformation);
 		
 		$this->eventManager->handle(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
 		
 		$this->addDocumentToIndex($doc);
+	}
+	
+	/**
+	 * @param MetaInformation $metaInformation
+	 * @param object $entity
+	 * @throws \BadMethodCallException if callback method not exists
+	 * @return boolean
+	 */
+	private function addToIndex(MetaInformation $metaInformation, $entity) {
+		if (!$metaInformation->hasSynchronizationFilter()) {
+			return true;
+		}
+		
+		$callback = $metaInformation->getSynchronizationCallback();
+		if (!method_exists($entity, $callback)) {
+			throw new \BadMethodCallException(sprintf('unknown method %s in entity %s', $callback, get_class($entity)));
+		}
+		
+		return $entity->$callback(); 
 	}
 	
 	/**
