@@ -1,10 +1,6 @@
 <?php
-$file = __DIR__.'/../../../../../../app/bootstrap.php.cache';
 
+require_once __DIR__ . '/../vendor/autoload.php';
 
-
-if (!file_exists($file)) {
-	throw new RuntimeException('Install dependencies to run test suite. "php composer.phar install --dev"');
-}
-
-require_once $file;
+\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+\Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();

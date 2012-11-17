@@ -2,8 +2,11 @@ language: php
 
 php:
   - 5.3
-  - 5.4
 
 before_script:
+    - sudo pecl install mongo
+    - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev
+    - php composer.phar install
+    - yes | sudo pecl install solr-beta
+    - echo "extension=solr.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
