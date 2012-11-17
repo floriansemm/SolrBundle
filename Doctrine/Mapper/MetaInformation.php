@@ -205,14 +205,6 @@ class MetaInformation {
 	public function setBoost($boost) {
 		$this->boost = $boost;
 	}
-
-	public function setSynchronizationFilter($syncFilter) {
-		$this->synchronizationFilter = $syncFilter;
-	}
-
-	public function hasSynchronizationFilter() {
-		return $this->synchronizationFilter;
-	}
 }
 
 ?>

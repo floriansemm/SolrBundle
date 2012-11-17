@@ -92,7 +92,8 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertDefinitionHasTag('solr.delete.document.listener', 'doctrine.event_listener');
 		$this->assertDefinitionHasTag('solr.add.document.listener', 'doctrine.event_listener');
 		
-		$arguments = array_pop($this->container->getDefinition('solr.doctrine.configuration')->getArguments());
+		$doctrineArguments = $this->container->getDefinition('solr.doctrine.configuration')->getArguments();
+		$arguments = array_pop($doctrineArguments);
 		$doctrineConfiguration = $arguments;
 		
 		$this->assertEquals('doctrine.orm.default_configuration',$doctrineConfiguration);		
@@ -114,7 +115,8 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertDefinitionHasTag('solr.delete.document.mongodb.listener', 'doctrine_mongodb.odm.event_listener');
 		$this->assertDefinitionHasTag('solr.add.document.mongodb.listener', 'doctrine_mongodb.odm.event_listener');
 		
-		$arguments = array_pop($this->container->getDefinition('solr.doctrine.configuration')->getArguments());
+		$doctrineArguments = $this->container->getDefinition('solr.doctrine.configuration')->getArguments();
+		$arguments = array_pop($doctrineArguments);
 		$doctrineConfiguration = $arguments;
 	
 		$this->assertEquals('doctrine_mongodb.odm.default_configuration',$doctrineConfiguration);
