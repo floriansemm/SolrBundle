@@ -9,7 +9,8 @@
         "symfony/framework-bundle": "2.1.*",
         "doctrine/doctrine-module": "*",
         "doctrine/doctrine-orm-module": "*",
-        "doctrine/mongodb": "*"
+        "doctrine/mongodb": "*",
+        "doctrine/mongodb-odm": "*"
     },
     "minimum-stability": "dev",
     "autoload": {
