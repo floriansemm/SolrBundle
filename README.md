@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle)
+
 This Bundle provides a simple API to index and query a Solr Index. 
 
 Please use the `developing` branch for pull-request.
