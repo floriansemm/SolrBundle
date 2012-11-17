@@ -10,3 +10,6 @@ before_script:
     - php composer.phar install
     - yes | sudo pecl install solr-beta
     - echo "extension=solr.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+notifications:
+  email:
+    - fsemm.travis-ci@gmx.de    
