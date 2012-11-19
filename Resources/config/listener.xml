@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+	    <parameter key="solr.add.document.ormlistener.class">FS\SolrBundle\Doctrine\ORM\Listener\AddDocumentListener</parameter>
+        <parameter key="solr.delete.document.orm.listener.class">FS\SolrBundle\Doctrine\ORM\Listener\DeleteDocumentListener</parameter>
+        <parameter key="solr.update.document.orm.listener.class">FS\SolrBundle\Doctrine\ORM\Listener\UpdateDocumentListener</parameter>
+        
+        <parameter key="solr.add.document.odm.listener.class">FS\SolrBundle\Doctrine\ODM\Listener\AddDocumentListener</parameter>
+        <parameter key="solr.delete.document.odm.listener.class">FS\SolrBundle\Doctrine\ODM\Listener\DeleteDocumentListener</parameter>
+        <parameter key="solr.update.document.odm.listener.class">FS\SolrBundle\Doctrine\ODM\Listener\UpdateDocumentListener</parameter>
+	</parameters>
+
+	<services>
+		<!-- ORM Listener -->
+		<service id="solr.add.document.orm.listener" class="%solr.add.document.orm.listener.class%" public="false">
+    		<argument type="service" id="solr" />
+    	</service>
+
+		<service id="solr.update.document.orm.listener" class="%solr.update.document.orm.listener.class%" public="false">
+    		<argument type="service" id="solr" />
+    	</service>    	
+
+    	<service id="solr.delete.document.orm.listener" class="%solr.delete.document.orm.listener.class%" public="false">
+    		<argument type="service" id="solr" />
+    	</service>
+
+		<!-- ODM Listener -->
+        <service id="solr.delete.document.odm.listener" class="%solr.delete.document.odm.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>
+
+        <service id="solr.update.document.odm.listener" class="%solr.update.document.odm.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>      
+        
+        <service id="solr.add.document.odm.listener" class="%solr.add.document.odm.listener.class%" public="false">
+            <argument type="service" id="solr" />
+        </service>	
+	</services>
+</container>

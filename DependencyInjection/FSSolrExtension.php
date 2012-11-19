@@ -22,7 +22,8 @@ class FSSolrExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
     	$loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-    	$loader->load('services.xml');    	
+    	$loader->load('services.xml');  
+    	$loader->load('listener.xml');  	
     	
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -97,14 +98,14 @@ class FSSolrExtension extends Extension
     	}
 		
 		if ($this->isMongoDbConfigured($container)) {
-            $container->getDefinition('solr.delete.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'preRemove'));
-            $container->getDefinition('solr.update.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postUpdate'));
-            $container->getDefinition('solr.add.document.mongodb.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postPersist'));
+            $container->getDefinition('solr.delete.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'preRemove'));
+            $container->getDefinition('solr.update.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postUpdate'));
+            $container->getDefinition('solr.add.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postPersist'));
 
     	} else {
-    		$container->getDefinition('solr.add.document.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
-    		$container->getDefinition('solr.delete.document.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
-    		$container->getDefinition('solr.update.document.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));    		
+    		$container->getDefinition('solr.add.document.orm.listener')->addTag('doctrine.event_listener', array('event'=>'postPersist'));
+    		$container->getDefinition('solr.delete.document.orm.listener')->addTag('doctrine.event_listener', array('event'=>'preRemove'));
+    		$container->getDefinition('solr.update.document.orm.listener')->addTag('doctrine.event_listener', array('event'=>'postUpdate'));    		
     	}
     }
     
