@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Definition;
+
 use Symfony\Component\DependencyInjection\Reference;
 
 use Symfony\Component\DependencyInjection\Scope;
@@ -21,6 +23,9 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		$this->container = new ContainerBuilder();
+		
+		$definition = new Definition();
+		$this->container->setDefinition('doctrine.orm.default_configuration', $definition);
 	}
 	
 	private function commonConfig() {
@@ -120,6 +125,21 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$doctrineConfiguration = $arguments;
 	
 		$this->assertEquals('doctrine_mongodb.odm.default_configuration',$doctrineConfiguration);
+	}
+	
+	public function testDoctrineConfiguration_NoConfigurationFound() {
+		$config = $this->commonConfig();
+		
+		$this->container->removeDefinition('doctrine.orm.default_configuration');
+		
+		$extension = new FSSolrExtension();
+		try {
+			$extension->load($config, $this->container);
+			
+			$this->fail('exception should thrown');
+		} catch (\RuntimeException $e) {
+			$this->assertTrue(true);
+		}	
 	}
 	
 	private function assertDefinitionHasTag($definition, $tag) {

@@ -14,13 +14,13 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class FSSolrExtension extends Extension
-{
-    /**
-     * {@inheritDoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
-    {
+class FSSolrExtension extends Extension {
+ 
+	/**
+	 * (non-PHPdoc)
+	 * @see \Symfony\Component\DependencyInjection\Extension\ExtensionInterface::load()
+	 */
+    public function load(array $configs, ContainerBuilder $container) {
     	$loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
     	$loader->load('services.xml');  
     	$loader->load('listener.xml');  	
@@ -32,9 +32,24 @@ class FSSolrExtension extends Extension
 
         $container->setParameter('solr.auto_index', $config['auto_index']);
         
+        if (!$this->isDoctrineConfigured($container, $config)) {
+        	throw new \RuntimeException('No doctrine configuration was found, please setup a orm/odm doctrine configuration.');
+        }
+        
         $this->setupDoctrineListener($config, $container);
         $this->setupDoctrineConfiguration($config, $container);
        
+    }
+    
+    /**
+     * @param ContainerBuilder $container
+     * @param array $config
+     * @return boolean
+     */
+    private function isDoctrineConfigured(ContainerBuilder $container, array $config) {
+    	$ormConfig = sprintf('doctrine.orm.%s_configuration', $config['entity_manager']);
+    	
+    	return $this->isODMConfigured($container) || $container->hasDefinition($ormConfig);
     }
     
     /**
@@ -66,7 +81,7 @@ class FSSolrExtension extends Extension
      * @param ContainerBuilder $container
      */
     private function setupDoctrineConfiguration(array $config, ContainerBuilder $container) {
-    	if (!$this->isMongoDbConfigured($container)) {
+    	if (!$this->isODMConfigured($container)) {
     		$container->getDefinition('solr.doctrine.configuration')->setArguments(array(
     			new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
     		));
@@ -97,7 +112,7 @@ class FSSolrExtension extends Extension
     		return;
     	}
 		
-		if ($this->isMongoDbConfigured($container)) {
+		if ($this->isODMConfigured($container)) {
             $container->getDefinition('solr.delete.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'preRemove'));
             $container->getDefinition('solr.update.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postUpdate'));
             $container->getDefinition('solr.add.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postPersist'));
@@ -109,7 +124,11 @@ class FSSolrExtension extends Extension
     	}
     }
     
-    private function isMongoDbConfigured(ContainerBuilder $container) {
+    /**
+     * @param ContainerBuilder $container
+     * @return boolean 
+     */
+    private function isODMConfigured(ContainerBuilder $container) {
     	return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
     
