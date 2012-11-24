@@ -32,10 +32,6 @@ class FSSolrExtension extends Extension {
 
         $container->setParameter('solr.auto_index', $config['auto_index']);
         
-        if (!$this->isDoctrineConfigured($container, $config)) {
-        	throw new \RuntimeException('No doctrine configuration was found, please setup a orm/odm doctrine configuration.');
-        }
-        
         $this->setupDoctrineListener($config, $container);
         $this->setupDoctrineConfiguration($config, $container);
        
@@ -111,7 +107,7 @@ class FSSolrExtension extends Extension {
     	if ($autoIndexing == false) {
     		return;
     	}
-		
+
 		if ($this->isODMConfigured($container)) {
             $container->getDefinition('solr.delete.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'preRemove'));
             $container->getDefinition('solr.update.document.odm.listener')->addTag('doctrine_mongodb.odm.event_listener', array('event'=>'postUpdate'));

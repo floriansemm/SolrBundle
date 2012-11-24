@@ -127,21 +127,6 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('doctrine_mongodb.odm.default_configuration',$doctrineConfiguration);
 	}
 	
-	public function testDoctrineConfiguration_NoConfigurationFound() {
-		$config = $this->commonConfig();
-		
-		$this->container->removeDefinition('doctrine.orm.default_configuration');
-		
-		$extension = new FSSolrExtension();
-		try {
-			$extension->load($config, $this->container);
-			
-			$this->fail('exception should thrown');
-		} catch (\RuntimeException $e) {
-			$this->assertTrue(true);
-		}	
-	}
-	
 	private function assertDefinitionHasTag($definition, $tag) {
 		$this->assertTrue($this->container->getDefinition($definition)->hasTag($tag), sprintf('%s with %s tag', $definition, $tag));
 	}

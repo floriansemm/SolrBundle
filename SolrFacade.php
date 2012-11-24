@@ -189,7 +189,7 @@ class SolrFacade {
 	 */
 	public function addDocument($entity) {
 		$metaInformation = $this->metaInformationFactory->loadInformation($entity);
-
+		
 		if (!$this->addToIndex($metaInformation, $entity)) {
 			return;
 		}

@@ -152,29 +152,6 @@ like Doctrine-Repositories:
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
-Filter Annotation
-=================
-
-In some cases a entity should not be index. For this you have the `SynchronizationFilter` Annotation.
-
-
-		/**
-		 *
-		 * @Solr\Document
-		 * @Solr\SynchronizationFilter(callback="shouldBeIndex")
-		 */
-		class SomeEntity {
-			/**
-			 * @return boolean
-			 */
-			public function shouldBeIndex() {
-				// put your logic here
-			}
-		}
-
-The callback property specifies an callable function, which decides whether the should index or not. 
-
-
 MongoDB
 =======
 
