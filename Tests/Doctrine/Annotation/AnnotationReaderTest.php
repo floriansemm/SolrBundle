@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Annotation;
 
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
+
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFloatBoost;
 
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost;
@@ -104,5 +106,19 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
 	
 		$this->assertEquals(1.4, $boost);
 	}
+	
+	public function testGetCallback_CallbackDefined() {
+		$reader = new AnnotationReader();
+		$callback = $reader->getSynchronizationCallback(new ValidTestEntityFiltered());
+		
+		$this->assertEquals('shouldBeIndex', $callback);
+	}
+	
+	public function testGetCallback_NoCallbackDefined() {
+		$reader = new AnnotationReader();
+		$callback = $reader->getSynchronizationCallback(new ValidTestEntity());
+	
+		$this->assertEquals('', $callback);
+	}	
 }
 

@@ -4,16 +4,11 @@ namespace FS\SolrBundle\Tests\Doctrine\Annotation\Entities;
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
- * 
- * @Solr\Document(boost="1.4")
+ *
+ * @Solr\Document
+ * @Solr\SynchronizationFilter(callback="shouldBeIndex")
  */
-class ValidTestEntityFloatBoost {
-
-	/**
-	 * @Solr\Id
-	 */
-	private $id;
-
+class InvalidTestEntityFiltered {
 }
 
 ?>
