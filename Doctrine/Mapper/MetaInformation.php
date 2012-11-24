@@ -205,8 +205,6 @@ class MetaInformation {
 	public function setBoost($boost) {
 		$this->boost = $boost;
 	}
-<<<<<<< HEAD
-=======
 
 	/**
 	 * @return boolean
@@ -232,7 +230,6 @@ class MetaInformation {
 	public function setSynchronizationCallback($synchronizationCallback) {
 		$this->synchronizationCallback = $synchronizationCallback;
 	}
->>>>>>> sync-filter
 }
 
 ?>
