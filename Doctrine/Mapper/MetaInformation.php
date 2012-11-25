@@ -46,10 +46,10 @@ class MetaInformation {
 	private $boost = 0;
 
 	/**
-	 * @var boolean
+	 * @var string
 	 */
-	private $synchronizationFilter = false;
-
+	private $synchronizationCallback = '';
+	
 	/**
 	 * 
 	 * @return number
@@ -204,6 +204,31 @@ class MetaInformation {
 	 */
 	public function setBoost($boost) {
 		$this->boost = $boost;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasSynchronizationFilter() {
+		if ($this->synchronizationCallback == '') {
+			return false;
+		}		
+		
+		return true;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getSynchronizationCallback() {
+		return $this->synchronizationCallback;
+	}
+
+	/**
+	 * @param string $synchronizationCallback
+	 */
+	public function setSynchronizationCallback($synchronizationCallback) {
+		$this->synchronizationCallback = $synchronizationCallback;
 	}
 }
 
