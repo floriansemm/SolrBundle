@@ -70,7 +70,7 @@ class EntityMapper {
 	 * @return string
 	 */
 	private function removeFieldSuffix($property) {
-		if ($pos = strpos($property, '_')) {
+		if (($pos = strrpos($property, '_')) !== false) {
 			return substr($property, 0, $pos);
 		}
 		
