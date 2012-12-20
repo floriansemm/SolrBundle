@@ -31,7 +31,20 @@ Bundle
 
 2.  Add Bundle to autoload
 
-        # app/autoload.php
+	A. Via composer, add in your composer.json
+
+        "require": {
+            // ...  
+            "floriansemm/solr-bundle": "dev-master"
+        }
+        
+	B.  or manually, in app/autoload.php
+	
+	i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)
+
+        $loader->add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));		
+
+	ii. in older version it could be
 
         $loader->registerNamespaces(array(
             // ...
