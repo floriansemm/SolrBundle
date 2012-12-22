@@ -27,6 +27,11 @@ class FieldTest extends \PHPUnit_Framework_TestCase {
         $field = new Field(array('name' => 'test', 'type' => 'boolean'));
         $this->assertEquals('test_b', $field->getNameWithAlias());
     }
+    
+    public function testGetNameWithAlias_NoFieldType() {
+    	$field = new Field(array('name' => 'title'));
+    	$this->assertEquals('title', $field->getNameWithAlias());
+    }    
 
     public function testGetNameWithAlias_Integer() {
         $field = new Field(array('name' => 'test', 'type' => 'integer'));
@@ -54,4 +59,5 @@ class FieldTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('test_underscore', $result);
     }
+    
 }

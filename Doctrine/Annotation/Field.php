@@ -43,11 +43,19 @@ class Field extends Annotation {
 	 * @return string
 	 */
 	public function getNameWithAlias() {
-		if ($this->type && array_key_exists($this->type, self::$TYP_MAPPING)) {
-			return $this->normalizeName($this->name). self::$TYP_MAPPING[$this->type];
+		return $this->normalizeName($this->name). $this->getTypeSuffix($this->type);
+	}
+	
+	private function getTypeSuffix($type) {
+		if ($type == '') {
+			return '';
 		}
 		
-		throw new \RuntimeException('unsupported type'. $this->type);
+		if (!isset(self::$TYP_MAPPING[$this->type])) {
+			throw new \RuntimeException('unsupported type'. $this->type);
+		}
+		
+		return self::$TYP_MAPPING[$this->type];
 	}
 	
 	/**

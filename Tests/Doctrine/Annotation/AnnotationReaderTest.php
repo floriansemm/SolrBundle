@@ -1,6 +1,10 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Doctrine\Annotation;
+namespace FS\SolrBundle\Tests\Doctrine\Mapping\Mapper;
+
+use FS\SolrBundle\Doctrine\Annotation\Field;
+
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoTypes;
 
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 
@@ -35,6 +39,18 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals(3, count($fields), '3 fields are mapped');		
 	}
+	
+	public function testGetFields_OneFieldsOneTypes() {
+		$reader = new AnnotationReader();
+	
+		$fields = $reader->getFields(new ValidTestEntityNoTypes());
+	
+		$this->assertEquals(1, count($fields), '1 fields are mapped');
+		
+		$field = $fields[0];
+		$this->assertTrue($field instanceof Field);
+		$this->assertEquals('title', $field->getNameWithAlias());
+	}	
 	
 	/**
 	 * @expectedException RuntimeException
