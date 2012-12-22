@@ -4,8 +4,7 @@ This Bundle provides a simple API to index and query a Solr Index.
 
 Please use the `developing` branch for pull-request.
 
-Installation
-============
+# Installation #
 
 Solr-Server
 
@@ -52,8 +51,7 @@ Bundle
             // ...
         ));
 
-Configuration
-=============
+# Configuration #
 
 You have to setup the connection options
 
@@ -69,8 +67,7 @@ You have to setup the connection options
             auto_index: true|false
 			entity_manager: default 
 
-Usage
-=====
+# Usage #
 
 To put an entity to the index, you must add some annotations to your entity:
 
@@ -120,6 +117,25 @@ To put an entity to the index, you must add some annotations to your entity:
 			private $created_at = null;
 		}
 	
+## Field Types ##
+
+Solr comes with a set of predefined field-name/field-types mapping:
+
+- title (solr-type: general_text)
+- text (solr-type: general_text)
+- category (solr-type: general_text)
+- content_type (solr-type: string)
+
+So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:
+
+			/**
+			 * @Solr\Field
+			 * @ORM\Column(name="category", type="text")
+			 */
+			private $category = '';
+
+The field has in this case automaticaly the type "general_text".
+
 If you persist this entity, it will put automaticlly to the index. Update and delete happens automatically too.
 
 To query the index you have to call some services.
