@@ -52,8 +52,8 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 		}
 		$output->writeln('<info>Synchronization successful</info>');
 		
-		$output->writeln('<comment>Synchronized Documents: '.$synchronicedEntities.'</comment>');
-		$output->writeln('<comment>Not Synchronized Documents: '.$notSynchronicedEntities.'</comment>');
+		$output->writeln(sprintf('<comment>Synchronized Documents: %s</comment>', $synchronicedEntities));
+		$output->writeln(sprintf('<comment>Not Synchronized Documents: %s</comment>', $notSynchronicedEntities));
 		
 	}
 	
