@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Doctrine\MongoDB\Listener;
+namespace FS\SolrBundle\Doctrine\ODM\Listener;
 
 use FS\SolrBundle\SolrQueryFacade;
 
