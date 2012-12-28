@@ -1,12 +1,10 @@
 <?php
 namespace FS\SolrBundle\Command;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SynchronizeIndexCommand extends ContainerAwareCommand {
@@ -21,11 +19,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 		$entity = $input->getArgument('entity');
 		$source = $input->getOption('source');
 
-		if($source == 'relational') {
-			$objectManager = $this->getContainer()->get('doctrine');
-		} else if($source == 'mongodb') {
-			$objectManager = $this->getContainer()->get('doctrine_mongodb');
-		}
+		$objectManager = $this->getObjectManager($source);
 
 		try {
 			$repository = $objectManager->getRepository($entity);
@@ -39,25 +33,48 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 
 		if (count($entities) == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
-		} else {
-			$solr = $this->getContainer()->get('solr');
 			
-			$synchronicedEntities = 0;
-			$notSynchronicedEntities = 0;
-			foreach ($entities as $entity) {
-				try {
-					$solr->synchronizeIndex($entity);
-					
-					$synchronicedEntities++;
-				} catch(\Exception $e) {
-					$notSynchronicedEntities++;
-				}					
-			}
-			$output->writeln('<info>Synchronization successful</info>');
-			
-			$output->writeln('<comment>Synchronized Documents: '.$synchronicedEntities.'</comment>');
-			$output->writeln('<comment>Not Synchronized Documents: '.$notSynchronicedEntities.'</comment>');
+			return;
 		}
+		
+		$solr = $this->getContainer()->get('solr');
+		
+		$synchronicedEntities = 0;
+		$notSynchronicedEntities = 0;
+		foreach ($entities as $entity) {
+			try {
+				$solr->synchronizeIndex($entity);
+				
+				$synchronicedEntities++;
+			} catch(\Exception $e) {
+				$notSynchronicedEntities++;
+			}					
+		}
+		$output->writeln('<info>Synchronization successful</info>');
+		
+		$output->writeln('<comment>Synchronized Documents: '.$synchronicedEntities.'</comment>');
+		$output->writeln('<comment>Not Synchronized Documents: '.$notSynchronicedEntities.'</comment>');
+		
+	}
+	
+	/**
+	 * @param string $source
+	 * @throws \InvalidArgumentException if $source is unknown
+	 * @throws \RuntimeException if no doctrine instance is configured
+	 * @return AbstractManagerRegistry
+	 */
+	private function getObjectManager($source) {
+		$objectManager = null;
+		
+		if($source == 'relational') {
+			$objectManager = $this->getContainer()->get('doctrine');
+		} else if($source == 'mongodb') {
+			$objectManager = $this->getContainer()->get('doctrine_mongodb');
+		} else {
+			throw new \InvalidArgumentException(sprintf('Unknown source %s', $source));
+		}
+
+		return $objectManager;
 	}
 }
 
