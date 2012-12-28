@@ -2,7 +2,6 @@ language: php
 
 php:
   - 5.3
-
 before_script:
     - sudo pecl install mongo
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
