@@ -1,8 +1,8 @@
 <?php
 namespace FS\SolrBundle\Command;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\DoctrineBundle\Registry;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +27,15 @@ class SynchronizeIndexCommand extends ContainerAwareCommand {
 			$objectManager = $this->getContainer()->get('doctrine_mongodb');
 		}
 
-		$entities = $objectManager->getRepository($entity)->findAll();
+		try {
+			$repository = $objectManager->getRepository($entity);
+		} catch (\Exception $e) {
+			$output->writeln(sprintf('<error>No repository found for "%s", check our input</error>', $entity));
+				
+			return;			
+		}
+		
+		$entities = $repository->findAll();
 
 		if (count($entities) == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
