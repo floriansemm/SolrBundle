@@ -6,10 +6,10 @@ php:
 before_script:
     - sudo pecl install mongo
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install
     - yes | sudo pecl install solr-beta
     - echo "extension=solr.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+    - curl -s http://getcomposer.org/installer | php
+    - php composer.phar install    
 notifications:
   email:
     - fsemm.travis-ci@gmx.de    
