@@ -2,7 +2,7 @@
 
 This Bundle provides a simple API to index and query a Solr Index. 
 
-Please use the `developing` branch for pull-request.
+Please use the `development` branch for pull-request.
 
 # Configuration
 
@@ -16,11 +16,18 @@ Solr-Server
 
 Follow the installation instructions in this [Tutorial]
 
+## Install curl and php5-curl [Ubuntu]
+
+	sudo aptitude update
+	sudo aptitude install libcurl3 libcurl3-dev php5-curl
+
 ## Install php extension
 
 PHP-Extension
 
-		sudo pecl install -n solr-beta
+	sudo pear install pecl/solr
+	sudo sh -c 'echo "extension=solr.so" > /etc/php5/conf.d/solr.ini' # Ubuntu
+	# Restart any services running php, so the new extension is loaded; i.e.: sudo service apache2 restart
 
 ## Install the Bundle
 
