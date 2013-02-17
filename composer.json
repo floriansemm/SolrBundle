@@ -19,5 +19,5 @@
             "FS\\SolrBundle": ""
         }
     },
-    "target-dir": "FS/SolrBundle",
+    "target-dir": "FS/SolrBundle"
 }
