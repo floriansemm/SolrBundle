@@ -22,7 +22,7 @@
     "target-dir": "FS/SolrBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "master"
+            "dev-master": "0.*"
         }
     }
 }
