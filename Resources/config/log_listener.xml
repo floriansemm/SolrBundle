@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+        <parameter key="solr.log_listener.insert.class">FS\SolrBundle\Event\Listener\InsertLogListener</parameter>
+        <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
+        <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
+        <parameter key="solr.log_listener.error.class">FS\SolrBundle\Event\Listener\ErrorLogListener</parameter>	
+	</parameters>
+
+	<services>
+    	<service id="solr.log_listener.insert" class="%solr.log_listener.insert.class%" public="false">
+    		<argument type="service" id="logger" />
+    		<tag name="solr.event_listener" event="insert" />
+    	</service>
+    	
+    	<service id="solr.log_listener.update" class="%solr.log_listener.update.class%" public="false">
+    		<argument type="service" id="logger" />
+    		<tag name="solr.event_listener" event="update" />
+    	</service>    	
+
+    	<service id="solr.log_listener.delete" class="%solr.log_listener.delete.class%" public="false">
+    		<argument type="service" id="logger" />
+    		<tag name="solr.event_listener" event="delete" />
+    	</service>
+    	
+		<service id="solr.log_listener.error" class="%solr.log_listener.error.class%" public="false">
+    		<argument type="service" id="logger" />
+    		<tag name="solr.event_listener" event="error" />
+    	</service> 	
+	
+	</services>
+</container>

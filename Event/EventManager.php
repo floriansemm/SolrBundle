@@ -12,7 +12,8 @@ class EventManager {
 
 	const UPDATE = 'update';
 	const INSERT = 'insert';
-	const DELETE = 'delete';	
+	const DELETE = 'delete';
+	const ERROR = 'error';
 	
 	/**
 	 * @param string $event
