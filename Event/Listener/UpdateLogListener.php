@@ -4,7 +4,7 @@ namespace FS\SolrBundle\Event\Listener;
 use FS\SolrBundle\Event\Event;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
-class UpdateLogListener extends AbstractLogListener  {
+class UpdateLogListener extends AbstractLogListener {
 
 	/**
 	 * (non-PHPdoc)
@@ -16,7 +16,7 @@ class UpdateLogListener extends AbstractLogListener  {
 		$nameWithId = $this->createDocumentNameWithId($metaInformation);
 		$fieldList = $this->createFieldList($metaInformation);
 		
-		$this->logger->info(sprintf('use path %s, document %s with fields %s was updated', $event->getCore(), $nameWithId, $fieldList));
+		$this->logger->debug(sprintf('use path %s, document %s with fields %s was updated', $event->getCore(), $nameWithId, $fieldList));
 	}
 }
 
