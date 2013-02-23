@@ -59,8 +59,7 @@ class SolrFacade {
 	 * @param MetaInformationFactory $metaInformationFactory
 	 */
 	public function __construct(SolrConnectionFactory $connectionFactory, CommandFactory $commandFactory, EventManager $manager, MetaInformationFactory $metaInformationFactory) {
-		$connection = $connectionFactory->getDefaultConnection();
-		$this->solrClient = $connection->getClient();
+		$this->solrClient = $connectionFactory->getDefaultConnection()->getClient();
 		$this->commandFactory = $commandFactory;
 		$this->eventManager = $manager;
 		$this->metaInformationFactory = $metaInformationFactory;
