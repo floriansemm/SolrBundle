@@ -1,6 +1,10 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Event\Events;
+
+use FS\SolrBundle\Event\ErrorEvent;
+
 use FS\SolrBundle\Event\Event;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
@@ -55,8 +59,7 @@ class SolrFacade {
 	 * @param MetaInformationFactory $metaInformationFactory
 	 */
 	public function __construct(SolrConnectionFactory $connectionFactory, CommandFactory $commandFactory, EventManager $manager, MetaInformationFactory $metaInformationFactory) {
-		$connection = $connectionFactory->getDefaultConnection();
-		$this->solrClient = $connection->getClient();
+		$this->solrClient = $connectionFactory->getDefaultConnection()->getClient();
 		$this->commandFactory = $commandFactory;
 		$this->eventManager = $manager;
 		$this->metaInformationFactory = $metaInformationFactory;
@@ -164,7 +167,12 @@ class SolrFacade {
 				$response = $this->solrClient->deleteByQuery($queryString);
 				
 				$this->solrClient->commit();
-			} catch (\Exception $e) {}
+			} catch (\Exception $e) {
+				$errorEvent = new ErrorEvent(null, null, 'delete-document');
+				$errorEvent->setException($e);
+					
+				$this->eventManager->handle(EventManager::ERROR, $errorEvent);
+			}
 			
 			$this->eventManager->handle(EventManager::DELETE, new Event($this->solrClient, $metaInformations));
 		}
@@ -235,15 +243,17 @@ class SolrFacade {
 	
 	/**
 	 * @param \SolrInputDocument $doc
-	 * @throws \RuntimeException if the client can't index the entity
 	 */
 	private function addDocumentToIndex($doc) {
 		try {
 			$updateResponse = $this->solrClient->addDocument($doc);
 			
 			$this->solrClient->commit();
-		} catch (\Exception $e) { 
-			throw new \RuntimeException('could not index entity');
+		} catch (\Exception $e) {
+			$errorEvent = new ErrorEvent(null, null, 'add-document');
+			$errorEvent->setException($e);
+			
+			$this->eventManager->handle(EventManager::ERROR, $errorEvent);
 		}		
 	}
 		
@@ -278,16 +288,16 @@ class SolrFacade {
 		return $mappedEntities;
 	}
 	
-	/**
-	 * @throws \RuntimeException if the client can't clear the index 
-	 */
 	public function clearIndex() {
 		try {
 			$this->solrClient->deleteByQuery('*:*');
 			$this->solrClient->commit();
 			
 		} catch (\Exception $e) {
-			throw new \RuntimeException('could not clear index');
+			$errorEvent = new ErrorEvent(null, null, 'clear-index');
+			$errorEvent->setException($e);
+			
+			$this->eventManager->handle(EventManager::ERROR, $errorEvent);
 		}
 	}
 	

@@ -16,12 +16,20 @@ class Event {
 	private $metainformation = null;
 
 	/**
+	 * something like 'update-solr-document'
+	 * 
+	 * @var string
+	 */
+	private $solrAction = '';
+	
+	/**
 	 * @param object $client
 	 * @param MetaInformation $metainformation
 	 */
-	public function __construct($client, MetaInformation $metainformation) {
+	public function __construct($client = null, MetaInformation $metainformation = null, $solrAction = '') {
 		$this->client = $client;
 		$this->metainformation = $metainformation;
+		$this->solrAction = $solrAction;
 	}
 	
 	/**
@@ -42,6 +50,13 @@ class Event {
 		}
 		
 		return '';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getSolrAction() {
+		return $this->solrAction;
 	}
 }
 

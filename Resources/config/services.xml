@@ -15,9 +15,6 @@
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
         <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
         <parameter key="solr.connection_factory.class">FS\SolrBundle\SolrConnectionFactory</parameter>
-        <parameter key="solr.log_listener.insert.class">FS\SolrBundle\Event\Listener\InsertLogListener</parameter>
-        <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
-        <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
     </parameters>
 
     <services>
@@ -48,20 +45,7 @@
     	
     	<service id="solr.connection_factory" class="%solr.connection_factory.class%" public="false" />
     	
-    	<service id="solr.log_listener.insert" class="%solr.log_listener.insert.class%" public="false">
-    		<argument type="service" id="logger" />
-    		<tag name="solr.event_listener" event="insert" />
-    	</service>
-    	
-    	<service id="solr.log_listener.update" class="%solr.log_listener.update.class%" public="false">
-    		<argument type="service" id="logger" />
-    		<tag name="solr.event_listener" event="update" />
-    	</service>    	
-
-    	<service id="solr.log_listener.delete" class="%solr.log_listener.delete.class%" public="false">
-    		<argument type="service" id="logger" />
-    		<tag name="solr.event_listener" event="delete" />
-    	</service>
+   	
     	
     </services>
 </container>
