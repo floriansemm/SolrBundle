@@ -7,17 +7,24 @@
     "require": {
         "php": ">=5.3.2",
         "ext-solr": "*",
-        "symfony/framework-bundle": "2.1.*",
+        "symfony/framework-bundle": ">=2.1.0,<=2.2.x-dev",
+        "doctrine/orm": "~2.0,>=2.2.3"
+    },
+    "require-dev": {
         "doctrine/doctrine-module": "*",
         "doctrine/doctrine-orm-module": "*",
         "doctrine/mongodb": "*",
         "doctrine/mongodb-odm": "*"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "alpha",
     "autoload": {
         "psr-0": {
             "FS\\SolrBundle": ""
         }
+    },
+    "suggest": {
+        "doctrine/mongodb": "Required if you want to use the MongoDB ODM features",
+        "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM features"
     },
     "target-dir": "FS/SolrBundle"
 }
