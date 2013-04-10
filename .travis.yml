@@ -3,8 +3,6 @@ language: php
 php:
   - 5.3
 before_script:
-    - pecl install mongo
-    - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - yes | pecl install solr-beta
     - echo "extension=solr.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - curl -s http://getcomposer.org/installer | php
