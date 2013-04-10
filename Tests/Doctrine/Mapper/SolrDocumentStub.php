@@ -1,8 +1,8 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
-class SolrDocumentStub extends \ArrayObject {
+class SolrDocumentStub extends \ArrayObject
+{
 
 }
 
-?>

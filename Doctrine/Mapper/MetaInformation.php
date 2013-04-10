@@ -3,233 +3,255 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 
-class MetaInformation {
+class MetaInformation
+{
 
-	/**
-	 * @var string
-	 */
-	private $identifier = '';
+    /**
+     * @var string
+     */
+    private $identifier = '';
 
-	/**
-	 * @var string
-	 */ 
-	private $className = '';
+    /**
+     * @var string
+     */
+    private $className = '';
 
-	/**
-	 * @var string
-	 */ 
-	private $documentName = '';
+    /**
+     * @var string
+     */
+    private $documentName = '';
 
-	/**
-	 * @var array
-	 */ 
-	private $fields = array();
+    /**
+     * @var array
+     */
+    private $fields = array();
 
-	/**
-	 * @var array
-	 */ 
-	private $fieldMapping = array();
+    /**
+     * @var array
+     */
+    private $fieldMapping = array();
 
-	/**
-	 * @var string
-	 */ 
-	private $repository = '';
+    /**
+     * @var string
+     */
+    private $repository = '';
 
-	/**
-	 * @var object
-	 */ 
-	private $entity = null;
+    /**
+     * @var object
+     */
+    private $entity = null;
 
-	/**
-	 * @var number
-	 */
-	private $boost = 0;
+    /**
+     * @var number
+     */
+    private $boost = 0;
 
-	/**
-	 * @var string
-	 */
-	private $synchronizationCallback = '';
-	
-	/**
-	 * 
-	 * @return number
-	 */ 
-	public function getEntityId() {
-		if ($this->entity !== null) {
-			return $this->entity->getId();
-		}
+    /**
+     * @var string
+     */
+    private $synchronizationCallback = '';
 
-		return 0;
-	}
+    /**
+     *
+     * @return number
+     */
+    public function getEntityId()
+    {
+        if ($this->entity !== null) {
+            return $this->entity->getId();
+        }
 
-	/**
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return $this->identifier;
-	}
+        return 0;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getClassName() {
-		return $this->className;
-	}
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getDocumentName() {
-		return $this->documentName;
-	}
+    /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
 
-	/**
-	 * @return array With instances of FS\SolrBundle\Doctrine\Annotation\Field
-	 */
-	public function getFields() {
-		return $this->fields;
-	}
+    /**
+     * @return string
+     */
+    public function getDocumentName()
+    {
+        return $this->documentName;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getRepository() {
-		return $this->repository;
-	}
+    /**
+     * @return array With instances of FS\SolrBundle\Doctrine\Annotation\Field
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
 
-	/**
-	 * @return object
-	 */
-	public function getEntity() {
-		return $this->entity;
-	}
+    /**
+     * @return string
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
 
-	/**
-	 * @param string $identifiert
-	 */
-	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
-	}
+    /**
+     * @return object
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
 
-	/**
-	 * @param string $className
-	 */
-	public function setClassName($className) {
-		$this->className = $className;
-	}
+    /**
+     * @param string $identifiert
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
 
-	/**
-	 * @param string $documentName
-	 */
-	public function setDocumentName($documentName) {
-		$this->documentName = $documentName;
-	}
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+    }
 
-	/**
-	 * @param multitype: $fields
-	 */
-	public function setFields($fields) {
-		$this->fields = $fields;
-	}
+    /**
+     * @param string $documentName
+     */
+    public function setDocumentName($documentName)
+    {
+        $this->documentName = $documentName;
+    }
 
-	/**
-	 * @param string $field
-	 * @return boolean
-	 */
-	public function hasField($field) {
-		if (count($this->fields) == 0) {
-			return false;
-		}
+    /**
+     * @param multitype: $fields
+     */
+    public function setFields($fields)
+    {
+        $this->fields = $fields;
+    }
 
-		return isset($this->fields[$field]);
-	}
+    /**
+     * @param string $field
+     * @return boolean
+     */
+    public function hasField($field)
+    {
+        if (count($this->fields) == 0) {
+            return false;
+        }
 
-	/**
-	 * @param string $field
-	 * @param string $value
-	 */
-	public function setFieldValue($field, $value) {
-		$this->fields[$field]->value = $value;
-	}
+        return isset($this->fields[$field]);
+    }
 
-	/**
-	 * @param unknown_type $field
-	 * @return Field|null
-	 */
-	public function getField($field) {
-		if (!$this->hasField($field)) {
-			return null;
-		}
+    /**
+     * @param string $field
+     * @param string $value
+     */
+    public function setFieldValue($field, $value)
+    {
+        $this->fields[$field]->value = $value;
+    }
 
-		return $this->fields[$field];
-	}
+    /**
+     * @param unknown_type $field
+     * @return Field|null
+     */
+    public function getField($field)
+    {
+        if (!$this->hasField($field)) {
+            return null;
+        }
 
-	/**
-	 * @param string $repository
-	 */
-	public function setRepository($repository) {
-		$this->repository = $repository;
-	}
+        return $this->fields[$field];
+    }
 
-	/**
-	 * @param object $entity
-	 */
-	public function setEntity($entity) {
-		$this->entity = $entity;
-	}
+    /**
+     * @param string $repository
+     */
+    public function setRepository($repository)
+    {
+        $this->repository = $repository;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getFieldMapping() {
-		return $this->fieldMapping;
-	}
+    /**
+     * @param object $entity
+     */
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
+    }
 
-	/**
-	 * @param array $fieldMapping
-	 */
-	public function setFieldMapping($fieldMapping) {
-		$this->fieldMapping = $fieldMapping;
-	}
+    /**
+     * @return array
+     */
+    public function getFieldMapping()
+    {
+        return $this->fieldMapping;
+    }
 
-	/**
-	 * @return number
-	 */
-	public function getBoost() {
-		return $this->boost;
-	}
+    /**
+     * @param array $fieldMapping
+     */
+    public function setFieldMapping($fieldMapping)
+    {
+        $this->fieldMapping = $fieldMapping;
+    }
 
-	/**
-	 * @param number $boost
-	 */
-	public function setBoost($boost) {
-		$this->boost = $boost;
-	}
+    /**
+     * @return number
+     */
+    public function getBoost()
+    {
+        return $this->boost;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function hasSynchronizationFilter() {
-		if ($this->synchronizationCallback == '') {
-			return false;
-		}		
-		
-		return true;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getSynchronizationCallback() {
-		return $this->synchronizationCallback;
-	}
+    /**
+     * @param number $boost
+     */
+    public function setBoost($boost)
+    {
+        $this->boost = $boost;
+    }
 
-	/**
-	 * @param string $synchronizationCallback
-	 */
-	public function setSynchronizationCallback($synchronizationCallback) {
-		$this->synchronizationCallback = $synchronizationCallback;
-	}
+    /**
+     * @return boolean
+     */
+    public function hasSynchronizationFilter()
+    {
+        if ($this->synchronizationCallback == '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSynchronizationCallback()
+    {
+        return $this->synchronizationCallback;
+    }
+
+    /**
+     * @param string $synchronizationCallback
+     */
+    public function setSynchronizationCallback($synchronizationCallback)
+    {
+        $this->synchronizationCallback = $synchronizationCallback;
+    }
 }
-
-?>

@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-class SynchronizationFilter extends Annotation {
-	public $callback = '';
+class SynchronizationFilter extends Annotation
+{
+    public $callback = '';
 }

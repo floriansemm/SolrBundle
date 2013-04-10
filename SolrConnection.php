@@ -47,5 +47,3 @@ class SolrConnection {
 		return $this->client;
 	}
 }
-
-?>
