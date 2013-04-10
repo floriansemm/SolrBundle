@@ -14,8 +14,7 @@
         "doctrine/doctrine-module": "*",
         "doctrine/doctrine-orm-module": "*",
         "doctrine/mongodb": "*",
-        "doctrine/mongodb-odm": "*",
-        "doctrine/mongodb": "*"
+        "doctrine/mongodb-odm": "*"
     },
     "minimum-stability": "alpha",
     "autoload": {
