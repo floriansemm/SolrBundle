@@ -1,8 +1,8 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
-class NotIndexedEntity {
+class NotIndexedEntity
+{
 
 }
 
-?>

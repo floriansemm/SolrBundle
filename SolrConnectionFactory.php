@@ -52,5 +52,3 @@ class SolrConnectionFactory {
 		return $this->getConnection($firstConnectionName);
 	}
 }
-
-?>

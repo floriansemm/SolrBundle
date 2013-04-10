@@ -8,7 +8,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
  * @Solr\Document
  * @Solr\SynchronizationFilter(callback="shouldBeIndex")
  */
-class InvalidTestEntityFiltered {
+class InvalidTestEntityFiltered
+{
 }
 
-?>

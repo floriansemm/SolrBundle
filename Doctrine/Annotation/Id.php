@@ -6,8 +6,7 @@ use Doctrine\Common\Annotations\Annotation;
 /**
  * @Annotation
  */
-class Id extends Annotation {
-	public $name;
+class Id extends Annotation
+{
+    public $name;
 }
-
-?>
