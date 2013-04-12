@@ -134,7 +134,7 @@ To put an entity to the index, you must add some annotations to your entity:
 			private $created_at = null;
 		}
 
-### Supoorted field types
+### Supported field types
 
 Currently is a basic set of types implemented.
 
