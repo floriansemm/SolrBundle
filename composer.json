@@ -6,9 +6,9 @@
     "homepage": "https://github.com/floriansemm/SolrBundle",
     "require": {
         "php": ">=5.3.2",
-        "ext-solr": "*",
         "symfony/framework-bundle": ">=2.1.0,<=2.3.*",
-        "doctrine/orm": "~2.0,>=2.2.3"
+        "doctrine/orm": "~2.0,>=2.2.3",
+        "solarium/solarium": "2.4.0"
     },
     "require-dev": {
         "doctrine/doctrine-module": "*",
