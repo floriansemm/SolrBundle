@@ -5,9 +5,7 @@
     "keywords": ["search", "index", "symfony", "solr"],
     "homepage": "https://github.com/floriansemm/SolrBundle",
     "require": {
-        "php": ">=5.3.2",
-        "doctrine/orm": "dev-master",
-        "solarium/solarium": "2.4.0"
+        "php": ">=5.3.2"
     },
     "require-dev": {
         "doctrine/doctrine-module": "*",
