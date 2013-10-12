@@ -21,7 +21,8 @@ class SolrConnection {
 		
 		$this->client = new \SolrClient($this->connection);
 	}
-	
+
+
 	/**
 	 * @return array
 	 */
