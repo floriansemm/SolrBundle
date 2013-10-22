@@ -36,6 +36,13 @@ class ValidTestEntity
      */
     private $created_at;
 
+    /**
+     * @Solr\Field(type="my_costom_fieldtype")
+     *
+     * @var string
+     */
+    private $costomField;
+
     public function getId()
     {
         return $this->id;
@@ -78,6 +85,20 @@ class ValidTestEntity
         $this->title = $title;
     }
 
+    /**
+     * @param string $costomField
+     */
+    public function setCostomField($costomField)
+    {
+        $this->costomField = $costomField;
+    }
 
+    /**
+     * @return string
+     */
+    public function getCostomField()
+    {
+        return $this->costomField;
+    }
 }
 
