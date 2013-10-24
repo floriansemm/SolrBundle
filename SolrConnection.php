@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle;
 
+use Solarium\Client;
+
 class SolrConnection {
 	
 	/**
@@ -9,7 +11,7 @@ class SolrConnection {
 	private $connection = array();
 	
 	/**
-	 * @var \SolrClient
+	 * @var Solarium\Client
 	 */
 	private $client = null;
 	
@@ -18,8 +20,15 @@ class SolrConnection {
 	 */
 	public function __construct(array $connection = array()) {
 		$this->connection = $connection;
-		
-		$this->client = new \SolrClient($this->connection);
+
+        $this->client = new Client(array(
+            'endpoint' => array(
+                'localhost' => array(
+                    'host' => '192.168.178.24',
+                    'port' => 8983,
+                    'path' => '/solr/',
+                )
+            )));
 	}
 
 
@@ -32,11 +41,13 @@ class SolrConnection {
 	
 	/**
 	 * @throws \RuntimeException if the client cannot connect so Solr host
-	 * @return \SolrClient
+	 * @return Solarium\Client
 	 */
 	public function getClient() {
 		try {
-			$this->client->ping();
+            $ping = $this->client->createPing();
+
+			$this->client->ping($ping);
 		} catch (\Exception $e) {
 			$host = $this->connection['hostname'];
 			$port = $this->connection['port'];
