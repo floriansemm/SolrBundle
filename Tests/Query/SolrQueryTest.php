@@ -24,7 +24,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     private function createQueryWithFieldMapping()
     {
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
 
         $solrQuery = new SolrQuery($solr);
         $solrQuery->setMappedFields($this->getFieldMapping());

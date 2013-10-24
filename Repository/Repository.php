@@ -3,13 +3,13 @@ namespace FS\SolrBundle\Repository;
 
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
-use FS\SolrBundle\SolrFacade;
+use FS\SolrBundle\Solr;
 
 class Repository implements RepositoryInterface
 {
 
     /**
-     * @var SolrFacade
+     * @var Solr
      */
     private $solr = null;
 
@@ -19,10 +19,10 @@ class Repository implements RepositoryInterface
     private $entity = null;
 
     /**
-     * @param SolrFacade $solr
+     * @param Solr $solr
      * @param object $entity
      */
-    public function __construct(SolrFacade $solr, $entity)
+    public function __construct(Solr $solr, $entity)
     {
         $this->solr = $solr;
 

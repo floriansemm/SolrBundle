@@ -11,7 +11,8 @@
         "doctrine/doctrine-module": "*",
         "doctrine/doctrine-orm-module": "*",
         "doctrine/mongodb": "*",
-        "doctrine/mongodb-odm": "*"
+        "doctrine/mongodb-odm": "*",
+        "solarium/solarium": "dev-master"
     },
     "minimum-stability": "alpha",
     "autoload": {

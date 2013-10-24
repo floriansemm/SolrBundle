@@ -36,7 +36,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('toDocument')
             ->will($this->returnValue($document));
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $solr->expects($this->once())
             ->method('getMapper')
             ->will($this->returnValue($mapper));
@@ -82,7 +82,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('toDocument')
             ->will($this->returnValue($document));
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $solr->expects($this->once())
             ->method('getMapper')
             ->will($this->returnValue($mapper));
@@ -114,7 +114,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $query = $this->getMock('FS\SolrBundle\Query\SolrQuery', array(), array(), '', false);
         $query->expects($this->exactly(2))
             ->method('addSearchTerm');

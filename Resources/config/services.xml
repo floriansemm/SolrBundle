@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
+        <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
         <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>

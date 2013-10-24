@@ -15,7 +15,7 @@ use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 
-class SolrFacade
+class Solr
 {
 
     /**
@@ -98,7 +98,7 @@ class SolrFacade
 
     /**
      * @param string $coreName
-     * @return SolrFacade
+     * @return Solr
      */
     public function core($coreName)
     {

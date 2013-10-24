@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle\Query;
 
-use FS\SolrBundle\SolrFacade;
+use FS\SolrBundle\Solr;
 
 class SolrQuery extends AbstractQuery
 {
@@ -23,18 +23,18 @@ class SolrQuery extends AbstractQuery
 
     /**
      *
-     * @var SolrFacade
+     * @var Solr
      */
-    private $solrFacade = null;
+    private $solr = null;
 
     /**
-     * @param SolrFacade $solr
+     * @param Solr $solr
      */
-    public function __construct(SolrFacade $solr)
+    public function __construct(Solr $solr)
     {
         parent::__construct();
 
-        $this->solrFacade = $solr;
+        $this->solr = $solr;
     }
 
     /**
@@ -42,7 +42,7 @@ class SolrQuery extends AbstractQuery
      */
     public function getResult()
     {
-        return $this->solrFacade->query($this);
+        return $this->solr->query($this);
     }
 
     /**
