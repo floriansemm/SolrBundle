@@ -312,7 +312,7 @@ class Solr
     private function addDocumentToIndex($doc)
     {
         try {
-            $updateResponse = $this->solrClient->addDocument($doc);
+            $this->solrClient->addDocument($doc);
 
             $this->solrClient->commit();
         } catch (\Exception $e) {
