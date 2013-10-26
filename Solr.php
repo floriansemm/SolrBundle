@@ -233,6 +233,11 @@ class Solr
         try {
             $response = $this->solrClient->query($solrQuery);
         } catch (\Exception $e) {
+            $errorEvent = new ErrorEvent(null, null, 'query solr');
+            $errorEvent->setException($e);
+
+            $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+
             return array();
         }
 
