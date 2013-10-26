@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle;
 
-use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
@@ -223,6 +223,7 @@ class Solr
     }
 
     /**
+     * @param AbstractQuery $query
      * @return array found entities
      */
     public function query(AbstractQuery $query)
@@ -294,7 +295,7 @@ class Solr
 
     /**
      * @param MetaInformation metaInformationsy
-     * @return \SolrInputDocument|null
+     * @return Document|null
      */
     private function toDocument(MetaInformation $metaInformation)
     {
@@ -307,7 +308,7 @@ class Solr
     }
 
     /**
-     * @param \SolrInputDocument $doc
+     * @param Document $doc
      */
     private function addDocumentToIndex($doc)
     {
