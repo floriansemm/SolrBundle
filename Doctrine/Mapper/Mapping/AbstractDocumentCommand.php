@@ -1,7 +1,6 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
-use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use Solarium\QueryType\Update\Query\Document\Document;
 
