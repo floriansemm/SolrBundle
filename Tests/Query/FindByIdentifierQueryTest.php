@@ -17,17 +17,13 @@ class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
         $document->addField('id', '1');
         $document->addField('document_name_s', 'validtestentity');
 
-        $expectedQuery = 'id:1';
-        $query = new FindByIdentifierQuery($document);
+        $expectedQuery = 'id:1 AND document_name_s:validtestentity';
+        $query = new FindByIdentifierQuery();
+        $query->setDocument($document);
 
-        $filterQueries = $query->getSolrQuery()->getFilterQueries();
-
-        $queryString = $query->getQueryString();
+        $queryString = $query->getQuery();
 
         $this->assertEquals($expectedQuery, $queryString);
-        $this->assertEquals(1, count($filterQueries));
-        $actualFilterQuery = array_pop($filterQueries);
-        $this->assertEquals('document_name_s:validtestentity', $actualFilterQuery);
     }
 
     public function testGetQuery_DocumentNameMissing()
@@ -35,11 +31,11 @@ class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
         $document = new Document();
         $document->addField('id', '1');
 
-        $query = new FindByIdentifierQuery($document);
-
+        $query = new FindByIdentifierQuery();
+        $query->setDocument($document);
 
         try {
-            $queryString = $query->getQueryString();
+            $query->getQuery();
 
             $this->fail('an exception should be thrown');
         } catch (\RuntimeException $e) {
@@ -49,12 +45,11 @@ class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_IdMissing()
     {
-        $document = new Document();
-
-        $query = new FindByIdentifierQuery($document);
+        $query = new FindByIdentifierQuery();
+        $query->setDocument(new Document());
 
         try {
-            $queryString = $query->getQueryString();
+            $query->getQuery();
 
             $this->fail('an exception should be thrown');
         } catch (\RuntimeException $e) {

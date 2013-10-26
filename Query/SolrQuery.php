@@ -28,13 +28,19 @@ class SolrQuery extends AbstractQuery
     private $solr = null;
 
     /**
-     * @param Solr $solr
+     * @param \FS\SolrBundle\Solr $solr
      */
-    public function __construct(Solr $solr)
+    public function setSolr($solr)
     {
-        parent::__construct();
-
         $this->solr = $solr;
+    }
+
+    /**
+     * @return \FS\SolrBundle\Solr
+     */
+    public function getSolr()
+    {
+        return $this->solr;
     }
 
     /**
@@ -116,7 +122,7 @@ class SolrQuery extends AbstractQuery
     {
         $entityFieldNames = array_flip($this->mappedFields);
         if (array_key_exists($field, $entityFieldNames)) {
-            $this->solrQuery->addField($entityFieldNames[$field]);
+            parent::addField($entityFieldNames[$field]);
         }
 
         return $this;
@@ -125,7 +131,7 @@ class SolrQuery extends AbstractQuery
     /**
      * @return string
      */
-    public function getQueryString()
+    public function getQuery()
     {
         $term = '';
         if (count($this->searchTerms) == 0) {
@@ -146,6 +152,8 @@ class SolrQuery extends AbstractQuery
 
             $termCount++;
         }
+
+        $this->setQuery($term);
 
         return $term;
     }

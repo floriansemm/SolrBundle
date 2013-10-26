@@ -119,7 +119,8 @@ class Solr
         $class = $metaInformation->getClassName();
         $entity = new $class;
 
-        $query = new SolrQuery($this);
+        $query = new SolrQuery();
+        $query->setSolr($this);
         $query->setEntity($entity);
 
         $query->setMappedFields($metaInformation->getFieldMapping());

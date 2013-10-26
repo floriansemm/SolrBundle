@@ -1,23 +1,20 @@
 <?php
 namespace FS\SolrBundle\Query;
 
-abstract class AbstractQuery
-{
+use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Update\Query\Document\Document;
 
+abstract class AbstractQuery extends Query
+{
     /**
-     * @var \SolrQuery
+     * @var Document
      */
-    protected $solrQuery = null;
+    protected $document = null;
 
     /**
      * @var object
      */
     private $entity = null;
-
-    public function __construct()
-    {
-        $this->solrQuery = new \SolrQuery('*:*');
-    }
 
     /**
      * @return the $entity
@@ -36,20 +33,18 @@ abstract class AbstractQuery
     }
 
     /**
-     * @return \SolrQuery
+     * @param \Solarium\QueryType\Update\Query\Document\Document $document
      */
-    public function getSolrQuery()
+    public function setDocument($document)
     {
-        $searchTerm = $this->getQueryString();
-        if (strlen($searchTerm) > 0) {
-            $this->solrQuery->setQuery($searchTerm);
-        }
-
-        return $this->solrQuery;
+        $this->document = $document;
     }
 
     /**
-     * @return string
+     * @return \Solarium\QueryType\Update\Query\Document\Document
      */
-    abstract public function getQueryString();
+    public function getDocument()
+    {
+        return $this->document;
+    }
 }

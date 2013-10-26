@@ -26,7 +26,8 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
     {
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
 
-        $solrQuery = new SolrQuery($solr);
+        $solrQuery = new SolrQuery();
+        $solrQuery->setSolr($solr);
         $solrQuery->setMappedFields($this->getFieldMapping());
 
         return $solrQuery;
@@ -53,9 +54,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $solrQuery->addField('title')
             ->addField('text');
 
-        $concreteSolrQuery = $solrQuery->getSolrQuery();
-
-        $fields = $concreteSolrQuery->getFields();
+        $fields = $solrQuery->getFields();
 
         $this->assertEquals(2, count($fields));
         $this->assertTrue(in_array('title_s', $fields));
@@ -69,9 +68,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $solrQuery->addField('title')
             ->addField('foo');
 
-        $concreteSolrQuery = $solrQuery->getSolrQuery();
-
-        $fields = $concreteSolrQuery->getFields();
+        $fields = $solrQuery->getFields();
 
         $this->assertEquals(1, count($fields));
         $this->assertTrue(in_array('title_s', $fields));
@@ -83,9 +80,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $query = $this->createQueryWithSearchTerms();
 
-        $solrQuery = $query->getSolrQuery();
-
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
 
     }
 
@@ -132,7 +127,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $query = $this->createQueryWithSearchTerms();
 
-        $this->assertEquals($expected, $query->getQueryString());
+        $this->assertEquals($expected, $query->getQuery());
     }
 
     public function testGetQuery_TermsConcatWithAnd()
@@ -142,7 +137,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $query = $this->createQueryWithSearchTerms();
         $query->setUseAndOperator(true);
 
-        $this->assertEquals($expected, $query->getQueryString());
+        $this->assertEquals($expected, $query->getQuery());
     }
 
     public function testGetQuery_SearchInAllFields()
@@ -152,6 +147,6 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $expected = 'title_s:*foo* OR text_t:*foo* OR created_at_dt:*foo*';
 
-        $this->assertEquals($expected, $solrQuery->getQueryString());
+        $this->assertEquals($expected, $solrQuery->getQuery());
     }
 }
