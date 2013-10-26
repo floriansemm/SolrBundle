@@ -240,8 +240,6 @@ class Solr
 
         try {
             $response = $this->solrClient->select($query);
-
-
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);

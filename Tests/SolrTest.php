@@ -96,7 +96,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $deleteQuery->expects($this->once())
-            ->method('addDeleteQuery');
+            ->method('addDeleteQuery')
+            ->with($this->isType('string'));
 
         $deleteQuery->expects($this->once())
             ->method('addCommit');
