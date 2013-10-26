@@ -173,7 +173,7 @@ class Solr
 
             try {
                 $delete = $this->solrClient->createUpdate();
-                $delete->addDeleteQuery($deleteQuery);
+                $delete->addDeleteQuery($deleteQuery->getQuery());
                 $delete->addCommit();
 
                 $this->solrClient->update($delete);
