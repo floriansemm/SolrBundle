@@ -121,7 +121,6 @@ class Solr
         $query = new SolrQuery($this);
         $query->setEntity($entity);
 
-        $command = $this->commandFactory->get('all');
         $query->setMappedFields($metaInformation->getFieldMapping());
 
         return $query;
@@ -171,7 +170,7 @@ class Solr
             $queryString = $deleteQuery->getQueryString();
 
             try {
-                $response = $this->solrClient->deleteByQuery($queryString);
+                $this->solrClient->deleteByQuery($queryString);
 
                 $this->solrClient->commit();
             } catch (\Exception $e) {
