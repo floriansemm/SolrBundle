@@ -14,12 +14,13 @@ use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
+use Solarium\Client;
 
 class Solr
 {
 
     /**
-     * @var \SolrClient
+     * @var Client
      */
     private $solrClient = null;
     /**
@@ -170,9 +171,11 @@ class Solr
             $queryString = $deleteQuery->getQueryString();
 
             try {
-                $this->solrClient->deleteByQuery($queryString);
+                $delete = $this->solrClient->createUpdate();
+                $delete->addDeleteQuery($queryString);
+                $delete->addCommit();
 
-                $this->solrClient->commit();
+                $this->solrClient->update($delete);
             } catch (\Exception $e) {
                 $errorEvent = new ErrorEvent(null, null, 'delete-document');
                 $errorEvent->setException($e);
@@ -228,10 +231,16 @@ class Solr
      */
     public function query(AbstractQuery $query)
     {
-        $solrQuery = $query->getSolrQuery();
+        $entity = $query->getEntity();
+
+        $queryString = $query->getQueryString();
+        $query = $this->solrClient->createSelect();
+        $query->setQuery($queryString);
 
         try {
-            $response = $this->solrClient->query($solrQuery);
+            $response = $this->solrClient->select($query);
+
+
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
@@ -241,19 +250,13 @@ class Solr
             return array();
         }
 
-        $response = $response->getResponse();
-
-        if (!array_key_exists('response', $response)) {
+        if ($response->getNumFound() == 0) {
             return array();
         }
 
-        if ($response['response']['docs'] == false) {
-            return array();
-        }
-
-        $targetEntity = $query->getEntity();
+        $targetEntity = $entity;
         $mappedEntities = array();
-        foreach ($response['response']['docs'] as $document) {
+        foreach ($response as $document) {
             $mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
         }
 
@@ -318,9 +321,11 @@ class Solr
     private function addDocumentToIndex($doc)
     {
         try {
-            $this->solrClient->addDocument($doc);
+            $update = $this->solrClient->createUpdate();
+            $update->addDocument($doc);
+            $update->addCommit();
 
-            $this->solrClient->commit();
+            $this->solrClient->update($update);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'add-document');
             $errorEvent->setException($e);

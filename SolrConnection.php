@@ -12,7 +12,7 @@ class SolrConnection
     private $connection = array();
 
     /**
-     * @var Solarium\Client
+     * @var Client
      */
     private $client = null;
 
@@ -45,7 +45,7 @@ class SolrConnection
 
     /**
      * @throws \RuntimeException if the client cannot connect so Solr host
-     * @return Solarium\Client
+     * @return Client
      */
     public function getClient()
     {
