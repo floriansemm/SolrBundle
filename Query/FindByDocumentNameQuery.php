@@ -1,18 +1,20 @@
 <?php
 namespace FS\SolrBundle\Query;
 
+use Solarium\QueryType\Update\Query\Document\Document;
+
 class FindByDocumentNameQuery extends AbstractQuery
 {
 
     /**
-     * @var \SolrInputDocument
+     * @var Document
      */
     private $document = null;
 
     /**
-     * @param \SolrInputDocument $document
+     * @param Document $document
      */
-    public function __construct(\SolrInputDocument $document)
+    public function __construct(Document $document)
     {
         parent::__construct();
 
@@ -25,13 +27,13 @@ class FindByDocumentNameQuery extends AbstractQuery
      */
     public function getQueryString()
     {
-        $documentNameField = $this->document->getField('document_name_s');
+        $documentNameField = $this->document->document_name_s;
 
         if ($documentNameField == null) {
             throw new \RuntimeException('documentName should not be null');
         }
 
-        $this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField->values[0]));
+        $this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField));
 
         return '';
     }

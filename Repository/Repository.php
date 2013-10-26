@@ -68,7 +68,7 @@ class Repository implements RepositoryInterface
             return null;
         }
 
-        $document->deleteField('id');
+        $document->removeField('id');
 
         $query = new FindByDocumentNameQuery($document);
         $query->setEntity($this->entity);

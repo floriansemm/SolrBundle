@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Query;
 
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
  * @group query
@@ -12,7 +13,7 @@ class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_SearchInAllFields()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'validtestentity');
 
         $expectedQuery = '';
@@ -29,7 +30,7 @@ class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_DocumentnameMissing()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
 
         $query = new FindByDocumentNameQuery($document);
 

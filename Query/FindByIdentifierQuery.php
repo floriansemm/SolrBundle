@@ -1,18 +1,20 @@
 <?php
 namespace FS\SolrBundle\Query;
 
+use Solarium\QueryType\Update\Query\Document\Document;
+
 class FindByIdentifierQuery extends AbstractQuery
 {
 
     /**
-     * @var \SolrInputDocument
+     * @var Document
      */
     private $document = null;
 
     /**
-     * @param \SolrInputDocument $document
+     * @param Document $document
      */
-    public function __construct(\SolrInputDocument $document)
+    public function __construct(Document $document)
     {
         parent::__construct();
 
@@ -25,8 +27,8 @@ class FindByIdentifierQuery extends AbstractQuery
      */
     public function getQueryString()
     {
-        $idField = $this->document->getField('id');
-        $documentNameField = $this->document->getField('document_name_s');
+        $idField = $this->document->id;
+        $documentNameField = $this->document->document_name_s;
 
         if ($idField == null) {
             throw new \RuntimeException('id should not be null');
@@ -36,9 +38,9 @@ class FindByIdentifierQuery extends AbstractQuery
             throw new \RuntimeException('documentName should not be null');
         }
 
-        $this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField->values[0]));
+        $this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField));
 
-        $query = sprintf('id:%s', $idField->values[0]);
+        $query = sprintf('id:%s', $idField);
 
         return $query;
     }

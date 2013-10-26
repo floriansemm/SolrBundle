@@ -16,9 +16,8 @@ use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
-use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Query\SolrQuery;
-use FS\SolrBundle\SolrQueryFacade;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
  *
@@ -61,16 +60,6 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->connectionFactory->expects($this->any())
             ->method('getDefaultConnection')
             ->will($this->returnValue($this->config));
-    }
-
-    private function setupDoctrine($namespace)
-    {
-        $doctrineConfiguration = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
-        $doctrineConfiguration->expects($this->any())
-            ->method('getEntityNamespace')
-            ->will($this->returnValue($namespace));
-
-        return $doctrineConfiguration;
     }
 
     private function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
@@ -173,7 +162,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery($document);
 
@@ -188,7 +177,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery($document);
 
@@ -205,7 +194,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery($document);
         $query->setEntity(new ValidTestEntity());

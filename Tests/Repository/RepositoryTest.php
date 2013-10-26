@@ -4,7 +4,7 @@ namespace FS\SolrBundle\Tests\Solr\Repository;
 
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
-use FS\SolrBundle\Query\SolrQuery;
+use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Repository\Repository;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 
@@ -16,7 +16,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFind_DocumentIsKnown()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
@@ -62,7 +62,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFindAll()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
@@ -104,7 +104,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $actual = $repo->findAll();
 
         $this->assertTrue(is_array($actual));
-        $this->assertFalse($document->fieldExists('id'), 'id was removed');
+
+        $this->assertNull($document->id, 'id was removed');
     }
 
     public function testFindBy()
