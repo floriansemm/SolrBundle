@@ -168,12 +168,12 @@ class Solr
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
         if ($document = $this->entityMapper->toDocument($metaInformations)) {
-            $deleteQuery = new FindByIdentifierQuery($document);
-            $queryString = $deleteQuery->getQueryString();
+            $deleteQuery = new FindByIdentifierQuery();
+            $deleteQuery->setDocument($document);
 
             try {
                 $delete = $this->solrClient->createUpdate();
-                $delete->addDeleteQuery($queryString);
+                $delete->addDeleteQuery($deleteQuery);
                 $delete->addCommit();
 
                 $this->solrClient->update($delete);
@@ -234,7 +234,7 @@ class Solr
     {
         $entity = $query->getEntity();
 
-        $queryString = $query->getQueryString();
+        $queryString = $query->getQuery();
         $query = $this->solrClient->createSelect();
         $query->setQuery($queryString);
 

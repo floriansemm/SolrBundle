@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Tests\Solr;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
+use FS\SolrBundle\Tests\ResultFake;
 use FS\SolrBundle\Tests\SolrResponseFake;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Event\EventManager;
@@ -51,7 +52,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
         $this->connectionFactory = $this->getMock('FS\SolrBundle\SolrConnectionFactory', array(), array(), '', false);
 
-        $this->solrClientFake = new SolrClientFake();
+        $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
 
         $this->config->expects($this->once())
             ->method('getClient')
@@ -60,6 +61,55 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->connectionFactory->expects($this->any())
             ->method('getDefaultConnection')
             ->will($this->returnValue($this->config));
+    }
+
+    private function assertUpdateQueryExecuted()
+    {
+        $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $updateQuery->expects($this->once())
+            ->method('addDocument');
+
+        $updateQuery->expects($this->once())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createUpdate')
+            ->will($this->returnValue($updateQuery));
+    }
+
+    private function assertUpdateQueryWasNotExecuted()
+    {
+        $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $updateQuery->expects($this->never())
+            ->method('addDocument');
+
+        $updateQuery->expects($this->never())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->never())
+            ->method('createUpdate');
+    }
+
+    private function assertDeleteQueryExecuted()
+    {
+        $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $deleteQuery->expects($this->once())
+            ->method('addDeleteQuery');
+
+        $deleteQuery->expects($this->once())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createUpdate')
+            ->will($this->returnValue($deleteQuery));
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('update')
+            ->with($deleteQuery);
     }
 
     private function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
@@ -116,6 +166,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDocument()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::INSERT);
@@ -124,12 +176,12 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument(new ValidTestEntity());
-
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
     }
 
     public function testUpdateDocument()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::UPDATE);
@@ -138,12 +190,12 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->updateDocument(new ValidTestEntity());
-
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
     }
 
     public function testRemoveDocument()
     {
+        $this->assertDeleteQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::DELETE);
@@ -152,34 +204,38 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->removeDocument(new ValidTestEntity());
+    }
 
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
+    private function assertQueryWasExecuted($data = array())
+    {
+        $selectQuery = $this->getMock('Solarium\QueryType\Select\Query\Query', array(), array(), '', false);
+        $selectQuery->expects($this->once())
+            ->method('setQuery');
+
+        $queryResult = new ResultFake($data);
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createSelect')
+            ->will($this->returnValue($selectQuery));
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('select')
+            ->with($selectQuery)
+            ->will($this->returnValue($queryResult));
     }
 
     public function testQuery_NoResponseKeyInResponseSet()
     {
-        $this->solrClientFake->setResponse(new SolrResponseFake());
+        $this->assertQueryWasExecuted();
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
-
-        $entities = $solr->query($query);
-        $this->assertEquals(0, count($entities));
-    }
-
-    public function testQuery_NoDocumentsFound()
-    {
-        $responseArray = array('response' => array('docs' => false));
-        $this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
-
-        $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
-
-        $document = new Document();
-        $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
+        $query = new FindByDocumentNameQuery();
+        $query->setDocument($document);
 
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
@@ -189,14 +245,14 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
 
-        $responseArray['response']['docs'][] = $arrayObj;
-        $this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
+        $this->assertQueryWasExecuted(array($arrayObj));
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
+        $query = new FindByDocumentNameQuery();
+        $query->setDocument($document);
         $query->setEntity(new ValidTestEntity());
 
         $entities = $solr->query($query);
@@ -205,6 +261,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
     public function testAddEntity_ShouldNotIndexEntity()
     {
+        $this->assertUpdateQueryWasNotExecuted();
+
         $this->eventManager->expects($this->never())
             ->method('handle');
 
@@ -217,12 +275,13 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument($entity);
 
-        $this->assertFalse($this->solrClientFake->isCommited(), 'commit was called');
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
     public function testAddEntity_ShouldIndexEntity()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::INSERT);
@@ -237,12 +296,13 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument($entity);
 
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was called');
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
     public function testAddEntity_FilteredEntityWithUnknownCallback()
     {
+        $this->assertUpdateQueryWasNotExecuted();
+
         $this->eventManager->expects($this->never())
             ->method('handle');
 

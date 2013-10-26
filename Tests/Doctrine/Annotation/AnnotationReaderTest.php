@@ -76,7 +76,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $fields = $reader->getFieldMapping(new ValidTestEntity());
 
         $this->assertEquals(4, count($fields), 'four fields are mapped');
-        $this->assertTrue(array_key_exists('title_s', $fields));
+        $this->assertTrue(array_key_exists('title', $fields));
         $this->assertTrue(array_key_exists('id', $fields));
     }
 
