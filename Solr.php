@@ -267,9 +267,11 @@ class Solr
     public function clearIndex()
     {
         try {
-            $this->solrClient->deleteByQuery('*:*');
-            $this->solrClient->commit();
+            $delete = $this->solrClient->createUpdate();
+            $delete->addDeleteQuery('*:*');
+            $delete->addCommit();
 
+            $this->solrClient->update($delete);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
             $errorEvent->setException($e);
