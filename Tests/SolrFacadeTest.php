@@ -92,7 +92,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
             ->method('createUpdate');
     }
 
-    private function assertDeleteQueryExecuted()
+    private function assertDeleteQueryWasExecuted()
     {
         $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $deleteQuery->expects($this->once())
@@ -194,7 +194,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveDocument()
     {
-        $this->assertDeleteQueryExecuted();
+        $this->assertDeleteQueryWasExecuted();
 
         $this->eventManager->expects($this->once())
             ->method('handle')
@@ -204,6 +204,14 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->removeDocument(new ValidTestEntity());
+    }
+
+    public function testClearIndex()
+    {
+        $this->assertDeleteQueryWasExecuted();
+
+        $solr = new Solr($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr->clearIndex();
     }
 
     private function assertQueryWasExecuted($data = array())
