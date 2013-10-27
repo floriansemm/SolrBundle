@@ -10,10 +10,9 @@
         <parameter key="solr.builder.class">FS\SolrBundle\Builder\SolrBuilder</parameter>
         <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
 
-
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
-        <parameter key="solr.doctrine.configuration.class">FS\SolrBundle\Doctrine\Configuration</parameter>
+        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver</parameter>
         
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
@@ -38,7 +37,7 @@
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
     	
-    	<service id="solr.doctrine.configuration" class="%solr.doctrine.configuration.class%" public="false" />    	
+    	<service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false" />
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<tag name="solr.document.command" command="all" />

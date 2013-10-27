@@ -42,18 +42,6 @@ class FSSolrExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     * @return boolean
-     */
-    private function isDoctrineConfigured(ContainerBuilder $container, array $config)
-    {
-        $ormConfig = sprintf('doctrine.orm.%s_configuration', $config['entity_manager']);
-
-        return $this->isODMConfigured($container) || $container->hasDefinition($ormConfig);
-    }
-
-    /**
      * @param array $config
      * @param ContainerBuilder $container
      */
@@ -98,30 +86,39 @@ class FSSolrExtension extends Extension
     }
 
     /**
-     * if mongo_db is not configured, then use the doctrine_orm configuration
      *
      * @param array $config
      * @param ContainerBuilder $container
      */
     private function setupDoctrineConfiguration(array $config, ContainerBuilder $container)
     {
-        if (!$this->isODMConfigured($container)) {
-            $container->getDefinition('solr.doctrine.configuration')->setArguments(
-                array(
-                    new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
-                )
-            );
-        } else {
-            $container->getDefinition('solr.doctrine.configuration')->setArguments(
-                array(
-                    new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
-                )
-            );
+        if ($this->isOrmConfigured($container)) {
+            $entityManagers = $container->getParameter('doctrine.entity_managers');
+
+            $entityManagersNames = array_keys($entityManagers);
+            foreach($entityManagersNames as $entityManager) {
+                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
+                    'addOrmConfiguration',
+                    array(new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager)))
+                );
+            }
+        }
+
+        if ($this->isODMConfigured($container)) {
+            $documentManagers = $container->getParameter('doctrine_mongodb.odm.document_managers');
+
+            $documentManagersNames = array_keys($documentManagers);
+            foreach($documentManagersNames as $documentManager) {
+                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
+                    'addOdmConfiguration',
+                    array(new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $documentManager)))
+                );
+            }
         }
 
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
-            'setDoctrineConfiguration',
-            array(new Reference('solr.doctrine.configuration'))
+            'setClassnameResolver',
+            array(new Reference('solr.doctrine.classnameresolver'))
         );
     }
 
@@ -155,7 +152,9 @@ class FSSolrExtension extends Extension
                 array('event' => 'postPersist')
             );
 
-        } else {
+        }
+
+        if ($this->isOrmConfigured($container)) {
             $container->getDefinition('solr.add.document.orm.listener')->addTag(
                 'doctrine.event_listener',
                 array('event' => 'postPersist')
@@ -180,4 +179,12 @@ class FSSolrExtension extends Extension
         return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @return boolean
+     */
+    private function isOrmConfigured(ContainerBuilder $container)
+    {
+        return $container->hasParameter('doctrine.entity_managers');
+    }
 }
