@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -30,12 +31,12 @@ class FSSolrExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $this->setupConnections($config, $container);
+        $this->setupClients($config, $container);
 
         $container->setParameter('solr.auto_index', $config['auto_index']);
 
         $this->setupDoctrineListener($config, $container);
-        $this->setupDoctrineConfiguration($config, $container);
+//        $this->setupDoctrineConfiguration($config, $container);
 
     }
 
@@ -55,23 +56,35 @@ class FSSolrExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function setupConnections(array $config, ContainerBuilder $container)
+    private function setupClients(array $config, ContainerBuilder $container)
     {
-        $connectionParameters = $config['solr'];
+        $clients = $config['clients'];
 
-        $cores = $config['solr']['path'];
-        $connections = array();
-        if (count($cores) > 0) {
-            foreach ($cores as $coreName => $path) {
-                $connectionParameters['path'] = $path;
-                $connections[$coreName] = $connectionParameters;
-            }
-        } else {
-            $connectionParameters['path'] = '/solr';
-            $connections['default'] = $connectionParameters;
+        foreach ($clients as $clientName => $client) {
+            // client mit endpoint
+            $endpoint = array_pop($client['endpoints']);
+
+            $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
+            $builder = sprintf('solr.client.adapter.builder.%s', $clientName);
+            $container->setDefinition($builder, $builderDefinition);
+
+            $connectInformation[$endpoint] = $config['endpoints'][$endpoint];
+            $builderDefinition->replaceArgument(0, $connectInformation);
+
+            // adapter
+            $clientAdapterDefinition = new DefinitionDecorator('solr.client.adapter');
+            $clientAdapter = sprintf('solr.client.adapter.%s', $clientName);
+            $container->setDefinition($clientAdapter, $clientAdapterDefinition);
+            $clientAdapterDefinition->setFactoryService($builder);
+
+            // eigentlich client
+            $clientDefinition = new DefinitionDecorator('solr.client');
+            $container->setDefinition(sprintf('solr.client.%s', $clientName), $clientDefinition);
+
+            $clientDefinition->replaceArgument(0, new Reference($clientAdapter));
+
+
         }
-
-        $container->getDefinition('solr.connection_factory')->setArguments(array($connections));
     }
 
     /**

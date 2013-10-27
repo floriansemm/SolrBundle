@@ -39,10 +39,6 @@ class Solr
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
-    /**
-     * @var SolrConnectionFactory
-     */
-    private $connectionFactory = null;
 
     /**
      * @param SolrConnection $connection
@@ -51,16 +47,15 @@ class Solr
      * @param MetaInformationFactory $metaInformationFactory
      */
     public function __construct(
-        SolrConnectionFactory $connectionFactory,
+        Client $client,
         CommandFactory $commandFactory,
         EventManager $manager,
         MetaInformationFactory $metaInformationFactory
     ) {
-        $this->solrClient = $connectionFactory->getDefaultConnection()->getClient();
+        $this->solrClient = $client;
         $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
         $this->metaInformationFactory = $metaInformationFactory;
-        $this->connectionFactory = $connectionFactory;
 
         $this->entityMapper = new EntityMapper();
     }
@@ -95,18 +90,6 @@ class Solr
     public function getMetaFactory()
     {
         return $this->metaInformationFactory;
-    }
-
-    /**
-     * @param string $coreName
-     * @return Solr
-     */
-    public function core($coreName)
-    {
-        $connection = $this->connectionFactory->getConnection($coreName);
-        $this->solrClient = $connection->getClient();
-
-        return $this;
     }
 
     /**
