@@ -28,65 +28,86 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase
 
     private function commonConfig()
     {
-        return array(
-            'fs_solr' => array(
-                'solr' => array(
-                    'hostname' => '1.1.1.1',
-                    'port' => '8080'
-                ),
-                'entity_manager' => 'default'
+        return array(array(
+
+            'endpoints' => array(
+                'default' => array(
+                    'host' => '192.168.178.24',
+                    'port' => 8983,
+                    'path' => '/solr/',
+                )
+            ),
+            'clients' => array(
+                'default' => array('endpoints' => array('default'))
             )
-        );
+        ));
     }
 
-    private function multiCoreConfig()
-    {
-        return array(
-            'fs_solr' => array(
-                'solr' => array(
-                    'hostname' => '1.1.1.1',
-                    'port' => '8080',
-                    'path' => array(
-                        'core0' => '/solr/core0',
-                        'core1' => '/solr/core1'
-                    )
-                ),
-                'entity_manager' => 'default'
-            )
-        );
-    }
-
-    public function testSolrConnection()
+    /**
+     * @test
+     */
+    public function solrClientsWithCommonSettings()
     {
         $config = $this->commonConfig();
 
         $extension = new FSSolrExtension();
         $extension->load($config, $this->container);
 
-        $connection = $this->container->getDefinition('solr.connection_factory')->getArguments();
-        $connection = array_pop($connection);
-        $this->assertTrue(array_key_exists('default', $connection), 'default connection');
-        $this->assertEquals('/solr', $connection['default']['path'], 'path to solr');
+        $this->assertTrue($this->container->hasDefinition('solr.client.adapter.builder.default'));
+        $this->assertTrue($this->container->hasDefinition('solr.client.adapter.default'));
+        $this->assertTrue($this->container->hasDefinition('solr.client.default'));
     }
 
-    public function testSolrConnection_MultiCore()
+    /**
+     * @test
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The endpoint foo_endpoint is not defined
+     */
+    public function solrClientsWithUndefinedEndpoint()
     {
-        $config = $this->multiCoreConfig();
+        $config = array(array(
+            'endpoints' => array(
+                'default' => array(
+                    'host' => '192.168.178.24',
+                    'port' => 8983,
+                    'path' => '/solr/',
+                )
+            ),
+            'clients' => array(
+                'default' => array('endpoints' => array('foo_endpoint'))
+            )
+        ));
+
+        $extension = new FSSolrExtension();
+        $extension->load($config, $this->container);
+    }
+
+    /**
+     * @test
+     */
+    public function noClientsConfiguredFirstEndpointIsFallback()
+    {
+        $config = array(array(
+            'endpoints' => array(
+                'default1' => array(
+                    'host' => '192.168.178.24',
+                    'port' => 8983,
+                    'path' => '/solr/',
+                ),
+                'default2' => array(
+                    'host' => '192.168.178.24',
+                    'port' => 8983,
+                    'path' => '/solr/',
+                )
+            )
+        ));
 
         $extension = new FSSolrExtension();
         $extension->load($config, $this->container);
 
-        $connection = $this->container->getDefinition('solr.connection_factory')->getArguments();
-        $connection = array_pop($connection);
-
-        $this->assertTrue(array_key_exists('core0', $connection), 'core0 connection');
-        $this->assertTrue(array_key_exists('core1', $connection), 'core1 connection');
-
-        $this->assertEquals('/solr/core0', $connection['core0']['path'], 'path to core0');
-        $this->assertEquals('/solr/core1', $connection['core1']['path'], 'path to core1');
-
-        $this->assertEquals('1.1.1.1', $connection['core0']['hostname'], 'host of core0');
-        $this->assertEquals('1.1.1.1', $connection['core1']['hostname'], 'host of core1');
+        $this->assertTrue($this->container->hasDefinition('solr.client.adapter.builder.default1'));
+        $this->assertTrue($this->container->hasDefinition('solr.client.adapter.default1'));
+        $this->assertTrue($this->container->hasDefinition('solr.client.default1'));
     }
 
     public function testDoctrineORMSetup()

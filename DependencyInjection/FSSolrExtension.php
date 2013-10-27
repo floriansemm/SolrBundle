@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -36,7 +37,7 @@ class FSSolrExtension extends Extension
         $container->setParameter('solr.auto_index', $config['auto_index']);
 
         $this->setupDoctrineListener($config, $container);
-//        $this->setupDoctrineConfiguration($config, $container);
+        $this->setupDoctrineConfiguration($config, $container);
 
     }
 
@@ -60,6 +61,13 @@ class FSSolrExtension extends Extension
     {
         $clients = $config['clients'];
 
+        if (count($clients) == 0) {
+            $endpoints = array_keys($config['endpoints']);
+            $defaultClient = $endpoints[0];
+
+            $clients[$defaultClient] = array('endpoints' => array($defaultClient));
+        }
+
         foreach ($clients as $clientName => $client) {
             // client mit endpoint
             $endpoint = array_pop($client['endpoints']);
@@ -67,6 +75,10 @@ class FSSolrExtension extends Extension
             $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
             $builder = sprintf('solr.client.adapter.builder.%s', $clientName);
             $container->setDefinition($builder, $builderDefinition);
+
+            if (!isset($config['endpoints'][$endpoint])) {
+                throw new RuntimeException(sprintf('The endpoint %s is not defined', $endpoint));
+            }
 
             $connectInformation[$endpoint] = $config['endpoints'][$endpoint];
             $builderDefinition->replaceArgument(0, $connectInformation);
@@ -82,8 +94,6 @@ class FSSolrExtension extends Extension
             $container->setDefinition(sprintf('solr.client.%s', $clientName), $clientDefinition);
 
             $clientDefinition->replaceArgument(0, new Reference($clientAdapter));
-
-
         }
     }
 
@@ -166,7 +176,7 @@ class FSSolrExtension extends Extension
      * @return boolean
      */
     private function isODMConfigured(ContainerBuilder $container)
-    {return false;
+    {
         return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
 
