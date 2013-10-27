@@ -311,7 +311,7 @@ class Solr
 
             $this->solrClient->update($update);
         } catch (\Exception $e) {
-            $errorEvent = new ErrorEvent(null, null, 'add-document');
+            $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
 
             $this->eventManager->handle(EventManager::ERROR, $errorEvent);
