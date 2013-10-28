@@ -41,7 +41,7 @@ class Solr
     private $metaInformationFactory = null;
 
     /**
-     * @param SolrConnection $connection
+     * @param Client $client
      * @param CommandFactory $commandFactory
      * @param EventManager $manager
      * @param MetaInformationFactory $metaInformationFactory
@@ -58,14 +58,6 @@ class Solr
         $this->metaInformationFactory = $metaInformationFactory;
 
         $this->entityMapper = new EntityMapper();
-    }
-
-    /**
-     * @param SolrConnection $connection
-     */
-    public function setConnection(SolrConnection $connection)
-    {
-        $this->solrClient = $connection->getClient();
     }
 
     /**
