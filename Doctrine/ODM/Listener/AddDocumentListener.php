@@ -2,23 +2,23 @@
 namespace FS\SolrBundle\Doctrine\ODM\Listener;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use FS\SolrBundle\SolrFacade;
+use FS\SolrBundle\Solr;
 use FS\SolrBundle\SolrQueryFacade;
 
 class AddDocumentListener
 {
 
     /**
-     * @var SolrFacade
+     * @var Solr
      */
-    private $solrFacade = null;
+    private $solr = null;
 
     /**
-     * @param SolrFacade $solrFacade
+     * @param Solr $solr
      */
-    public function __construct(SolrFacade $solrFacade)
+    public function __construct(Solr $solr)
     {
-        $this->solrFacade = $solrFacade;
+        $this->solr = $solr;
     }
 
     /**
@@ -29,7 +29,7 @@ class AddDocumentListener
         $entity = $args->getDocument();
 
         try {
-            $this->solrFacade->addDocument($entity);
+            $this->solr->addDocument($entity);
         } catch (\RuntimeException $e) {
         }
     }

@@ -1,23 +1,23 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
-use FS\SolrBundle\Doctrine\Annotation\Field;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 abstract class SolrDocumentTest extends \PHPUnit_Framework_TestCase
 {
     const FIELDS_ALWAYS_MAPPED = 2;
 
-    protected function assertHasDocumentFields($document, $expectedFields)
+    protected function assertHasDocumentFields(Document $document, $expectedFields)
     {
-        $actualFields = $document->getFieldNames();
+        $actualFields = $document->getFields();
         foreach ($expectedFields as $expectedField) {
-            $this->assertTrue(in_array($expectedField, $actualFields), 'field' . $expectedField . ' not in document');
+            $this->assertTrue(array_key_exists($expectedField, $actualFields), 'field' . $expectedField . ' not in document');
         }
     }
 
-    protected function assertFieldCount($expectedCount, \SolrInputDocument $document, $message = '')
+    protected function assertFieldCount($expectedCount, Document $document, $message = '')
     {
-        $this->assertEquals($expectedCount + self::FIELDS_ALWAYS_MAPPED, $document->getFieldCount(), $message);
+        $this->assertEquals($expectedCount + self::FIELDS_ALWAYS_MAPPED, $document->count(), $message);
     }
 }
 

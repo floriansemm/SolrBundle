@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\ClassnameResolver;
 use FS\SolrBundle\Doctrine\Configuration;
 
 /**
@@ -23,9 +24,9 @@ class MetaInformationFactory
     private $annotationReader = null;
 
     /**
-     * @var Configuration
+     * @var ClassnameResolver
      */
-    private $doctrineConfiguration = null;
+    private $classnameResolver = null;
 
     public function __construct()
     {
@@ -33,11 +34,11 @@ class MetaInformationFactory
     }
 
     /**
-     * @param Configuration $doctrineConfiguration
+     * @param ClassnameResolver $classnameResolver
      */
-    public function setDoctrineConfiguration(Configuration $doctrineConfiguration)
+    public function setClassnameResolver(ClassnameResolver $classnameResolver)
     {
-        $this->doctrineConfiguration = $doctrineConfiguration;
+        $this->classnameResolver = $classnameResolver;
     }
 
     /**
@@ -46,6 +47,7 @@ class MetaInformationFactory
      */
     public function loadInformation($entity)
     {
+
         $className = $this->getClass($entity);
 
         if (!is_object($entity)) {
@@ -85,12 +87,7 @@ class MetaInformationFactory
             return $entity;
         }
 
-        list($namespaceAlias, $simpleClassName) = explode(':', $entity);
-        $realClassName = $this->doctrineConfiguration->getNamespace($namespaceAlias) . '\\' . $simpleClassName;
-
-        if (!class_exists($realClassName)) {
-            throw new \RuntimeException(sprintf('Unknown entity %s', $entity));
-        }
+        $realClassName = $this->classnameResolver->resolveFullQualifiedClassname($entity);
 
         return $realClassName;
     }

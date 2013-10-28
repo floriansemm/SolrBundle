@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle;
 
-use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
@@ -14,12 +14,13 @@ use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
+use Solarium\Client;
 
-class SolrFacade
+class Solr
 {
 
     /**
-     * @var \SolrClient
+     * @var Client
      */
     private $solrClient = null;
     /**
@@ -38,38 +39,25 @@ class SolrFacade
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
-    /**
-     * @var SolrConnectionFactory
-     */
-    private $connectionFactory = null;
 
     /**
-     * @param SolrConnection $connection
+     * @param Client $client
      * @param CommandFactory $commandFactory
      * @param EventManager $manager
      * @param MetaInformationFactory $metaInformationFactory
      */
     public function __construct(
-        SolrConnectionFactory $connectionFactory,
+        Client $client,
         CommandFactory $commandFactory,
         EventManager $manager,
         MetaInformationFactory $metaInformationFactory
     ) {
-        $this->solrClient = $connectionFactory->getDefaultConnection()->getClient();
+        $this->solrClient = $client;
         $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
         $this->metaInformationFactory = $metaInformationFactory;
-        $this->connectionFactory = $connectionFactory;
 
         $this->entityMapper = new EntityMapper();
-    }
-
-    /**
-     * @param SolrConnection $connection
-     */
-    public function setConnection(SolrConnection $connection)
-    {
-        $this->solrClient = $connection->getClient();
     }
 
     /**
@@ -97,18 +85,6 @@ class SolrFacade
     }
 
     /**
-     * @param string $coreName
-     * @return SolrFacade
-     */
-    public function core($coreName)
-    {
-        $connection = $this->connectionFactory->getConnection($coreName);
-        $this->solrClient = $connection->getClient();
-
-        return $this;
-    }
-
-    /**
      * @param object $entity
      * @return SolrQuery
      */
@@ -118,10 +94,10 @@ class SolrFacade
         $class = $metaInformation->getClassName();
         $entity = new $class;
 
-        $query = new SolrQuery($this);
+        $query = new SolrQuery();
+        $query->setSolr($this);
         $query->setEntity($entity);
 
-        $command = $this->commandFactory->get('all');
         $query->setMappedFields($metaInformation->getFieldMapping());
 
         return $query;
@@ -167,13 +143,15 @@ class SolrFacade
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
         if ($document = $this->entityMapper->toDocument($metaInformations)) {
-            $deleteQuery = new FindByIdentifierQuery($document);
-            $queryString = $deleteQuery->getQueryString();
+            $deleteQuery = new FindByIdentifierQuery();
+            $deleteQuery->setDocument($document);
 
             try {
-                $response = $this->solrClient->deleteByQuery($queryString);
+                $delete = $this->solrClient->createUpdate();
+                $delete->addDeleteQuery($deleteQuery->getQuery());
+                $delete->addCommit();
 
-                $this->solrClient->commit();
+                $this->solrClient->update($delete);
             } catch (\Exception $e) {
                 $errorEvent = new ErrorEvent(null, null, 'delete-document');
                 $errorEvent->setException($e);
@@ -224,31 +202,35 @@ class SolrFacade
     }
 
     /**
+     * @param AbstractQuery $query
      * @return array found entities
      */
     public function query(AbstractQuery $query)
     {
-        $solrQuery = $query->getSolrQuery();
+        $entity = $query->getEntity();
+
+        $queryString = $query->getQuery();
+        $query = $this->solrClient->createSelect();
+        $query->setQuery($queryString);
 
         try {
-            $response = $this->solrClient->query($solrQuery);
+            $response = $this->solrClient->select($query);
         } catch (\Exception $e) {
+            $errorEvent = new ErrorEvent(null, null, 'query solr');
+            $errorEvent->setException($e);
+
+            $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+
             return array();
         }
 
-        $response = $response->getResponse();
-
-        if (!array_key_exists('response', $response)) {
+        if ($response->getNumFound() == 0) {
             return array();
         }
 
-        if ($response['response']['docs'] == false) {
-            return array();
-        }
-
-        $targetEntity = $query->getEntity();
+        $targetEntity = $entity;
         $mappedEntities = array();
-        foreach ($response['response']['docs'] as $document) {
+        foreach ($response as $document) {
             $mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
         }
 
@@ -258,9 +240,11 @@ class SolrFacade
     public function clearIndex()
     {
         try {
-            $this->solrClient->deleteByQuery('*:*');
-            $this->solrClient->commit();
+            $delete = $this->solrClient->createUpdate();
+            $delete->addDeleteQuery('*:*');
+            $delete->addCommit();
 
+            $this->solrClient->update($delete);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
             $errorEvent->setException($e);
@@ -295,7 +279,7 @@ class SolrFacade
 
     /**
      * @param MetaInformation metaInformationsy
-     * @return \SolrInputDocument|null
+     * @return Document|null
      */
     private function toDocument(MetaInformation $metaInformation)
     {
@@ -308,16 +292,18 @@ class SolrFacade
     }
 
     /**
-     * @param \SolrInputDocument $doc
+     * @param Document $doc
      */
     private function addDocumentToIndex($doc)
     {
         try {
-            $updateResponse = $this->solrClient->addDocument($doc);
+            $update = $this->solrClient->createUpdate();
+            $update->addDocument($doc);
+            $update->addCommit();
 
-            $this->solrClient->commit();
+            $this->solrClient->update($update);
         } catch (\Exception $e) {
-            $errorEvent = new ErrorEvent(null, null, 'add-document');
+            $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
 
             $this->eventManager->handle(EventManager::ERROR, $errorEvent);

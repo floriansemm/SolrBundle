@@ -17,28 +17,28 @@
 	<services>
 		<!-- ORM Listener -->
 		<service id="solr.add.document.orm.listener" class="%solr.add.document.orm.listener.class%" public="false">
-    		<argument type="service" id="solr" />
+    		<argument type="service" id="solr.client.default" />
     	</service>
 
 		<service id="solr.update.document.orm.listener" class="%solr.update.document.orm.listener.class%" public="false">
-    		<argument type="service" id="solr" />
+    		<argument type="service" id="solr.client.default" />
     	</service>    	
 
     	<service id="solr.delete.document.orm.listener" class="%solr.delete.document.orm.listener.class%" public="false">
-    		<argument type="service" id="solr" />
+    		<argument type="service" id="solr.client.default" />
     	</service>
 
 		<!-- ODM Listener -->
         <service id="solr.delete.document.odm.listener" class="%solr.delete.document.odm.listener.class%" public="false">
-            <argument type="service" id="solr" />
+            <argument type="service" id="solr.client.default" />
         </service>
 
         <service id="solr.update.document.odm.listener" class="%solr.update.document.odm.listener.class%" public="false">
-            <argument type="service" id="solr" />
+            <argument type="service" id="solr.client.default" />
         </service>      
         
         <service id="solr.add.document.odm.listener" class="%solr.add.document.odm.listener.class%" public="false">
-            <argument type="service" id="solr" />
+            <argument type="service" id="solr.client.default" />
         </service>	
 	</services>
 </container>

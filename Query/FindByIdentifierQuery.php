@@ -5,28 +5,13 @@ class FindByIdentifierQuery extends AbstractQuery
 {
 
     /**
-     * @var \SolrInputDocument
-     */
-    private $document = null;
-
-    /**
-     * @param \SolrInputDocument $document
-     */
-    public function __construct(\SolrInputDocument $document)
-    {
-        parent::__construct();
-
-        $this->document = $document;
-    }
-
-    /**
      * (non-PHPdoc)
      * @see \FS\SolrBundle\Query\AbstractQuery::getQueryString()
      */
-    public function getQueryString()
+    public function getQuery()
     {
-        $idField = $this->document->getField('id');
-        $documentNameField = $this->document->getField('document_name_s');
+        $idField = $this->document->id;
+        $documentNameField = $this->document->document_name_s;
 
         if ($idField == null) {
             throw new \RuntimeException('id should not be null');
@@ -36,10 +21,9 @@ class FindByIdentifierQuery extends AbstractQuery
             throw new \RuntimeException('documentName should not be null');
         }
 
-        $this->solrQuery->addFilterQuery(sprintf('document_name_s:%s', $documentNameField->values[0]));
+        $query = sprintf('id:%s AND document_name_s:%s', $idField, $documentNameField);
+        $this->setQuery($query);
 
-        $query = sprintf('id:%s', $idField->values[0]);
-
-        return $query;
+        return parent::getQuery();
     }
 }
