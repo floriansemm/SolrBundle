@@ -6,7 +6,7 @@
     "homepage": "https://github.com/floriansemm/SolrBundle",
     "require": {
         "php": ">=5.3.2",
-        "solarium/solarium": "dev-master"
+        "solarium/solarium": "*"
     },
     "require-dev": {
         "doctrine/doctrine-module": "*",
