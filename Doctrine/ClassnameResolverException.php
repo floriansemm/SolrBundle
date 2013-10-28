@@ -2,6 +2,6 @@
 
 namespace FS\SolrBundle\Doctrine;
 
-class ConfigurationException extends \RuntimeException
+class ClassnameResolverException extends \RuntimeException
 {
 } 

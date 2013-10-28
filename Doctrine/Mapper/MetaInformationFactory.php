@@ -47,6 +47,7 @@ class MetaInformationFactory
      */
     public function loadInformation($entity)
     {
+
         $className = $this->getClass($entity);
 
         if (!is_object($entity)) {

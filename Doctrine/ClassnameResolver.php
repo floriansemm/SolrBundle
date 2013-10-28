@@ -56,7 +56,7 @@ class ClassnameResolver
             }
         }
 
-        throw new ClassnameResolverException(sprintf('could not find entity-namespace for entity %s', $entity));
+        throw new ClassnameResolverException(sprintf('could not resolve classname for entity %s', $entity));
     }
 
     /**
