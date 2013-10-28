@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -30,7 +32,7 @@ class FSSolrExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $this->setupConnections($config, $container);
+        $this->setupClients($config, $container);
 
         $container->setParameter('solr.auto_index', $config['auto_index']);
 
@@ -40,65 +42,80 @@ class FSSolrExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     * @return boolean
-     */
-    private function isDoctrineConfigured(ContainerBuilder $container, array $config)
-    {
-        $ormConfig = sprintf('doctrine.orm.%s_configuration', $config['entity_manager']);
-
-        return $this->isODMConfigured($container) || $container->hasDefinition($ormConfig);
-    }
-
-    /**
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function setupConnections(array $config, ContainerBuilder $container)
+    private function setupClients(array $config, ContainerBuilder $container)
     {
-        $connectionParameters = $config['solr'];
+        $clients = $config['clients'];
 
-        $cores = $config['solr']['path'];
-        $connections = array();
-        if (count($cores) > 0) {
-            foreach ($cores as $coreName => $path) {
-                $connectionParameters['path'] = $path;
-                $connections[$coreName] = $connectionParameters;
-            }
-        } else {
-            $connectionParameters['path'] = '/solr';
-            $connections['default'] = $connectionParameters;
+        if (count($clients) == 0) {
+            $endpoints = array_keys($config['endpoints']);
+            $defaultClient = $endpoints[0];
+
+            $clients[$defaultClient] = array('endpoints' => array($defaultClient));
         }
 
-        $container->getDefinition('solr.connection_factory')->setArguments(array($connections));
+        foreach ($clients as $clientName => $client) {
+            $endpoint = array_pop($client['endpoints']);
+
+            $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
+            $builder = sprintf('solr.client.adapter.builder.%s', $clientName);
+            $container->setDefinition($builder, $builderDefinition);
+
+            if (!isset($config['endpoints'][$endpoint])) {
+                throw new RuntimeException(sprintf('The endpoint %s is not defined', $endpoint));
+            }
+
+            $connectInformation[$endpoint] = $config['endpoints'][$endpoint];
+            $builderDefinition->replaceArgument(0, $connectInformation);
+
+            $clientAdapterDefinition = new DefinitionDecorator('solr.client.adapter');
+            $clientAdapter = sprintf('solr.client.adapter.%s', $clientName);
+            $container->setDefinition($clientAdapter, $clientAdapterDefinition);
+            $clientAdapterDefinition->setFactoryService($builder);
+
+            $clientDefinition = new DefinitionDecorator('solr.client');
+            $container->setDefinition(sprintf('solr.client.%s', $clientName), $clientDefinition);
+
+            $clientDefinition->replaceArgument(0, new Reference($clientAdapter));
+        }
     }
 
     /**
-     * if mongo_db is not configured, then use the doctrine_orm configuration
      *
      * @param array $config
      * @param ContainerBuilder $container
      */
     private function setupDoctrineConfiguration(array $config, ContainerBuilder $container)
     {
-        if (!$this->isODMConfigured($container)) {
-            $container->getDefinition('solr.doctrine.configuration')->setArguments(
-                array(
-                    new Reference(sprintf('doctrine.orm.%s_configuration', $config['entity_manager']))
-                )
-            );
-        } else {
-            $container->getDefinition('solr.doctrine.configuration')->setArguments(
-                array(
-                    new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $config['entity_manager']))
-                )
-            );
+        if ($this->isOrmConfigured($container)) {
+            $entityManagers = $container->getParameter('doctrine.entity_managers');
+
+            $entityManagersNames = array_keys($entityManagers);
+            foreach($entityManagersNames as $entityManager) {
+                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
+                    'addOrmConfiguration',
+                    array(new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager)))
+                );
+            }
+        }
+
+        if ($this->isODMConfigured($container)) {
+            $documentManagers = $container->getParameter('doctrine_mongodb.odm.document_managers');
+
+            $documentManagersNames = array_keys($documentManagers);
+            foreach($documentManagersNames as $documentManager) {
+                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
+                    'addOdmConfiguration',
+                    array(new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $documentManager)))
+                );
+            }
         }
 
         $container->getDefinition('solr.meta.information.factory')->addMethodCall(
-            'setDoctrineConfiguration',
-            array(new Reference('solr.doctrine.configuration'))
+            'setClassnameResolver',
+            array(new Reference('solr.doctrine.classnameresolver'))
         );
     }
 
@@ -132,7 +149,9 @@ class FSSolrExtension extends Extension
                 array('event' => 'postPersist')
             );
 
-        } else {
+        }
+
+        if ($this->isOrmConfigured($container)) {
             $container->getDefinition('solr.add.document.orm.listener')->addTag(
                 'doctrine.event_listener',
                 array('event' => 'postPersist')
@@ -157,4 +176,12 @@ class FSSolrExtension extends Extension
         return $container->hasParameter('doctrine_mongodb.odm.document_managers');
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @return boolean
+     */
+    private function isOrmConfigured(ContainerBuilder $container)
+    {
+        return $container->hasParameter('doctrine.entity_managers');
+    }
 }

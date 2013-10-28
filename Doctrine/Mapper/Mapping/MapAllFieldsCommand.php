@@ -1,7 +1,6 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 

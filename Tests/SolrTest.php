@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Tests\Solr;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
+use FS\SolrBundle\Tests\ResultFake;
 use FS\SolrBundle\Tests\SolrResponseFake;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Event\EventManager;
@@ -13,29 +14,24 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
-use FS\SolrBundle\SolrFacade;
+use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
-use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Query\SolrQuery;
-use FS\SolrBundle\SolrQueryFacade;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
  *
  * @group facade
  */
-class SolrFacadeTest extends \PHPUnit_Framework_TestCase
+class SolrTest extends \PHPUnit_Framework_TestCase
 {
 
     private $metaFactory = null;
     private $config = null;
     private $commandFactory = null;
     private $eventManager = null;
-    private $connectionFactory = null;
 
-    /**
-     * @var SolrClientFake
-     */
     private $solrClientFake = null;
 
     public function setUp()
@@ -50,27 +46,58 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
         $this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
         $this->eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
-        $this->connectionFactory = $this->getMock('FS\SolrBundle\SolrConnectionFactory', array(), array(), '', false);
 
-        $this->solrClientFake = new SolrClientFake();
-
-        $this->config->expects($this->once())
-            ->method('getClient')
-            ->will($this->returnValue($this->solrClientFake));
-
-        $this->connectionFactory->expects($this->any())
-            ->method('getDefaultConnection')
-            ->will($this->returnValue($this->config));
+        $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
 
-    private function setupDoctrine($namespace)
+    private function assertUpdateQueryExecuted()
     {
-        $doctrineConfiguration = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
-        $doctrineConfiguration->expects($this->any())
-            ->method('getEntityNamespace')
-            ->will($this->returnValue($namespace));
+        $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $updateQuery->expects($this->once())
+            ->method('addDocument');
 
-        return $doctrineConfiguration;
+        $updateQuery->expects($this->once())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createUpdate')
+            ->will($this->returnValue($updateQuery));
+    }
+
+    private function assertUpdateQueryWasNotExecuted()
+    {
+        $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $updateQuery->expects($this->never())
+            ->method('addDocument');
+
+        $updateQuery->expects($this->never())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->never())
+            ->method('createUpdate');
+    }
+
+    private function assertDeleteQueryWasExecuted()
+    {
+        $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $deleteQuery->expects($this->once())
+            ->method('addDeleteQuery')
+            ->with($this->isType('string'));
+
+        $deleteQuery->expects($this->once())
+            ->method('addCommit');
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createUpdate')
+            ->will($this->returnValue($deleteQuery));
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('update')
+            ->with($deleteQuery);
     }
 
     private function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
@@ -88,7 +115,7 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
     {
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 
         $this->assertTrue($query instanceof SolrQuery);
@@ -104,7 +131,7 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $actual = $solr->getRepository('Tests:EntityWithRepository');
 
         $this->assertTrue($actual instanceof ValidEntityRepository);
@@ -121,76 +148,90 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->getRepository('Tests:EntityWithInvalidRepository');
     }
 
     public function testAddDocument()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::INSERT);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument(new ValidTestEntity());
-
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
     }
 
     public function testUpdateDocument()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::UPDATE);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->updateDocument(new ValidTestEntity());
-
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
     }
 
     public function testRemoveDocument()
     {
+        $this->assertDeleteQueryWasExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::DELETE);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->removeDocument(new ValidTestEntity());
+    }
 
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was never called');
+    public function testClearIndex()
+    {
+        $this->assertDeleteQueryWasExecuted();
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr->clearIndex();
+    }
+
+    private function assertQueryWasExecuted($data = array())
+    {
+        $selectQuery = $this->getMock('Solarium\QueryType\Select\Query\Query', array(), array(), '', false);
+        $selectQuery->expects($this->once())
+            ->method('setQuery');
+
+        $queryResult = new ResultFake($data);
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('createSelect')
+            ->will($this->returnValue($selectQuery));
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('select')
+            ->with($selectQuery)
+            ->will($this->returnValue($queryResult));
     }
 
     public function testQuery_NoResponseKeyInResponseSet()
     {
-        $this->solrClientFake->setResponse(new SolrResponseFake());
+        $this->assertQueryWasExecuted();
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
-
-        $entities = $solr->query($query);
-        $this->assertEquals(0, count($entities));
-    }
-
-    public function testQuery_NoDocumentsFound()
-    {
-        $responseArray = array('response' => array('docs' => false));
-        $this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
-
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
-
-        $document = new \SolrInputDocument();
-        $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
+        $query = new FindByDocumentNameQuery();
+        $query->setDocument($document);
 
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
@@ -200,14 +241,14 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
     {
         $arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
 
-        $responseArray['response']['docs'][] = $arrayObj;
-        $this->solrClientFake->setResponse(new SolrResponseFake($responseArray));
+        $this->assertQueryWasExecuted(array($arrayObj));
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
 
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('document_name_s', 'name');
-        $query = new FindByDocumentNameQuery($document);
+        $query = new FindByDocumentNameQuery();
+        $query->setDocument($document);
         $query->setEntity(new ValidTestEntity());
 
         $entities = $solr->query($query);
@@ -216,6 +257,8 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
 
     public function testAddEntity_ShouldNotIndexEntity()
     {
+        $this->assertUpdateQueryWasNotExecuted();
+
         $this->eventManager->expects($this->never())
             ->method('handle');
 
@@ -225,15 +268,16 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument($entity);
 
-        $this->assertFalse($this->solrClientFake->isCommited(), 'commit was called');
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
     public function testAddEntity_ShouldIndexEntity()
     {
+        $this->assertUpdateQueryExecuted();
+
         $this->eventManager->expects($this->once())
             ->method('handle')
             ->with(EventManager::INSERT);
@@ -245,15 +289,16 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         $solr->addDocument($entity);
 
-        $this->assertTrue($this->solrClientFake->isCommited(), 'commit was called');
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
     public function testAddEntity_FilteredEntityWithUnknownCallback()
     {
+        $this->assertUpdateQueryWasNotExecuted();
+
         $this->eventManager->expects($this->never())
             ->method('handle');
 
@@ -261,7 +306,7 @@ class SolrFacadeTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new SolrFacade($this->connectionFactory, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
         try {
             $solr->addDocument(new InvalidTestEntityFiltered());
 

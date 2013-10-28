@@ -69,4 +69,11 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test_underscore', $result);
     }
 
+    public function testCostomFieldType()
+    {
+        $field = new Field(array('name' => 'costumtype', 'type' => 'my_special_type'));
+
+        $this->assertEquals('costumtype', $field->getNameWithAlias());
+    }
+
 }

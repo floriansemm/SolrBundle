@@ -5,33 +5,39 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="solr.class">FS\SolrBundle\SolrFacade</parameter>
-        <parameter key="solr.connection.class">FS\SolrBundle\SolrConnection</parameter>
+
+        <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
+        <parameter key="solr.builder.class">FS\SolrBundle\Builder\SolrBuilder</parameter>
+        <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
+
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
-        <parameter key="solr.doctrine.configuration.class">FS\SolrBundle\Doctrine\Configuration</parameter>
+        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver</parameter>
         
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
         <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
-        <parameter key="solr.connection_factory.class">FS\SolrBundle\SolrConnectionFactory</parameter>
     </parameters>
 
     <services>
-		<service id="solr" class="%solr.class%">
-			<argument type="service" id="solr.connection_factory" />
+		<service id="solr.client" class="%solr.class%" abstract="true">
+			<argument type="service" id="solr.client" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="solr.event_manager" />
 			<argument type="service" id="solr.meta.information.factory" />
 		</service>
 
-		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
+        <service id="solr.client.adapter" class="%solr.client.adapter.class%" abstract="true" factory-service="solr.client.adapter.builder" factory-method="build" />
 
-		<service id="solr.connection" class="%solr.connection.class%" public="false" />
+        <service id="solr.client.adapter.builder" abstract="true" class="%solr.builder.class%">
+            <argument type="collection" />
+        </service>
+
+		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
     	
-    	<service id="solr.doctrine.configuration" class="%solr.doctrine.configuration.class%" public="false" />    	
+    	<service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false" />
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<tag name="solr.document.command" command="all" />
@@ -42,10 +48,6 @@
     	</service>    	
     	
     	<service id="solr.event_manager" class="%solr.event_manager.class%" public="false" />
-    	
-    	<service id="solr.connection_factory" class="%solr.connection_factory.class%" public="false" />
-    	
-   	
     	
     </services>
 </container>

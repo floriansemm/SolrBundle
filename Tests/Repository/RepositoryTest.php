@@ -4,7 +4,7 @@ namespace FS\SolrBundle\Tests\Solr\Repository;
 
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
-use FS\SolrBundle\Query\SolrQuery;
+use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Repository\Repository;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 
@@ -16,7 +16,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFind_DocumentIsKnown()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
@@ -36,7 +36,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('toDocument')
             ->will($this->returnValue($document));
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $solr->expects($this->once())
             ->method('getMapper')
             ->will($this->returnValue($mapper));
@@ -62,7 +62,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFindAll()
     {
-        $document = new \SolrInputDocument();
+        $document = new Document();
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
@@ -82,7 +82,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('toDocument')
             ->will($this->returnValue($document));
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $solr->expects($this->once())
             ->method('getMapper')
             ->will($this->returnValue($mapper));
@@ -104,7 +104,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $actual = $repo->findAll();
 
         $this->assertTrue(is_array($actual));
-        $this->assertFalse($document->fieldExists('id'), 'id was removed');
+
+        $this->assertNull($document->id, 'id was removed');
     }
 
     public function testFindBy()
@@ -114,7 +115,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $solr = $this->getMock('FS\SolrBundle\SolrFacade', array(), array(), '', false);
+        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $query = $this->getMock('FS\SolrBundle\Query\SolrQuery', array(), array(), '', false);
         $query->expects($this->exactly(2))
             ->method('addSearchTerm');
