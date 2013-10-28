@@ -94,8 +94,6 @@ To put an entity to the index, you must add some annotations to your entity:
 		use FS\SolrBundle\Doctrine\Annotation as Solr;
 		
 		/**
-		 * 
-		 *
 		 * @Solr\Document(repository="Full\Qualified\Class\Name")
 		 * @ORM\Table()
 		 */
@@ -143,6 +141,8 @@ Currently is a basic set of types implemented.
 - date
 - integer
 - boolean
+
+It is possible to use custum field types (schema.xml).
 
 ### Filter annotation
 
