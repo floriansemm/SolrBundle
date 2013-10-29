@@ -8,27 +8,6 @@ Please use the `development` branch for pull-request.
 
 The bundle requires a working doctrine-orm or doctrine-mongodb configuration. There are no differences in the use.
 
-## Install Solr
-
-Solr-Server
-
-[Tutorial]: http://davehall.com.au/blog/dave/2010/06/26/multi-core-apache-solr-ubuntu-1004-drupal-auto-provisioning
-
-Follow the installation instructions in this [Tutorial]
-
-## Install curl and php5-curl [Ubuntu]
-
-	sudo aptitude update
-	sudo aptitude install libcurl3 libcurl3-dev php5-curl
-
-## Install php extension
-
-PHP-Extension
-
-	sudo pear install pecl/solr
-	sudo sh -c 'echo "extension=solr.so" > /etc/php5/conf.d/solr.ini' # Ubuntu
-	# Restart any services running php, so the new extension is loaded; i.e.: sudo service apache2 restart
-
 ## Install the Bundle
 
 Bundle
@@ -70,17 +49,20 @@ Bundle
 
 You have to setup the connection options
 
-		# app/config/config.yml
-		
-		fs_solr:
-			solr:
-				hostname: localhost
-				port: 8983
-                path:
-                    core0: /solr/core0
-                    core1: /solr/core1
-            auto_index: true|false
-			entity_manager: default 
+    # app/config/config.yml
+    fs_solr:
+      endpoints:
+        default:
+          host: host
+          port: 8983
+          path: /solr/
+          core: corename
+          timeout: 5
+      clients:
+        default:
+          endpoints: [default]
+          
+With this config you have access to the service `solr.client.default`. If you have more client you can access them with the call `solr.client.clientname`
 
 # Usage #
 
@@ -150,7 +132,6 @@ In some cases a entity should not be index. For this you have the `Synchronizati
 
 
 		/**
-		 *
 		 * @Solr\Document
 		 * @Solr\SynchronizationFilter(callback="shouldBeIndex")
 		 */
@@ -245,26 +226,6 @@ like Doctrine-Repositories:
 	
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
-
-## Use multiple cores
-
-Solr supports multiple indexies. If you have different languages in your application, use can index your documents in different indexies.
-
-The setup is easy:
-
-Under the `path` option, you can specify your different indexies.
-
-
-            path:
-                    core0: /solr/core0
-                    core1: /solr/core1
-
-In this case the default core is `core0`. If you use multiple core, then the auto-index functionality should be disabled. In other case all document will index in one core. To disable use the flag `auto_index` in your config (default value is `true`). 
-
-To index documents with the `addDocument` method requires a concrete core:
-
-        $this->get('solr')->core('core0')->addDocument($document);
-
 
 ## Commands
 
