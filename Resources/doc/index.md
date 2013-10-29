@@ -53,13 +53,16 @@ You have to setup the connection options
     fs_solr:
       endpoints:
         default:
-          host: 192.168.178.24
+          host: host
           port: 8983
           path: /solr/
+          core: corename
           timeout: 5
       clients:
         default:
           endpoints: [default]
+          
+With this config you have access to the service `solr.client.default`. If you have more client you can access them with the call `solr.client.clientname`
 
 # Usage #
 
