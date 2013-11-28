@@ -39,6 +39,10 @@ class Solr
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
+    /**
+     * @var int numFound
+     */
+    private $numFound = 0;
 
     /**
      * @param Client $client
@@ -224,7 +228,8 @@ class Solr
             return array();
         }
 
-        if ($response->getNumFound() == 0) {
+        $this->numFound = $response->getNumFound();
+        if ($this->numFound == 0) {
             return array();
         }
 
@@ -235,6 +240,15 @@ class Solr
         }
 
         return $mappedEntities;
+    }
+
+    /**
+     * Number of results found by query
+     * @return integer
+     */
+    public function getNumFound()
+    {
+        return $this->numFound;
     }
 
     public function clearIndex()
