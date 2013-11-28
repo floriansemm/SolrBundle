@@ -210,7 +210,7 @@ class Solr
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
-        $query = $this->solrClient->createSelect();
+        $query = $this->solrClient->createSelect($query->getOptions());
         $query->setQuery($queryString);
 
         try {
