@@ -73,14 +73,6 @@ class Solr
     }
 
     /**
-     * @param EntityMapper $mapper
-     */
-    public function setMapper($mapper)
-    {
-        $this->entityMapper = $mapper;
-    }
-
-    /**
      * @return CommandFactory
      */
     public function getCommandFactory()
