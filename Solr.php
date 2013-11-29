@@ -23,18 +23,22 @@ class Solr
      * @var Client
      */
     private $solrClient = null;
+
     /**
      * @var EntityMapper
      */
     private $entityMapper = null;
+
     /**
      * @var CommandFactory
      */
     private $commandFactory = null;
+
     /**
      * @var EventManager
      */
     private $eventManager = null;
+
     /**
      * @var MetaInformationFactory
      */
