@@ -72,6 +72,9 @@ class Solr
         return $this->entityMapper;
     }
 
+    /**
+     * @param EntityMapper $mapper
+     */
     public function setMapper($mapper)
     {
         $this->entityMapper = $mapper;
