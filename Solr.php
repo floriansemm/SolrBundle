@@ -19,6 +19,7 @@ use Solarium\Client;
 class Solr
 {
 
+
     /**
      * @var Client
      */
