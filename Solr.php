@@ -68,6 +68,11 @@ class Solr
         return $this->entityMapper;
     }
 
+    public function setMapper($mapper)
+    {
+        $this->entityMapper = $mapper;
+    }
+
     /**
      * @return CommandFactory
      */
@@ -305,7 +310,7 @@ class Solr
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
-var_dump($e->getMessage());
+
             $this->eventManager->handle(EventManager::ERROR, $errorEvent);
         }
     }

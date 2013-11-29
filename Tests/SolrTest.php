@@ -274,9 +274,14 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
+    /**
+     * @group failed_test
+     */
     public function testAddEntity_ShouldIndexEntity()
     {
         $this->assertUpdateQueryExecuted();
+
+        $mapper = $this->createEntityMapperWithDocument();
 
         $this->eventManager->expects($this->once())
             ->method('handle')
@@ -290,6 +295,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
         $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr->setMapper($mapper);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -314,6 +320,18 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         } catch (\BadMethodCallException $e) {
             $this->assertTrue(true);
         }
+    }
+
+    private function createEntityMapperWithDocument()
+    {
+        $doc = $this->getMock('Solarium\QueryType\Update\Query\Document\Document', array(), array(), '', false);
+
+        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
+        $mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue($doc));
+
+        return $mapper;
     }
 }
 
