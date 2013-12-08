@@ -15,6 +15,7 @@ use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 use Solarium\Client;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Solr
 {
@@ -35,7 +36,7 @@ class Solr
     private $commandFactory = null;
 
     /**
-     * @var EventManager
+     * @var EventDispatcher
      */
     private $eventManager = null;
 
@@ -53,7 +54,7 @@ class Solr
     public function __construct(
         Client $client,
         CommandFactory $commandFactory,
-        EventManager $manager,
+        EventDispatcher $manager,
         MetaInformationFactory $metaInformationFactory
     ) {
         $this->solrClient = $client;
@@ -160,10 +161,10 @@ class Solr
                 $errorEvent = new ErrorEvent(null, null, 'delete-document');
                 $errorEvent->setException($e);
 
-                $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+                $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
             }
 
-            $this->eventManager->handle(EventManager::DELETE, new Event($this->solrClient, $metaInformations));
+            $this->eventManager->dispatch(EventManager::DELETE, new Event($this->solrClient, $metaInformations));
         }
     }
 
@@ -180,7 +181,7 @@ class Solr
 
         $doc = $this->toDocument($metaInformation);
 
-        $this->eventManager->handle(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
+        $this->eventManager->dispatch(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
 
         $this->addDocumentToIndex($doc);
     }
@@ -223,7 +224,7 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
 
-            $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
 
             return array();
         }
@@ -253,7 +254,7 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
             $errorEvent->setException($e);
 
-            $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
         }
     }
 
@@ -274,7 +275,7 @@ class Solr
 
         $doc = $this->toDocument($metaInformations);
 
-        $this->eventManager->handle(EventManager::UPDATE, new Event($this->solrClient, $metaInformations));
+        $this->eventManager->dispatch(EventManager::UPDATE, new Event($this->solrClient, $metaInformations));
 
         $this->addDocumentToIndex($doc);
 
@@ -310,7 +311,7 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
 
-            $this->eventManager->handle(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
         }
     }
 }
