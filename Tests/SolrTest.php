@@ -45,7 +45,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         );
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
         $this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
-        $this->eventDispatcher = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcher', array(), array(), '', false);
 
         $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
