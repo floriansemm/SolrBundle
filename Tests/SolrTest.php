@@ -156,9 +156,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(EventManager::INSERT);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch');
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
@@ -170,9 +169,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(EventManager::UPDATE);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch');
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
@@ -184,9 +182,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertDeleteQueryWasExecuted();
 
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(EventManager::DELETE);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch');
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
@@ -196,6 +193,9 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
     public function testClearIndex()
     {
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch');
+
         $this->assertDeleteQueryWasExecuted();
 
         $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
@@ -278,9 +278,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(EventManager::INSERT);
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch');
 
         $entity = new ValidTestEntityFiltered();
         $entity->shouldIndex = true;

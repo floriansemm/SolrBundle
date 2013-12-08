@@ -8,8 +8,8 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
-use FS\SolrBundle\Event\EventManager;
 use FS\SolrBundle\Event\Events;
+use FS\SolrBundle\Event\EventManager;
 use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
@@ -151,6 +151,8 @@ class Solr
             $deleteQuery = new FindByIdentifierQuery();
             $deleteQuery->setDocument($document);
 
+            $this->eventManager->dispatch(Events::PRE_DELETE, new Event($this->solrClient, $metaInformations));
+
             try {
                 $delete = $this->solrClient->createUpdate();
                 $delete->addDeleteQuery($deleteQuery->getQuery());
@@ -161,10 +163,10 @@ class Solr
                 $errorEvent = new ErrorEvent(null, null, 'delete-document');
                 $errorEvent->setException($e);
 
-                $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
+                $this->eventManager->dispatch(Events::ERROR, $errorEvent);
             }
 
-            $this->eventManager->dispatch(EventManager::DELETE, new Event($this->solrClient, $metaInformations));
+            $this->eventManager->dispatch(Events::POST_DELETE, new Event($this->solrClient, $metaInformations));
         }
     }
 
@@ -181,9 +183,11 @@ class Solr
 
         $doc = $this->toDocument($metaInformation);
 
-        $this->eventManager->dispatch(EventManager::INSERT, new Event($this->solrClient, $metaInformation));
+        $this->eventManager->dispatch(Events::PRE_INSERT, new Event($this->solrClient, $metaInformation));
 
         $this->addDocumentToIndex($doc);
+
+        $this->eventManager->dispatch(Events::POST_INSERT, new Event($this->solrClient, $metaInformation));
     }
 
     /**
@@ -224,7 +228,7 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
 
-            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
             return array();
         }
@@ -244,6 +248,8 @@ class Solr
 
     public function clearIndex()
     {
+        $this->eventManager->dispatch(Events::PRE_CLEAR_INDEX, new Event($this->solrClient));
+
         try {
             $delete = $this->solrClient->createUpdate();
             $delete->addDeleteQuery('*:*');
@@ -254,8 +260,10 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
             $errorEvent->setException($e);
 
-            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(Events::ERROR, $errorEvent);
         }
+
+        $this->eventManager->dispatch(Events::POST_CLEAR_INDEX, new Event($this->solrClient));
     }
 
     /**
@@ -275,9 +283,11 @@ class Solr
 
         $doc = $this->toDocument($metaInformations);
 
-        $this->eventManager->dispatch(EventManager::UPDATE, new Event($this->solrClient, $metaInformations));
+        $this->eventManager->dispatch(Events::PRE_UPDATE, new Event($this->solrClient, $metaInformations));
 
         $this->addDocumentToIndex($doc);
+
+        $this->eventManager->dispatch(Events::POST_UPDATE, new Event($this->solrClient, $metaInformations));
 
         return true;
     }
@@ -311,7 +321,7 @@ class Solr
             $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
 
-            $this->eventManager->dispatch(EventManager::ERROR, $errorEvent);
+            $this->eventManager->dispatch(Events::ERROR, $errorEvent);
         }
     }
 }

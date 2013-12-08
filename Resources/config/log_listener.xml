@@ -9,24 +9,34 @@
         <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
         <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
         <parameter key="solr.log_listener.error.class">FS\SolrBundle\Event\Listener\ErrorLogListener</parameter>	
+        <parameter key="solr.log_listener.clearindex.class">FS\SolrBundle\Event\Listener\ClearIndexLogListener</parameter>
 	</parameters>
 
 	<services>
     	<service id="solr.log_listener.insert" class="%solr.log_listener.insert.class%">
     		<argument type="service" id="logger" />
 
-            <tag name="kernel.event_listener" event="insert" method="onSolrInsert" />
+            <tag name="kernel.event_listener" event="pre_insert" method="onSolrInsert" />
+            <tag name="kernel.event_listener" event="post_insert" method="onSolrInsert" />
     	</service>
     	
     	<service id="solr.log_listener.update" class="%solr.log_listener.update.class%">
     		<argument type="service" id="logger" />
-            <tag name="kernel.event_listener" event="update" method="onSolrUpdate" />
-    	</service>    	
+            <tag name="kernel.event_listener" event="pre_update" method="onSolrUpdate" />
+            <tag name="kernel.event_listener" event="post_update" method="onSolrUpdate" />
+    	</service>
 
     	<service id="solr.log_listener.delete" class="%solr.log_listener.delete.class%">
     		<argument type="service" id="logger" />
-            <tag name="kernel.event_listener" event="delete" method="onSolrDelete" />
+            <tag name="kernel.event_listener" event="pre_delete" method="onSolrDelete" />
+            <tag name="kernel.event_listener" event="post_delete" method="onSolrDelete" />
     	</service>
+
+        <service id="solr.log_listener.clearindex" class="%solr.log_listener.clearindex.class%">
+            <argument type="service" id="logger" />
+            <tag name="kernel.event_listener" event="pre_clear_index" method="onClearIndex" />
+            <tag name="kernel.event_listener" event="post_clear_index" method="onClearIndex" />
+        </service>
     	
 		<service id="solr.log_listener.error" class="%solr.log_listener.error.class%">
     		<argument type="service" id="logger" />
