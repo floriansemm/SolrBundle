@@ -30,7 +30,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     private $metaFactory = null;
     private $config = null;
     private $commandFactory = null;
-    private $eventManager = null;
+    private $eventDispatcher = null;
 
     private $solrClientFake = null;
 
@@ -45,7 +45,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         );
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
         $this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
-        $this->eventManager = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
+        $this->eventDispatcher = $this->getMock('FS\SolrBundle\Event\EventManager', array(), array(), '', false);
 
         $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
@@ -115,7 +115,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 
         $this->assertTrue($query instanceof SolrQuery);
@@ -131,7 +131,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $actual = $solr->getRepository('Tests:EntityWithRepository');
 
         $this->assertTrue($actual instanceof ValidEntityRepository);
@@ -148,7 +148,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->getRepository('Tests:EntityWithInvalidRepository');
     }
 
@@ -156,13 +156,13 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventManager->expects($this->once())
-            ->method('handle')
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
             ->with(EventManager::INSERT);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->addDocument(new ValidTestEntity());
     }
 
@@ -170,13 +170,13 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventManager->expects($this->once())
-            ->method('handle')
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
             ->with(EventManager::UPDATE);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->updateDocument(new ValidTestEntity());
     }
 
@@ -184,13 +184,13 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertDeleteQueryWasExecuted();
 
-        $this->eventManager->expects($this->once())
-            ->method('handle')
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
             ->with(EventManager::DELETE);
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->removeDocument(new ValidTestEntity());
     }
 
@@ -198,7 +198,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertDeleteQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->clearIndex();
     }
 
@@ -226,7 +226,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
@@ -243,7 +243,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->assertQueryWasExecuted(array($arrayObj));
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
@@ -259,8 +259,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryWasNotExecuted();
 
-        $this->eventManager->expects($this->never())
-            ->method('handle');
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $entity = new ValidTestEntityFiltered();
 
@@ -268,7 +268,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -278,8 +278,8 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryExecuted();
 
-        $this->eventManager->expects($this->once())
-            ->method('handle')
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
             ->with(EventManager::INSERT);
 
         $entity = new ValidTestEntityFiltered();
@@ -289,7 +289,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -299,14 +299,14 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertUpdateQueryWasNotExecuted();
 
-        $this->eventManager->expects($this->never())
-            ->method('handle');
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $information = MetaTestInformationFactory::getMetaInformation();
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventManager, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
         try {
             $solr->addDocument(new InvalidTestEntityFiltered());
 
