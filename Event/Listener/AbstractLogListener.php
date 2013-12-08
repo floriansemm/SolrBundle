@@ -5,7 +5,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Event\EventListenerInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
-abstract class AbstractLogListener implements EventListenerInterface
+abstract class AbstractLogListener
 {
 
     /**

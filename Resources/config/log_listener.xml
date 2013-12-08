@@ -15,22 +15,22 @@
     	<service id="solr.log_listener.insert" class="%solr.log_listener.insert.class%" public="false">
     		<argument type="service" id="logger" />
 
-            <tag name="kernel.event_listener" event="insert" method="onKernelController" />
+            <tag name="kernel.event_listener" event="insert" method="onSolrInsert" />
     	</service>
     	
     	<service id="solr.log_listener.update" class="%solr.log_listener.update.class%" public="false">
     		<argument type="service" id="logger" />
-            <tag name="kernel.event_listener" event="update" method="onKernelController" />
+            <tag name="kernel.event_listener" event="update" method="onSolrUpdate" />
     	</service>    	
 
     	<service id="solr.log_listener.delete" class="%solr.log_listener.delete.class%" public="false">
     		<argument type="service" id="logger" />
-            <tag name="kernel.event_listener" event="delete" method="onKernelController" />
+            <tag name="kernel.event_listener" event="delete" method="onSolrDelete" />
     	</service>
     	
 		<service id="solr.log_listener.error" class="%solr.log_listener.error.class%" public="false">
     		<argument type="service" id="logger" />
-            <tag name="kernel.event_listener" event="error" method="onKernelController" />
+            <tag name="kernel.event_listener" event="error" method="onSolrError" />
     	</service> 	
 	
 	</services>

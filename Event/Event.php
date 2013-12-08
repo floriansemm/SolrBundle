@@ -1,9 +1,10 @@
 <?php
 namespace FS\SolrBundle\Event;
 
+use Symfony\Component\EventDispatcher\Event as BaseEvent;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
-class Event
+class Event extends BaseEvent
 {
 
     /**
