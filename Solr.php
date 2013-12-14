@@ -20,6 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class Solr
 {
 
+
     /**
      * @var Client
      */
