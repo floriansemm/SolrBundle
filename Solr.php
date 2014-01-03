@@ -15,7 +15,7 @@ use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 use Solarium\Client;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Solr
 {
@@ -54,7 +54,7 @@ class Solr
     public function __construct(
         Client $client,
         CommandFactory $commandFactory,
-        EventDispatcher $manager,
+        EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory
     ) {
         $this->solrClient = $client;
