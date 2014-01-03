@@ -22,6 +22,11 @@ class SolrQuery extends AbstractQuery
     private $useAndOperator = false;
 
     /**
+     * @var bool
+     */
+    private $useWildcards = true;
+
+    /**
      *
      * @var Solr
      */
@@ -73,6 +78,14 @@ class SolrQuery extends AbstractQuery
     public function setUseAndOperator($strict)
     {
         $this->useAndOperator = $strict;
+    }
+
+    /**
+     * @param bool $strict
+     */
+    public function setUseWildcard($strict)
+    {
+        $this->useWildcards = $strict;
     }
 
     /**
@@ -145,7 +158,13 @@ class SolrQuery extends AbstractQuery
 
         $termCount = 1;
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
-            $term .= $fieldName . ':*' . $fieldValue . '*';
+
+            if ($this->useWildcards) {
+                $term .= $fieldName . ':*' . $fieldValue . '*';
+            } else {
+                $term .= $fieldName . ':' . $fieldValue;
+            }
+
             if ($termCount < count($this->searchTerms)) {
                 $term .= ' ' . $logicOperator . ' ';
             }
