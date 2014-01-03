@@ -10,7 +10,7 @@ class UpdateLogListener extends AbstractLogListener
      * (non-PHPdoc)
      * @see \FS\SolrBundle\Event\EventListenerInterface::notify()
      */
-    public function notify(Event $event)
+    public function onSolrUpdate(Event $event)
     {
         $metaInformation = $event->getMetaInformation();
 

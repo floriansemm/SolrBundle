@@ -10,7 +10,7 @@ class DeleteLogListener extends AbstractLogListener
      * (non-PHPdoc)
      * @see \FS\SolrBundle\Event\EventListenerInterface::notify()
      */
-    public function notify(Event $event)
+    public function onSolrDelete(Event $event)
     {
         $metaInformation = $event->getMetaInformation();
 

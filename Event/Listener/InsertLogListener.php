@@ -10,7 +10,7 @@ class InsertLogListener extends AbstractLogListener
      * (non-PHPdoc)
      * @see \FS\SolrBundle\Event\EventListenerInterface::notify()
      */
-    public function notify(Event $event)
+    public function onSolrInsert(Event $event)
     {
         $metaInformation = $event->getMetaInformation();
 

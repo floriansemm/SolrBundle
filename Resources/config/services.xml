@@ -16,14 +16,13 @@
         
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
-        <parameter key="solr.event_manager.class">FS\SolrBundle\Event\EventManager</parameter>
     </parameters>
 
     <services>
 		<service id="solr.client" class="%solr.class%" abstract="true">
 			<argument type="service" id="solr.client" />
 			<argument type="service" id="solr.mapping.factory" />
-			<argument type="service" id="solr.event_manager" />
+			<argument type="service" id="event_dispatcher" />
 			<argument type="service" id="solr.meta.information.factory" />
 		</service>
 
@@ -46,8 +45,6 @@
     	<service id="solr.mapping.identifier" class="%solr.mapping.identifier.class%" public="false">
     		<tag name="solr.document.command" command="identifier" />
     	</service>    	
-    	
-    	<service id="solr.event_manager" class="%solr.event_manager.class%" public="false" />
     	
     </services>
 </container>

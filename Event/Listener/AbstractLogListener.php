@@ -3,9 +3,9 @@ namespace FS\SolrBundle\Event\Listener;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Event\EventListenerInterface;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 
-abstract class AbstractLogListener implements EventListenerInterface
+abstract class AbstractLogListener
 {
 
     /**

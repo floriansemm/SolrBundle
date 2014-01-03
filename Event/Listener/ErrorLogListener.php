@@ -7,10 +7,7 @@ use FS\SolrBundle\Event\Event;
 class ErrorLogListener extends AbstractLogListener
 {
 
-    /** (non-PHPdoc)
-     * @see \FS\SolrBundle\Event\EventListenerInterface::notify()
-     */
-    public function notify(Event $event)
+    public function onSolrError(Event $event)
     {
 
         $exceptionMessage = '';
