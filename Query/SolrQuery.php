@@ -81,11 +81,11 @@ class SolrQuery extends AbstractQuery
     }
 
     /**
-     * @param bool $strict
+     * @param bool $boolean
      */
-    public function setUseWildcard($strict)
+    public function setUseWildcard($boolean)
     {
-        $this->useWildcards = $strict;
+        $this->useWildcards = $boolean;
     }
 
     /**
