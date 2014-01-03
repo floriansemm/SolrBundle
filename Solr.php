@@ -15,7 +15,7 @@ use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 use Solarium\Client;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Solr
 {
@@ -45,6 +45,10 @@ class Solr
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
+    /**
+     * @var int numFound
+     */
+    private $numFound = 0;
 
     /**
      * @param Client $client
@@ -55,7 +59,7 @@ class Solr
     public function __construct(
         Client $client,
         CommandFactory $commandFactory,
-        EventDispatcher $manager,
+        EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory
     ) {
         $this->solrClient = $client;
@@ -220,7 +224,7 @@ class Solr
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
-        $query = $this->solrClient->createSelect();
+        $query = $this->solrClient->createSelect($query->getOptions());
         $query->setQuery($queryString);
 
         try {
@@ -234,7 +238,8 @@ class Solr
             return array();
         }
 
-        if ($response->getNumFound() == 0) {
+        $this->numFound = $response->getNumFound();
+        if ($this->numFound == 0) {
             return array();
         }
 
@@ -245,6 +250,15 @@ class Solr
         }
 
         return $mappedEntities;
+    }
+
+    /**
+     * Number of results found by query
+     * @return integer
+     */
+    public function getNumFound()
+    {
+        return $this->numFound;
     }
 
     public function clearIndex()
