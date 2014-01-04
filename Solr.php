@@ -45,6 +45,10 @@ class Solr
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
+    /**
+     * @var int numFound
+     */
+    private $numFound = 0;
 
     /**
      * @param Client $client
@@ -220,7 +224,7 @@ class Solr
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
-        $query = $this->solrClient->createSelect();
+        $query = $this->solrClient->createSelect($query->getOptions());
         $query->setQuery($queryString);
 
         try {
@@ -234,7 +238,8 @@ class Solr
             return array();
         }
 
-        if ($response->getNumFound() == 0) {
+        $this->numFound = $response->getNumFound();
+        if ($this->numFound == 0) {
             return array();
         }
 
@@ -245,6 +250,15 @@ class Solr
         }
 
         return $mappedEntities;
+    }
+
+    /**
+     * Number of results found by query
+     * @return integer
+     */
+    public function getNumFound()
+    {
+        return $this->numFound;
     }
 
     public function clearIndex()
