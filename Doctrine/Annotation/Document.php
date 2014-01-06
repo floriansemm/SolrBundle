@@ -20,6 +20,8 @@ class Document extends Annotation
         if (!is_numeric($this->boost)) {
             throw new \InvalidArgumentException(sprintf('Invalid boost value %s', $this->boost));
         }
-        return floatval($this->boost);
+        
+        $float = floatval($this->boost);
+        return $float ?: null;
     }
 }
