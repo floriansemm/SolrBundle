@@ -32,7 +32,10 @@ class Field extends Annotation
         'text' => '_t',
         'date' => '_dt',
         'boolean' => '_b',
-        'integer' => '_i'
+        'integer' => '_i',
+        'long' => '_l',
+        'float' => '_f',
+        'double' => '_d',
     );
 
     /**
