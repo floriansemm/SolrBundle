@@ -17,6 +17,11 @@ class FeatureContext extends BehatContext
     private $eventDispatcher;
 
     /**
+     * @var \Solarium\Client
+     */
+    private $solrClient;
+
+    /**
      * Initializes context.
      * Every scenario gets it's own context object.
      *
@@ -24,7 +29,7 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        $this->useContext('save', new SaveEntityFeatureContext());
+        $this->useContext('crud', new CrudFeatureContext());
 
         $this->eventDispatcher = new \FS\SolrBundle\Tests\Integration\EventDispatcherFake();
     }
@@ -38,6 +43,14 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @return \Solarium\Client
+     */
+    public function getSolrClient()
+    {
+        return $this->solrClient;
+    }
+
+    /**
      * @return \FS\SolrBundle\Solr
      */
     public function getSolrInstance()
@@ -45,12 +58,12 @@ class FeatureContext extends BehatContext
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
         \Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
 
-        $solrClient = $this->setupSolrClient();
+        $this->solrClient = $this->setupSolrClient();
         $factory = $this->setupCommandFactory();
         $metaFactory = $this->setupMetaInformationFactory();
 
         $solr = new \FS\SolrBundle\Solr(
-            $solrClient,
+            $this->solrClient,
             $factory,
             $this->eventDispatcher,
             $metaFactory
