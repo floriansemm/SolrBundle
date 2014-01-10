@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Florian
- * Date: 10.01.14
- * Time: 07:55
- */
 
 namespace FS\SolrBundle\Tests\Integration;
 
@@ -15,6 +9,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EventDispatcherFake implements EventDispatcherInterface
 {
+
+    /**
+     * @var ErrorEvent[]
+     */
+    private $errorEvents = array();
+
+    /**
+     * @var \FS\SolrBundle\Event\Event[]
+     */
+    private $events = array();
+
     /**
      * Dispatches an event to all registered listeners.
      *
@@ -31,11 +36,43 @@ class EventDispatcherFake implements EventDispatcherInterface
     public function dispatch($eventName, Event $event = null)
     {
         if ($event instanceof ErrorEvent) {
-            var_dump($event->getExceptionMessage());
+            $this->errorEvents[$eventName] = $event;
+
+            return;
         }
 
+        $this->events[$eventName] = $event;
 
-        // TODO: Implement dispatch() method.
+        return;
+    }
+
+    /**
+     * @return bool
+     */
+    public function errorsOccurred()
+    {
+        if (count($this->errorEvents) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $eventName
+     * @return bool
+     */
+    public function eventOccurred($eventName)
+    {
+        if (isset($this->errorEvents[$eventName])) {
+            return true;
+        }
+
+        if (isset($this->events[$eventName])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
