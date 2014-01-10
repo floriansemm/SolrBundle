@@ -8,8 +8,10 @@ before_script:
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
+    - wget https://github.com/downloads/Behat/Behat/behat.phar
+
 script:
-    - bin/behat
+    - php behat.phar
 notifications:
   email:
     - fsemm.travis-ci@gmx.de    
