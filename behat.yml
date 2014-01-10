@@ -1,0 +1,4 @@
+default:
+    paths:
+        features: Tests/Integration/Features
+        bootstrap: Tests/Integration/Bootstrap
