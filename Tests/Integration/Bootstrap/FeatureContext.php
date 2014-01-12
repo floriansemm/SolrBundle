@@ -115,7 +115,7 @@ class FeatureContext extends BehatContext
     {
         $config = array(
             'default' => array(
-                'host' => '192.168.178.24',
+                'host' => 'localhost',
                 'port' => 8983,
                 'path' => '/solr/',
             )
