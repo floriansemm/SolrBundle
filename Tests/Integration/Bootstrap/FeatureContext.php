@@ -3,8 +3,6 @@
 use Behat\Behat\Context\BehatContext;
 
 
-require_once '../../../../autoload.php';
-
 /**
  * Features context.
  */
@@ -29,6 +27,13 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
+        $autoload =  __DIR__ . '/../vendor/autoload.php';
+        if (file_exists($autoload)) {
+            require_once $autoload;
+        } else {
+            require_once 'vendor/autoload.php';
+        }
+
         $this->useContext('crud', new CrudFeatureContext());
 
         $this->eventDispatcher = new \FS\SolrBundle\Tests\Integration\EventDispatcherFake();
