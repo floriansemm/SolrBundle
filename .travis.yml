@@ -9,7 +9,7 @@ before_script:
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
     - wget https://github.com/downloads/Behat/Behat/behat.phar
-    - wget http://apache.lauf-forum.at/lucene/solr/4.6.0/solr-4.6.0.tgz; tar xfv solr-4.6.0.tgz; cd solr-4.6.0/example; java -jar start.jar > /dev/null 2>&1 &;
+    - wget http://apache.lauf-forum.at/lucene/solr/4.6.0/solr-4.6.0.tgz; tar xfv solr-4.6.0.tgz; cd solr-4.6.0/example; java -jar start.jar > /dev/null 2>&1 &
 
 script:
     - php behat.phar
