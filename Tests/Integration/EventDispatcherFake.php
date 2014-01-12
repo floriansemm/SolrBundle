@@ -58,6 +58,16 @@ class EventDispatcherFake implements EventDispatcherInterface
         return false;
     }
 
+    public function getOccurredErrors()
+    {
+        $errors = '';
+        foreach ($this->errorEvents as $error) {
+            $errors .= $error->getExceptionMessage() . PHP_EOL;
+        }
+
+        return $errors;
+    }
+
     /**
      * @param string $eventName
      * @return bool

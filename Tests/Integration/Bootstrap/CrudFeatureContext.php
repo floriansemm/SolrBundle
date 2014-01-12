@@ -43,7 +43,7 @@ class CrudFeatureContext extends BehatContext
         $eventDispatcher = $this->getMainContext()->getEventDispatcher();
 
         if ($eventDispatcher->errorsOccurred()) {
-            throw new RuntimeException(sprintf('error occurred while indexing'));
+            throw new RuntimeException(sprintf('error occurred while indexing: %s', $eventDispatcher->getOccurredErrors()));
         }
 
         $this->getMainContext()->assertInsertSuccessful();
