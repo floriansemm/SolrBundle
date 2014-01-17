@@ -1,3 +1,10 @@
+---
+layout: page
+title: SolrBundle
+tagline: symfony2 doctrine2 solr
+---
+{% include JB/setup %}
+
 [![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle)
 
 This Bundle provides a simple API to index and query a Solr Index. 
@@ -233,4 +240,3 @@ There are comming two commands with this bundle:
 
 * `solr:index:clear` - delete all documents in the index
 * `solr:synchronize` - synchronize the db with the index
-
