@@ -39,16 +39,22 @@ class ConsoleCommandResults
         return count($this->errors) > 0;
     }
 
+    /**
+     * filtering of succeed result required:
+     *
+     * error-event will trigger after exception. the normal program-flow continues WITH post_update/insert events
+     *
+     * @return int
+     */
     public function getSucceed()
     {
-        $succeed = 0;
         foreach ($this->success as $resultId => $result) {
-            if (!isset($this->errors[$resultId])) {
-                $succeed++;
+            if (isset($this->errors[$resultId])) {
+                unset($this->success[$resultId]);
             }
         }
 
-        return $succeed;
+        return count($this->success);
     }
 
     public function getErrored()
