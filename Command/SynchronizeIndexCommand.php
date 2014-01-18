@@ -33,7 +33,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         try {
             $repository = $objectManager->getRepository($entity);
         } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>No repository found for "%s", check our input</error>', $entity));
+            $output->writeln(sprintf('<error>No repository found for "%s", check your input</error>', $entity));
 
             return;
         }
