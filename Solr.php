@@ -165,7 +165,7 @@ class Solr
 
                 $this->solrClient->update($delete);
             } catch (\Exception $e) {
-                $errorEvent = new ErrorEvent(null, null, 'delete-document');
+                $errorEvent = new ErrorEvent(null, $metaInformations, 'delete-document');
                 $errorEvent->setException($e);
 
                 $this->eventManager->dispatch(Events::ERROR, $errorEvent);
@@ -190,7 +190,7 @@ class Solr
 
         $this->eventManager->dispatch(Events::PRE_INSERT, new Event($this->solrClient, $metaInformation));
 
-        $this->addDocumentToIndex($doc);
+        $this->addDocumentToIndex($doc, $metaInformation);
 
         $this->eventManager->dispatch(Events::POST_INSERT, new Event($this->solrClient, $metaInformation));
     }
@@ -300,7 +300,7 @@ class Solr
 
         $this->eventManager->dispatch(Events::PRE_UPDATE, new Event($this->solrClient, $metaInformations));
 
-        $this->addDocumentToIndex($doc);
+        $this->addDocumentToIndex($doc, $metaInformations);
 
         $this->eventManager->dispatch(Events::POST_UPDATE, new Event($this->solrClient, $metaInformations));
 
@@ -323,8 +323,9 @@ class Solr
 
     /**
      * @param Document $doc
+     * @param MetaInformation $metaInformation
      */
-    private function addDocumentToIndex($doc)
+    private function addDocumentToIndex($doc, MetaInformation $metaInformation)
     {
         try {
             $update = $this->solrClient->createUpdate();
@@ -333,7 +334,7 @@ class Solr
 
             $this->solrClient->update($update);
         } catch (\Exception $e) {
-            $errorEvent = new ErrorEvent(null, null, json_encode($this->solrClient->getOptions()));
+            $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
