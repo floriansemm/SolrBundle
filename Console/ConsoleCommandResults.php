@@ -18,12 +18,12 @@ class ConsoleCommandResults
 
     public function success(CommandResult $result)
     {
-        $this->success[] = $result;
+        $this->success[$result->getResultId()] = $result;
     }
 
     public function error(CommandResult $result)
     {
-        $this->errors[] = $result;
+        $this->errors[$result->getResultId()] = $result;
     }
 
     /**
@@ -41,7 +41,14 @@ class ConsoleCommandResults
 
     public function getSucceed()
     {
-        return count($this->success);
+        $succeed = 0;
+        foreach ($this->success as $resultId => $result) {
+            if (!isset($this->errors[$resultId])) {
+                $succeed++;
+            }
+        }
+
+        return $succeed;
     }
 
     public function getErrored()
