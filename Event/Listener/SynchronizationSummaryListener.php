@@ -20,6 +20,7 @@ class SynchronizationSummaryListener
     {
         if ($event instanceof ErrorEvent) {
             $this->commandResult->error(new CommandResult(
+                $event->getMetaInformation()->getEntity()->getId(),
                 $event->getMetaInformation()->getClassName(),
                 $event->getExceptionMessage()
             ));
@@ -29,6 +30,7 @@ class SynchronizationSummaryListener
     public function onSolrSuccess(Event $event)
     {
         $this->commandResult->success(new CommandResult(
+            $event->getMetaInformation()->getEntity()->getId(),
             $event->getMetaInformation()->getClassName()
         ));
     }
