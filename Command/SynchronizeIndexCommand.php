@@ -53,11 +53,9 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                 $solr->synchronizeIndex($entity);
 
             } catch (\Exception $e) {}
-
-            break;
         }
-        $results = $this->getContainer()->get('solr.console.command.results');
 
+        $results = $this->getContainer()->get('solr.console.command.results');
         if ($results->hasErrors()) {
             $output->writeln('<info>Synchronization finished with errors!</info>');
         } else {
