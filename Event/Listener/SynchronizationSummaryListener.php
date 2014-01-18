@@ -19,7 +19,6 @@ class SynchronizationSummaryListener
     public function onSolrError(Event $event)
     {
         if ($event instanceof ErrorEvent) {
-
             $this->commandResult->error(new CommandResult(
                 $event->getMetaInformation()->getClassName(),
                 $event->getExceptionMessage()

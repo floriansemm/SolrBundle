@@ -48,25 +48,24 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
         $solr = $this->getContainer()->get('solr.client.default');
 
-        $synchronicedEntities = 0;
-        $notSynchronicedEntities = 0;
         foreach ($entities as $entity) {
             try {
                 $solr->synchronizeIndex($entity);
 
-                $synchronicedEntities++;
-            } catch (\Exception $e) {
-                $notSynchronicedEntities++;
-            }
+            } catch (\Exception $e) {}
 
             break;
         }
-        $output->writeln('<info>Synchronization successful</info>');
+        $results = $this->getContainer()->get('solr.console.command.results');
 
-        var_dump($this->getContainer()->get('solr.console.command.result')->getErrors());
+        if ($results->hasErrors()) {
+            $output->writeln('<info>Synchronization finished with errors!</info>');
+        } else {
+            $output->writeln('<info>Synchronization successful</info>');
+        }
 
-        $output->writeln(sprintf('<comment>Synchronized Documents: %s</comment>', $synchronicedEntities));
-        $output->writeln(sprintf('<comment>Not Synchronized Documents: %s</comment>', $notSynchronicedEntities));
+        $output->writeln(sprintf('<comment>Synchronized Documents: %s</comment>', $results->getSucceed()));
+        $output->writeln(sprintf('<comment>Not Synchronized Documents: %s</comment>', $results->getErrored()));
 
     }
 
