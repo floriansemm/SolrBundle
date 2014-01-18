@@ -16,6 +16,9 @@
         
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
+
+        <parameter key="solr.console.command.result.class">FS\SolrBundle\Console\ConsoleCommandResults</parameter>
+        <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
     </parameters>
 
     <services>
@@ -44,7 +47,17 @@
     	
     	<service id="solr.mapping.identifier" class="%solr.mapping.identifier.class%" public="false">
     		<tag name="solr.document.command" command="identifier" />
-    	</service>    	
-    	
+    	</service>
+
+        <service id="solr.console.command.result" class="%solr.console.command.result.class%">
+        </service>
+
+        <service id="solr.synchronize.error.listener" class="%solr.synchronize.error.listener.class%">
+            <argument type="service" id="solr.console.command.result" />
+            <tag name="kernel.event_listener" event="error" method="onSolrError" />
+            <tag name="kernel.event_listener" event="post_insert" method="onSolrSuccess" />
+            <tag name="kernel.event_listener" event="post_update" method="onSolrSuccess" />
+        </service>
+
     </services>
 </container>

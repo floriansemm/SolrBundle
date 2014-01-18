@@ -41,7 +41,7 @@
 		<service id="solr.log_listener.error" class="%solr.log_listener.error.class%">
     		<argument type="service" id="logger" />
             <tag name="kernel.event_listener" event="error" method="onSolrError" />
-    	</service> 	
+    	</service>
 	
 	</services>
 </container>
