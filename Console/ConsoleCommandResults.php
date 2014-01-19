@@ -39,6 +39,11 @@ class ConsoleCommandResults
         return count($this->errors) > 0;
     }
 
+    public function getOverall()
+    {
+        return $this->getErrored() + $this->getSucceed();
+    }
+
     /**
      * filtering of succeed result required:
      *

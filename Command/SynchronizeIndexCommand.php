@@ -51,7 +51,6 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         foreach ($entities as $entity) {
             try {
                 $solr->synchronizeIndex($entity);
-
             } catch (\Exception $e) {}
         }
 
@@ -62,9 +61,26 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             $output->writeln('<info>Synchronization successful</info>');
         }
 
+        $output->writeln('');
         $output->writeln(sprintf('<comment>Synchronized Documents: %s</comment>', $results->getSucceed()));
         $output->writeln(sprintf('<comment>Not Synchronized Documents: %s</comment>', $results->getErrored()));
+        $output->writeln('');
 
+        $output->writeln(sprintf('<comment>Overall: %s</comment>', $results->getOverall()));
+        if ($results->hasErrors()) {
+            $output->writeln('');
+            $output->writeln('<info>Errors:</info>');
+            $rows = array();
+            foreach ($results->getErrors() as $error) {
+                $rows[] = array($error->getEntity(), $error->getResultId(), $error->getMessage());
+            }
+
+            $table = $this->getHelperSet()->get('table');
+            $table->setHeaders(array('Entity', 'ID', 'Error'))
+                ->setRows($rows);
+
+            $table->render($output);
+        }
     }
 
     /**
