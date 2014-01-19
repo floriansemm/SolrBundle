@@ -39,14 +39,13 @@ class ConsoleErrorListOutput
         $this->output->writeln('');
         $this->output->writeln('<info>Errors:</info>');
         $rows = array();
-        foreach ($this->results->getErrors() as $error) {
+        foreach ($this->errors as $error) {
             $rows[] = array($error->getEntity(), $error->getResultId(), $error->getMessage());
         }
 
-        $table = $this->tableHelperSet->get('table');
-        $table->setHeaders(array('Entity', 'ID', 'Error'))
+        $this->tableHelperSet->setHeaders(array('Entity', 'ID', 'Error'))
             ->setRows($rows);
 
-        $table->render($this->output);
+        $this->tableHelperSet->render($this->output);
     }
 } 

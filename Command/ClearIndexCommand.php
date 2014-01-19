@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Command;
 
+use FS\SolrBundle\Console\ConsoleErrorListOutput;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,10 +23,22 @@ class ClearIndexCommand extends ContainerAwareCommand
 
         try {
             $solr->clearIndex();
-
-            $output->writeln('<info>Index successful cleared</info>');
         } catch (\Exception $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
+        }
+
+        $results = $this->getContainer()->get('solr.console.command.results');
+        if ($results->hasErrors()) {
+            $output->writeln('<info>Clear index finished with errors!</info>');
+        } else {
+            $output->writeln('<info>Index successful cleared successful</info>');
+        }
+
+        $output->writeln('');
+        $output->writeln(sprintf('<comment>Overall: %s</comment>', $results->getOverall()));
+
+        if ($results->hasErrors()) {
+            $errorList = new ConsoleErrorListOutput($output, $this->getHelper('table'), $results->getErrors());
+            $errorList->render();
         }
     }
 }
