@@ -9,12 +9,12 @@ class ConsoleCommandResults
     /**
      * @var CommandResult[]
      */
-    private $errors;
+    private $errors = array();
 
     /**
      * @var CommandResult[]
      */
-    private $success;
+    private $success = array();
 
     public function success(CommandResult $result)
     {
