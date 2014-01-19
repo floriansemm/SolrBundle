@@ -5,10 +5,26 @@ namespace FS\SolrBundle\Console;
 
 class CommandResult
 {
+    /**
+     * @var int
+     */
     private $resultId;
+
+    /**
+     * @var string
+     */
     private $message;
+
+    /**
+     * @var string
+     */
     private $entity;
 
+    /**
+     * @param int $resultId
+     * @param string $entity
+     * @param string string $message
+     */
     public function __construct($resultId, $entity, $message = '')
     {
         $this->resultId = $resultId;
@@ -39,6 +55,4 @@ class CommandResult
     {
         return $this->message;
     }
-
-
-} 
+}

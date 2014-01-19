@@ -16,11 +16,17 @@ class ConsoleCommandResults
      */
     private $success = array();
 
+    /**
+     * @param CommandResult $result
+     */
     public function success(CommandResult $result)
     {
         $this->success[$result->getResultId()] = $result;
     }
 
+    /**
+     * @param CommandResult $result
+     */
     public function error(CommandResult $result)
     {
         $this->errors[$result->getResultId()] = $result;
@@ -34,11 +40,17 @@ class ConsoleCommandResults
         return $this->errors;
     }
 
+    /**
+     * @return bool
+     */
     public function hasErrors()
     {
         return count($this->errors) > 0;
     }
 
+    /**
+     * @return int
+     */
     public function getOverall()
     {
         return $this->getErrored() + $this->getSucceed();
@@ -62,6 +74,9 @@ class ConsoleCommandResults
         return count($this->success);
     }
 
+    /**
+     * @return int
+     */
     public function getErrored()
     {
         return count($this->errors);
