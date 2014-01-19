@@ -33,12 +33,11 @@ class ClearIndexCommand extends ContainerAwareCommand
             $output->writeln('<info>Index successful cleared successful</info>');
         }
 
-        $output->writeln('');
-        $output->writeln(sprintf('<comment>Overall: %s</comment>', $results->getOverall()));
-
         if ($results->hasErrors()) {
-            $errorList = new ConsoleErrorListOutput($output, $this->getHelper('table'), $results->getErrors());
-            $errorList->render();
+            $output->writeln('');
+            $error = array_shift($results->getErrors());
+
+            $output->writeln(sprintf('<comment>Error: %s</comment>', $error->getMessage()));
         }
     }
 }
