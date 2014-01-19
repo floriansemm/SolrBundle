@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Command;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use FS\SolrBundle\Console\ConsoleErrorListOutput;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -68,18 +69,8 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
         $output->writeln(sprintf('<comment>Overall: %s</comment>', $results->getOverall()));
         if ($results->hasErrors()) {
-            $output->writeln('');
-            $output->writeln('<info>Errors:</info>');
-            $rows = array();
-            foreach ($results->getErrors() as $error) {
-                $rows[] = array($error->getEntity(), $error->getResultId(), $error->getMessage());
-            }
-
-            $table = $this->getHelperSet()->get('table');
-            $table->setHeaders(array('Entity', 'ID', 'Error'))
-                ->setRows($rows);
-
-            $table->render($output);
+            $errorList = new ConsoleErrorListOutput($output, $this->getHelper('table'), $results->getErrors());
+            $errorList->render();
         }
     }
 
