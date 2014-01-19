@@ -33,11 +33,19 @@ class ConsoleCommandResults
     }
 
     /**
-     * @return mixed
+     * @return CommandResult[]
      */
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @return CommandResult[]
+     */
+    public function getSuccess()
+    {
+        return $this->success;
     }
 
     /**
