@@ -90,8 +90,11 @@ class Field extends Annotation
             throw new \InvalidArgumentException(sprintf('Invalid boost value %s', $this->boost));
         }
 
-        $float = floatval($this->boost);
-        return $float ?: null;
+        if (floatval($this->boost !== 0)) {
+            return floatval($this->boost);
+        }
+
+        return null;
     }
 
     /**

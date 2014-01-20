@@ -3,9 +3,11 @@
 namespace FS\SolrBundle\Tests\Doctrine\Mapping\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoBoost;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoTypes;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFloatBoost;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNumericFields;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
@@ -132,6 +134,14 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1.4, $boost);
     }
 
+    public function testGetBoost_BoostIsNull()
+    {
+        $reader = new AnnotationReader();
+        $boost = $reader->getEntityBoost(new ValidTestEntityNoBoost());
+
+        $this->assertEquals(null, $boost);
+    }
+
     public function testGetCallback_CallbackDefined()
     {
         $reader = new AnnotationReader();
@@ -146,6 +156,25 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $callback = $reader->getSynchronizationCallback(new ValidTestEntity());
 
         $this->assertEquals('', $callback);
+    }
+
+    /**
+     * @test
+     */
+    public function numericFieldTypeAreSupported()
+    {
+        $reader = new AnnotationReader();
+        $fields = $reader->getFields(new ValidTestEntityNumericFields());
+
+        $this->assertEquals(4, count($fields));
+
+        $expectedFields = array('integer_i', 'double_d', 'float_f', 'long_l');
+        $actualFields = array();
+        foreach ($fields as $field) {
+            $actualFields[] = $field->getNameWithAlias();
+        }
+
+        $this->assertEquals($expectedFields, $actualFields);
     }
 }
 
