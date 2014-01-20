@@ -129,6 +129,9 @@ Currently is a basic set of types implemented.
 - text
 - date
 - integer
+- float
+- double
+- long
 - boolean
 
 It is possible to use custum field types (schema.xml).

@@ -32,7 +32,10 @@ class Field extends Annotation
         'text' => '_t',
         'date' => '_dt',
         'boolean' => '_b',
-        'integer' => '_i'
+        'integer' => '_i',
+        'long' => '_l',
+        'float' => '_f',
+        'double' => '_d',
     );
 
     /**
@@ -86,7 +89,9 @@ class Field extends Annotation
         if (!is_numeric($this->boost)) {
             throw new \InvalidArgumentException(sprintf('Invalid boost value %s', $this->boost));
         }
-        return floatval($this->boost);
+
+        $float = floatval($this->boost);
+        return $float ?: null;
     }
 
     /**
