@@ -9,8 +9,6 @@ tagline: symfony2 doctrine2 solr
 
 This Bundle provides a simple API to index and query a Solr Index. 
 
-Please use the `development` branch for pull-request.
-
 # Configuration
 
 The bundle requires a working doctrine-orm or doctrine-mongodb configuration. There are no differences in the use.
