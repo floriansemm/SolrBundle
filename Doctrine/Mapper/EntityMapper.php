@@ -1,103 +1,69 @@
 <?php
+
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Solarium\Client;
 
-class EntityMapper
-{
-    /**
-     * @var CreateDocumentCommandInterface
-     */
-    private $mappingCommand = null;
+class EntityMapper {
 
-    /**
-     * @param AbstractDocumentCommand $command
-     */
-    public function setMappingCommand(AbstractDocumentCommand $command)
-    {
-        $this->mappingCommand = $command;
-    }
+	/**
+	 * @var CreateDocumentCommandInterface
+	 */
+	private $mappingCommand = null;
 
-    /**
-     * @param object $entity
-     * @return Document
-     */
-    public function toDocument(MetaInformation $meta)
-    {
-        if ($this->mappingCommand instanceof AbstractDocumentCommand) {
-            return $this->mappingCommand->createDocument($meta);
-        }
+	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
 
-        return null;
-    }
+	/**
+	 * @var Client
+	 */
+	private $client;
 
-    /**
-     * @param \ArrayAccess $document
-     * @param object $targetEntity
-     * @return object
-     */
-    public function toEntity(\ArrayAccess $document, $sourceTargetEntity)
-    {
-        if (null === $sourceTargetEntity) {
-            throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
-        }
+	function __construct(Client $client, EventDispatcherInterface $eventDispatcher) {
+		$this->client = $client;
+		$this->eventDispatcher = $eventDispatcher;
+	}
 
-        $targetEntity = clone $sourceTargetEntity;
+	/**
+	 * @param AbstractDocumentCommand $command
+	 */
+	public function setMappingCommand(AbstractDocumentCommand $command) {
+		$this->mappingCommand = $command;
+	}
 
-        $reflectionClass = new \ReflectionClass($targetEntity);
-        foreach ($document as $property => $value) {
-            try {
-                $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
-            } catch (\ReflectionException $e) {
-                try {
-                    $classProperty = $reflectionClass->getProperty(
-                        $this->toCamelCase($this->removeFieldSuffix($property))
-                    );
-                } catch (\ReflectionException $e) {
-                    continue;
-                }
-            }
+	/**
+	 * @param object $entity
+	 * @return Document
+	 */
+	public function toDocument(MetaInformation $meta) {
+		if ($this->mappingCommand instanceof AbstractDocumentCommand) {
+			return $this->mappingCommand->createDocument($meta);
+		}
 
-            $classProperty->setAccessible(true);
-            $classProperty->setValue($targetEntity, $value);
-        }
+		return null;
+	}
 
-        return $targetEntity;
-    }
+	/**
+	 * @param \ArrayAccess $document
+	 * @param object $targetEntity
+	 * @return object
+	 */
+	public function toEntity(\ArrayAccess $document, MetaInformation $meta) {
+		if (null === $sourceTargetEntity) {
+			throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
+		}
 
-    /**
-     * returns the clean fieldname without type-suffix
-     *
-     * eg: title_s => title
-     *
-     * @param string $property
-     * @return string
-     */
-    private function removeFieldSuffix($property)
-    {
-        if (($pos = strrpos($property, '_')) !== false) {
-            return substr($property, 0, $pos);
-        }
+		$entityHydrateEvent = new \FS\SolrBundle\Event\EntityHydrate($document, $this->client, $meta);
 
-        return $property;
-    }
+		return $this->eventDispatcher->dispatch(\FS\SolrBundle\Event\Events::SOLR_HYDRATE_ENTITY, $entityHydrateEvent)->getEntity();
+	}
 
-    /**
-     * returns field name camelcased if it has underlines
-     *
-     * eg: user_id => userId
-     *
-     * @param string $fieldname
-     * @return string
-     */
-    private function toCamelCase($fieldname)
-    {
-        $words = str_replace('_', ' ', $fieldname);
-        $words = ucwords($words);
-        $pascalCased = str_replace(' ', '', $words);
 
-        return lcfirst($pascalCased);
-    }
+
 }

@@ -1,50 +1,49 @@
 <?php
+
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Update\Query\Document\Document;
 
-abstract class AbstractQuery extends Query
-{
-    /**
-     * @var Document
-     */
-    protected $document = null;
+abstract class AbstractQuery extends Query {
 
-    /**
-     * @var object
-     */
-    private $entity = null;
+	/**
+	 * @var Document
+	 */
+	protected $document = null;
 
-    /**
-     * @return the $entity
-     */
-    public function getEntity()
-    {
-        return $this->entity;
-    }
+	/**
+	 * @var MetaInformation
+	 */
+	private $entityMetaInformation = null;
 
-    /**
-     * @param object $entity
-     */
-    public function setEntity($entity)
-    {
-        $this->entity = $entity;
-    }
+	/**
+	 * @return MetaInformation
+	 */
+	public function getEntityMetaInformation() {
+		return $this->entityMetaInformation;
+	}
 
-    /**
-     * @param \Solarium\QueryType\Update\Query\Document\Document $document
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-    }
+	/**
+	 * @param MetaInformation $entityMetaInformation
+	 */
+	public function setEntityMetaInformation($entityMetaInformation) {
+		$this->entityMetaInformation = $entityMetaInformation;
+	}
 
-    /**
-     * @return \Solarium\QueryType\Update\Query\Document\Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
-    }
+	/**
+	 * @param Document $document
+	 */
+	public function setDocument($document) {
+		$this->document = $document;
+	}
+
+	/**
+	 * @return Document
+	 */
+	public function getDocument() {
+		return $this->document;
+	}
+
 }

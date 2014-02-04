@@ -17,4 +17,6 @@ final class Events
     const POST_CLEAR_INDEX = 'post_clear_index';
 
     const ERROR = 'error';
+	
+	const SOLR_HYDRATE_ENTITY = 'solr_hydrate_entity';
 } 

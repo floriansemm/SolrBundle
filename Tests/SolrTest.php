@@ -119,7 +119,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 
         $this->assertTrue($query instanceof SolrQuery);
-        $this->assertEquals(4, count($query->getMappedFields()));
+        $this->assertEquals(4, count($query->getEntityMetaInformation()->getFieldMapping()));
 
     }
 
@@ -249,7 +249,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
-        $query->setEntity(new ValidTestEntity());
+        $query->setEntityMetaInformation(new ValidTestEntity());
 
         $entities = $solr->query($query);
         $this->assertEquals(1, count($entities));

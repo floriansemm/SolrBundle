@@ -44,7 +44,7 @@ class Repository implements RepositoryInterface
 
         $query = new FindByIdentifierQuery();
         $query->setDocument($document);
-        $query->setEntity($this->entity);
+        $query->setEntityMetaInformation($this->entity);
         $found = $this->solr->query($query);
 
         if (count($found) == 0) {
@@ -73,7 +73,7 @@ class Repository implements RepositoryInterface
 
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
-        $query->setEntity($this->entity);
+        $query->setEntityMetaInformation($this->entity);
 
         return $this->solr->query($query);
     }
