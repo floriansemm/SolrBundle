@@ -31,7 +31,7 @@ class DefaultEntityHydrateListener {
 			$classProperty->setValue($targetEntity, $value);
 		}
 
-		return $targetEntity;
+		$event->setEntity($targetEntity);
 	}
 
 	/**
