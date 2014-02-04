@@ -25,7 +25,7 @@ class EntityMapper {
 	 */
 	private $client;
 
-	function __construct(Client $client, EventDispatcherInterface $eventDispatcher) {
+	function __construct(EventDispatcherInterface $eventDispatcher, Client $client = null) {
 		$this->client = $client;
 		$this->eventDispatcher = $eventDispatcher;
 	}
