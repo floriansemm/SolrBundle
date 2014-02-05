@@ -49,7 +49,7 @@ class Solr
     /**
      * @var int numFound
      */
-    private $numFound = 0;
+    private $numberOfFoundDocuments = 0;
 
     /**
      * @param Client $client
@@ -239,8 +239,8 @@ class Solr
             return array();
         }
 
-        $this->numFound = $response->getNumFound();
-        if ($this->numFound == 0) {
+        $this->numberOfFoundDocuments = $response->getNumFound();
+        if ($this->numberOfFoundDocuments == 0) {
             return array();
         }
 
@@ -259,7 +259,7 @@ class Solr
      */
     public function getNumFound()
     {
-        return $this->numFound;
+        return $this->numberOfFoundDocuments;
     }
 
     public function clearIndex()
