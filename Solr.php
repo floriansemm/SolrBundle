@@ -262,6 +262,9 @@ class Solr
         return $this->numberOfFoundDocuments;
     }
 
+    /**
+     * clears the whole index by using the query *:*
+     */
     public function clearIndex()
     {
         $this->eventManager->dispatch(Events::PRE_CLEAR_INDEX, new Event($this->solrClient));
