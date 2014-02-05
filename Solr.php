@@ -45,6 +45,7 @@ class Solr
      * @var MetaInformationFactory
      */
     private $metaInformationFactory = null;
+
     /**
      * @var int numFound
      */

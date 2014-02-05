@@ -5,8 +5,8 @@ class FindByIdentifierQuery extends AbstractQuery
 {
 
     /**
-     * (non-PHPdoc)
-     * @see \FS\SolrBundle\Query\AbstractQuery::getQueryString()
+     * @return string
+     * @throws \RuntimeException when id or document_name is null
      */
     public function getQuery()
     {

@@ -4,12 +4,17 @@ namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
+/**
+ * command maps all fields of the entity
+ *
+ * uses parent method for mapping of document_name and id
+ */
 class MapAllFieldsCommand extends AbstractDocumentCommand
 {
 
     /**
-     * (non-PHPdoc)
-     * @see FS\SolrBundle\Doctrine\Mapper\Mapping.AbstractDocumentCommand::createDocument()
+     * @param MetaInformation $meta
+     * @return null|\Solarium\QueryType\Update\Query\Document\Document
      */
     public function createDocument(MetaInformation $meta)
     {

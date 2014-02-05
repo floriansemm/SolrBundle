@@ -51,6 +51,10 @@ class Field extends Annotation
         return $this->normalizeName($this->name) . $this->getTypeSuffix($this->type);
     }
 
+    /**
+     * @param string $type
+     * @return string
+     */
     private function getTypeSuffix($type)
     {
         if ($type == '') {
