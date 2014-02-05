@@ -5,7 +5,7 @@ class CommandFactory
 {
 
     /**
-     * @var array
+     * @var AbstractDocumentCommand[]
      */
     private $commands = array();
 

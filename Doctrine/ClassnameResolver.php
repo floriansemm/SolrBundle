@@ -10,12 +10,12 @@ class ClassnameResolver
 {
 
     /**
-     * @var array
+     * @var OrmConfiguration[]
      */
     private $ormConfiguration = array();
 
     /**
-     * @var array
+     * @var OdmConfiguration[]
      */
     private $odmConfiguration = array();
 
