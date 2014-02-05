@@ -218,7 +218,7 @@ class Solr
 
     /**
      * @param AbstractQuery $query
-     * @return array found entities
+     * @return array of found documents
      */
     public function query(AbstractQuery $query)
     {

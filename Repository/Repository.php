@@ -29,8 +29,9 @@ class Repository implements RepositoryInterface
         $this->entity = $entity;
     }
 
-    /* (non-PHPdoc)
-     * @see FS\SolrBundle\Repository.RepositoryInterface::find()
+    /**
+     * @param int $id
+     * @return object|null
      */
     public function find($id)
     {
@@ -54,8 +55,8 @@ class Repository implements RepositoryInterface
         return array_pop($found);
     }
 
-    /* (non-PHPdoc)
-     * @see FS\SolrBundle\Repository.RepositoryInterface::findAll()
+    /**
+     * @return array of found documents
      */
     public function findAll()
     {
@@ -78,8 +79,9 @@ class Repository implements RepositoryInterface
         return $this->solr->query($query);
     }
 
-    /* (non-PHPdoc)
-     * @see FS\SolrBundle\Repository.RepositoryInterface::findBy()
+    /**
+     * @param array $args
+     * @return array of found documents
      */
     public function findBy(array $args)
     {
@@ -92,8 +94,9 @@ class Repository implements RepositoryInterface
         return $this->solr->query($query);
     }
 
-    /* (non-PHPdoc)
-     * @see FS\SolrBundle\Repository.RepositoryInterface::findOneBy()
+    /**
+     * @param array $args
+     * @return array
      */
     public function findOneBy(array $args)
     {

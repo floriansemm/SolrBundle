@@ -7,8 +7,7 @@ class UpdateLogListener extends AbstractLogListener
 {
 
     /**
-     * (non-PHPdoc)
-     * @see \FS\SolrBundle\Event\EventListenerInterface::notify()
+     * @param Event $event
      */
     public function onSolrUpdate(Event $event)
     {

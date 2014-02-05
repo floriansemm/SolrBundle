@@ -7,8 +7,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddCreateDocumentCommandPass implements CompilerPassInterface
 {
-    /* (non-PHPdoc)
-     * @see Symfony\Component\DependencyInjection\Compiler.CompilerPassInterface::process()
+    /**
+     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
