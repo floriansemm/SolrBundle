@@ -21,8 +21,8 @@ class DoctrineHydrator
         $this->doctrine;
     }
 
-    public function hydrate($document, MetaInformation $information)
+    public function hydrate($document)
     {
-        $this->doctrine->getManager()->find($information->getClassName(), 1);
+        $foo = $document;
     }
 } 

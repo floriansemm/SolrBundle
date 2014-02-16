@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Repository;
 
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Solr;
@@ -75,6 +76,7 @@ class Repository implements RepositoryInterface
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
         $query->setEntity($this->entity);
+        $query->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
 
         return $this->solr->query($query);
     }

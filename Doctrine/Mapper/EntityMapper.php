@@ -80,6 +80,10 @@ class EntityMapper
             $classProperty->setValue($targetEntity, $value);
         }
 
+        if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
+            $this->hydrator->hydrate($document);
+        }
+
         return $targetEntity;
     }
 
