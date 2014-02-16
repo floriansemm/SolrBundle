@@ -47,6 +47,8 @@ class Repository implements RepositoryInterface
         $query = new FindByIdentifierQuery();
         $query->setDocument($document);
         $query->setEntity($this->entity);
+        $query->setSolr($this->solr);
+        $query->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
         $found = $this->solr->query($query);
 
         if (count($found) == 0) {
