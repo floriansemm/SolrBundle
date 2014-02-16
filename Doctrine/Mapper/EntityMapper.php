@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -18,9 +19,13 @@ class EntityMapper
      */
     private $hydrator;
 
+    private $hydrationMode = '';
+
     public function __construct(DoctrineHydrator $doctrineHydrator)
     {
         $this->hydrator = $doctrineHydrator;
+
+        $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
     }
 
     /**
@@ -110,5 +115,10 @@ class EntityMapper
         $pascalCased = str_replace(' ', '', $words);
 
         return lcfirst($pascalCased);
+    }
+
+    public function setHydrationMode($mode)
+    {
+        $this->hydrationMode = $mode;
     }
 }

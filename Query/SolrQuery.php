@@ -176,4 +176,9 @@ class SolrQuery extends AbstractQuery
 
         return $term;
     }
+
+    public function setHydrationMode($mode)
+    {
+        $this->getSolr()->getMapper()->setHydrationMode($mode);
+    }
 }
