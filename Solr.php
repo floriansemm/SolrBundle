@@ -61,14 +61,15 @@ class Solr
         Client $client,
         CommandFactory $commandFactory,
         EventDispatcherInterface $manager,
-        MetaInformationFactory $metaInformationFactory
+        MetaInformationFactory $metaInformationFactory,
+        EntityMapper $entityMapper
     ) {
         $this->solrClient = $client;
         $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
         $this->metaInformationFactory = $metaInformationFactory;
 
-        $this->entityMapper = new EntityMapper();
+        $this->entityMapper = $entityMapper;
     }
 
     /**

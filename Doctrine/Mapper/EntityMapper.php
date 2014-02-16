@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -11,6 +12,16 @@ class EntityMapper
      * @var CreateDocumentCommandInterface
      */
     private $mappingCommand = null;
+
+    /**
+     * @var DoctrineHydrator
+     */
+    private $hydrator;
+
+    public function __construct(DoctrineHydrator $doctrineHydrator)
+    {
+        $this->hydrator = $doctrineHydrator;
+    }
 
     /**
      * @param AbstractDocumentCommand $command
