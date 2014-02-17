@@ -68,10 +68,19 @@
 
         <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">
             <argument id="solr.doctrine.hydration.doctrine_hydrator" type="service" />
+            <argument id="solr.doctrine.hydration.index_hydrator" type="service" />
         </service>
 
         <service id="solr.doctrine.hydration.doctrine_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">
             <argument id="doctrine" type="service" />
+            <argument id="solr.doctrine.hydration.value_hydrator" type="service" />
+        </service>
+
+        <service id="solr.doctrine.hydration.value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\ValueHydrator">
+        </service>
+
+        <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
+            <argument id="solr.doctrine.hydration.value_hydrator" type="service" />
         </service>
     </services>
 </container>

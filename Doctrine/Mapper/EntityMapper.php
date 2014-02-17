@@ -3,6 +3,7 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Hydration\IndexHydrator;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -17,13 +18,16 @@ class EntityMapper
     /**
      * @var DoctrineHydrator
      */
-    private $hydrator;
+    private $doctrineHydrator;
+
+    private $indexHydrator;
 
     private $hydrationMode = '';
 
-    public function __construct(DoctrineHydrator $doctrineHydrator)
+    public function __construct(DoctrineHydrator $doctrineHydrator, IndexHydrator $indexHydrator)
     {
-        $this->hydrator = $doctrineHydrator;
+        $this->doctrineHydrator = $doctrineHydrator;
+        $this->indexHydrator = $indexHydrator;
 
         $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
     }
@@ -60,28 +64,14 @@ class EntityMapper
             throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
         }
 
-        $targetEntity = clone $sourceTargetEntity;
+        $metaInformationFactory = new MetaInformationFactory();
+        $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
 
-        $reflectionClass = new \ReflectionClass($targetEntity);
-        foreach ($document as $property => $value) {
-            try {
-                $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
-            } catch (\ReflectionException $e) {
-                try {
-                    $classProperty = $reflectionClass->getProperty(
-                        $this->toCamelCase($this->removeFieldSuffix($property))
-                    );
-                } catch (\ReflectionException $e) {
-                    continue;
-                }
-            }
-
-            $classProperty->setAccessible(true);
-            $classProperty->setValue($targetEntity, $value);
-        }
+        $targetEntity = $this->indexHydrator->hydrate($document, $metaInformation);
+        $metaInformation->setEntity($targetEntity);
 
         if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
-            $this->hydrator->hydrate($document);
+            return $this->doctrineHydrator->hydrate($document, $metaInformation);
         }
 
         return $targetEntity;
