@@ -67,14 +67,16 @@ class EntityMapper
         $metaInformationFactory = new MetaInformationFactory();
         $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
 
-        $targetEntity = $this->indexHydrator->hydrate($document, $metaInformation);
-        $metaInformation->setEntity($targetEntity);
+        $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
+        if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {
+            return $hydratedDocument;
+        }
+
+        $metaInformation->setEntity($hydratedDocument);
 
         if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
             return $this->doctrineHydrator->hydrate($document, $metaInformation);
         }
-
-        return $targetEntity;
     }
 
     /**
