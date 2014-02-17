@@ -83,40 +83,6 @@ class EntityMapper
         }
     }
 
-    /**
-     * returns the clean fieldname without type-suffix
-     *
-     * eg: title_s => title
-     *
-     * @param string $property
-     * @return string
-     */
-    private function removeFieldSuffix($property)
-    {
-        if (($pos = strrpos($property, '_')) !== false) {
-            return substr($property, 0, $pos);
-        }
-
-        return $property;
-    }
-
-    /**
-     * returns field name camelcased if it has underlines
-     *
-     * eg: user_id => userId
-     *
-     * @param string $fieldname
-     * @return string
-     */
-    private function toCamelCase($fieldname)
-    {
-        $words = str_replace('_', ' ', $fieldname);
-        $words = ucwords($words);
-        $pascalCased = str_replace(' ', '', $words);
-
-        return lcfirst($pascalCased);
-    }
-
     public function setHydrationMode($mode)
     {
         $this->hydrationMode = $mode;
