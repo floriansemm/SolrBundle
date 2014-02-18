@@ -5,7 +5,7 @@ tagline: symfony2 doctrine2 solr
 ---
 {% include JB/setup %}
 
-[![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle)
+[![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle) [![Stories in Ready](http://badge.waffle.io/floriansemm/solrbundle.png)](http://waffle.io/floriansemm/solrbundle)
 
 This Bundle provides a simple API to index and query a Solr Index. 
 
