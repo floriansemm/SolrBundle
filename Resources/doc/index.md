@@ -75,49 +75,49 @@ With this config you have access to the service `solr.client.default`. If you ha
 
 To put an entity to the index, you must add some annotations to your entity:
 
-		// your Entity
+	// your Entity
 
-		// ....
-		use FS\SolrBundle\Doctrine\Annotation as Solr;
-		
+	// ....
+	use FS\SolrBundle\Doctrine\Annotation as Solr;
+	
+	/**
+	 * @Solr\Document(repository="Full\Qualified\Class\Name")
+	 * @ORM\Table()
+	 */
+	class Post
+	{
 		/**
-		 * @Solr\Document(repository="Full\Qualified\Class\Name")
-		 * @ORM\Table()
+		 * @Solr\Id
+		 *
+		 * @ORM\Column(name="id", type="integer")
+		 * @ORM\Id
+		 * @ORM\GeneratedValue(strategy="AUTO")
 		 */
-		class Post
-		{
-			/**
-			 * @Solr\Id
-			 *
-			 * @ORM\Column(name="id", type="integer")
-			 * @ORM\Id
-			 * @ORM\GeneratedValue(strategy="AUTO")
-			 */
-			private $id;
 
-			/**
-			 *
-			 * @Solr\Field(type="string")
-			 *
-			 * @ORM\Column(name="title", type="string", length=255)
-			 */
-			private $title = '';
+		private $id;
+		/**
+		 *
+		 * @Solr\Field(type="string")
+		 *
+		 * @ORM\Column(name="title", type="string", length=255)
+		 */
+		private $title = '';
 
-			/**
-			 * 
-			 * @Solr\Field(type="string")
-			 *
-			 * @ORM\Column(name="text", type="text")
-			 */
-			private $text = '';
+		/**
+		* 
+		* @Solr\Field(type="string")
+		*
+		* @ORM\Column(name="text", type="text")
+		*/
+		private $text = '';
 
-			/**
-			 * @Solr\Field(type="date")
-			 *
-			 * @ORM\Column(name="created_at", type="datetime")
-			 */
-			private $created_at = null;
-		}
+		/**
+		* @Solr\Field(type="date")
+		*
+		* @ORM\Column(name="created_at", type="datetime")
+		*/
+		private $created_at = null;
+	}
 
 ### Supported field types
 
@@ -139,18 +139,20 @@ It is possible to use custum field types (schema.xml).
 In some cases a entity should not be index. For this you have the `SynchronizationFilter` Annotation.
 
 
+	/**
+	* @Solr\Document
+	* @Solr\SynchronizationFilter(callback="shouldBeIndex")
+	*/
+	class SomeEntity
+	{
 		/**
-		 * @Solr\Document
-		 * @Solr\SynchronizationFilter(callback="shouldBeIndex")
-		 */
-		class SomeEntity {
-			/**
-			 * @return boolean
-			 */
-			public function shouldBeIndex() {
-				// put your logic here
-			}
+		* @return boolean
+		*/
+		public function shouldBeIndex()
+		{
+			// put your logic here
 		}
+	}
 
 The callback property specifies an callable function, which decides whether the should index or not. 	
 
@@ -168,11 +170,11 @@ For details have a look into your schema.xml.
 
 So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:
 
-			/**
-			 * @Solr\Field
-			 * @ORM\Column(name="category", type="text")
-			 */
-			private $category = '';
+		/**
+		* @Solr\Field
+		* @ORM\Column(name="category", type="text")
+		*/
+		private $category = '';
 
 The field has in this case automaticaly the type "general_text".
 
