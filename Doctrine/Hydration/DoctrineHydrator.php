@@ -2,13 +2,9 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
-
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-/**
- * hydrates full Entity from DB and merge with result from IndexHydrator
- */
 class DoctrineHydrator implements Hydrator
 {
 
@@ -17,14 +13,26 @@ class DoctrineHydrator implements Hydrator
      */
     private $doctrine;
 
+    /**
+     * @var Hydrator
+     */
     private $valueHydrator;
 
+    /**
+     * @param RegistryInterface $doctrine
+     * @param Hydrator $valueHydrator
+     */
     public function __construct(RegistryInterface $doctrine, Hydrator $valueHydrator)
     {
         $this->doctrine = $doctrine;
         $this->valueHydrator = $valueHydrator;
     }
 
+    /**
+     * @param $document
+     * @param MetaInformation $metaInformation
+     * @return object
+     */
     public function hydrate($document, MetaInformation $metaInformation)
     {
         $entityId = $document->id;

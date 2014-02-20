@@ -2,7 +2,6 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
-
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 interface Hydrator
