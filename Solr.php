@@ -341,7 +341,7 @@ class Solr
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()));
             $errorEvent->setException($e);
-
+echo $e->getMessage();
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
         }
     }

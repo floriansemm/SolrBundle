@@ -15,9 +15,18 @@ use Solarium\QueryType\Update\Query\Document\Document;
 class EntityMapperTest extends \PHPUnit_Framework_TestCase
 {
 
+    private $doctrineHydrator = null;
+    private $indexHydrator = null;
+
+    public function setUp()
+    {
+        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+    }
+
     public function testToDocument_EntityMayNotIndexed()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertNull($actual);
@@ -25,7 +34,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testToDocument_DocumentIsUpdated()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
         $mapper->setMappingCommand(new MapAllFieldsCommand(new AnnotationReader()));
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
@@ -43,7 +52,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
         $targetEntity = new ValidTestEntity();
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
         $entity = $mapper->toEntity($obj, $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
@@ -61,7 +70,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
         $targetEntity = new ValidTestEntity();
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
         $entity = $mapper->toEntity($obj, $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
@@ -70,9 +79,9 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $entity->getTitle());
     }
 
-    public function testToCamelCase()
+    public function ToCamelCase()
     {
-        $mapper = new EntityMapper();
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator);
 
         $meta = new \ReflectionClass($mapper);
         $method = $meta->getMethod('toCamelCase');

@@ -31,13 +31,13 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper');
+        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
         $mapper->expects($this->once())
             ->method('toDocument')
             ->will($this->returnValue($document));
 
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
-        $solr->expects($this->once())
+        $solr->expects($this->exactly(2))
             ->method('getMapper')
             ->will($this->returnValue($mapper));
 
@@ -77,13 +77,13 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper');
+        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
         $mapper->expects($this->once())
             ->method('toDocument')
             ->will($this->returnValue($document));
 
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
-        $solr->expects($this->once())
+        $solr->expects($this->exactly(2))
             ->method('getMapper')
             ->will($this->returnValue($mapper));
 
