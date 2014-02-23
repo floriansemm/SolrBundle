@@ -157,7 +157,8 @@ class Solr
             $deleteQuery = new FindByIdentifierQuery();
             $deleteQuery->setDocument($document);
 
-            $this->eventManager->dispatch(Events::PRE_DELETE, new Event($this->solrClient, $metaInformations));
+            $event = new Event($this->solrClient, $metaInformations);
+            $this->eventManager->dispatch(Events::PRE_DELETE, $event);
 
             try {
                 $delete = $this->solrClient->createUpdate();
@@ -166,13 +167,13 @@ class Solr
 
                 $this->solrClient->update($delete);
             } catch (\Exception $e) {
-                $errorEvent = new ErrorEvent(null, $metaInformations, 'delete-document');
+                $errorEvent = new ErrorEvent(null, $metaInformations, 'delete-document', $event);
                 $errorEvent->setException($e);
 
                 $this->eventManager->dispatch(Events::ERROR, $errorEvent);
             }
 
-            $this->eventManager->dispatch(Events::POST_DELETE, new Event($this->solrClient, $metaInformations));
+            $this->eventManager->dispatch(Events::POST_DELETE, $event);
         }
     }
 
@@ -189,11 +190,12 @@ class Solr
 
         $doc = $this->toDocument($metaInformation);
 
-        $this->eventManager->dispatch(Events::PRE_INSERT, new Event($this->solrClient, $metaInformation));
+        $event = new Event($this->solrClient, $metaInformation);
+        $this->eventManager->dispatch(Events::PRE_INSERT, $event);
 
-        $this->addDocumentToIndex($doc, $metaInformation);
+        $this->addDocumentToIndex($doc, $metaInformation, $event);
 
-        $this->eventManager->dispatch(Events::POST_INSERT, new Event($this->solrClient, $metaInformation));
+        $this->eventManager->dispatch(Events::POST_INSERT, $event);
     }
 
     /**
@@ -302,11 +304,12 @@ class Solr
 
         $doc = $this->toDocument($metaInformations);
 
-        $this->eventManager->dispatch(Events::PRE_UPDATE, new Event($this->solrClient, $metaInformations));
+        $event = new Event($this->solrClient, $metaInformations);
+        $this->eventManager->dispatch(Events::PRE_UPDATE, $event);
 
-        $this->addDocumentToIndex($doc, $metaInformations);
+        $this->addDocumentToIndex($doc, $metaInformations, $event);
 
-        $this->eventManager->dispatch(Events::POST_UPDATE, new Event($this->solrClient, $metaInformations));
+        $this->eventManager->dispatch(Events::POST_UPDATE, $event);
 
         return true;
     }
@@ -329,7 +332,7 @@ class Solr
      * @param Document $doc
      * @param MetaInformation $metaInformation
      */
-    private function addDocumentToIndex($doc, MetaInformation $metaInformation)
+    private function addDocumentToIndex($doc, MetaInformation $metaInformation, Event $event)
     {
         try {
             $update = $this->solrClient->createUpdate();
@@ -338,7 +341,7 @@ class Solr
 
             $this->solrClient->update($update);
         } catch (\Exception $e) {
-            $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()));
+            $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()), $event);
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);

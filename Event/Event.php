@@ -25,14 +25,25 @@ class Event extends BaseEvent
     private $solrAction = '';
 
     /**
+     * @var Event
+     */
+    private $sourceEvent;
+
+    /**
      * @param object $client
      * @param MetaInformation $metainformation
      */
-    public function __construct($client = null, MetaInformation $metainformation = null, $solrAction = '')
+    public function __construct(
+        $client = null,
+        MetaInformation $metainformation = null,
+        $solrAction = '',
+        Event $sourceEvent = null
+    )
     {
         $this->client = $client;
         $this->metainformation = $metainformation;
         $this->solrAction = $solrAction;
+        $this->sourceEvent = $sourceEvent;
     }
 
     /**
@@ -63,5 +74,18 @@ class Event extends BaseEvent
     public function getSolrAction()
     {
         return $this->solrAction;
+    }
+
+    /**
+     * @return Event
+     */
+    public function getSourceEvent()
+    {
+        return $this->sourceEvent;
+    }
+
+    public function hasSourceEvent()
+    {
+        return $this->sourceEvent !== null;
     }
 }

@@ -18,5 +18,9 @@ class ErrorLogListener extends AbstractLogListener
         $this->logger->debug(
             sprintf('the error "%s" occure while executing event %s', $exceptionMessage, $event->getSolrAction())
         );
+
+        if ($event->hasSourceEvent()) {
+            $event->getSourceEvent()->stopPropagation();
+        }
     }
 }
