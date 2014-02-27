@@ -39,8 +39,12 @@
 		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
-    	
-    	<service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false" />
+
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases" />
+
+    	<service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false">
+            <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces" />
+        </service>
     	
     	<service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
     		<tag name="solr.document.command" command="all" />

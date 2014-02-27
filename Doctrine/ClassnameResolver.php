@@ -5,54 +5,45 @@ use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ORM\Configuration as OrmConfiguration;
 use Doctrine\ORM\ORMException;
+use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
+use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaces;
 
 class ClassnameResolver
 {
 
     /**
-     * @var OrmConfiguration[]
+     * @var KnownNamespaceAliases
      */
-    private $ormConfiguration = array();
+    private $knownNamespaceAliases;
 
-    /**
-     * @var OdmConfiguration[]
-     */
-    private $odmConfiguration = array();
+    public function __construct(KnownNamespaceAliases $knownNamespaceAliases)
+    {
+        $this->knownNamespaceAliases = $knownNamespaceAliases;
+    }
 
     /**
      * @param string $entityAlias
      * @return string
      *
-     * @throws ClassnameResolverException if the entityAlias could not find in any configured namespace
+     * @throws ClassnameResolverException if the entityAlias could not find in any configured namespace or the class
+     * does not exist
      */
     public function resolveFullQualifiedClassname($entityAlias)
     {
-        $entityNamespace = $this->getNamespaceAlias($entityAlias);
+        $entityNamespaceAlias = $this->getNamespaceAlias($entityAlias);
 
-        $foundNamespace = '';
-        foreach ($this->ormConfiguration as $configuration) {
-            try {
-                $foundNamespace = $configuration->getEntityNamespace($entityNamespace);
-            } catch (ORMException $e) {}
+        if ($this->knownNamespaceAliases->isKnownNamespaceAlias($entityNamespaceAlias) === false) {
+            throw new ClassnameResolverException(sprintf('could not resolve classname for entity %s', $entityNamespaceAlias));
         }
+
+        $foundNamespace = $this->knownNamespaceAliases->getFullyQualifiedNamespace($entityNamespaceAlias);
 
         $realClassName = $this->getFullyQualifiedClassname($foundNamespace, $entityAlias);
-        if (class_exists($realClassName)) {
-            return $realClassName;
+        if (class_exists($realClassName) === false) {
+            throw new ClassnameResolverException(sprintf('class %s does not exist', $realClassName));
         }
 
-        foreach ($this->odmConfiguration as $configuration) {
-            try {
-                $foundNamespace = $configuration->getDocumentNamespace($entityNamespace);
-            } catch (MongoDBException $e) {}
-        }
-
-        $realClassName = $this->getFullyQualifiedClassname($foundNamespace, $entityAlias);
-        if (class_exists($realClassName)) {
-            return $realClassName;
-        }
-
-        throw new ClassnameResolverException(sprintf('could not resolve classname for entity %s', $entityAlias));
+        return $realClassName;
     }
 
     /**
@@ -89,19 +80,5 @@ class ClassnameResolver
         return $realClassName;
     }
 
-    /**
-     * @param OdmConfiguration $configuration
-     */
-    public function addOdmConfiguration(OdmConfiguration $configuration)
-    {
-        $this->odmConfiguration[] = $configuration;
-    }
 
-    /**
-     * @param OrmConfiguration $configuration
-     */
-    public function addOrmConfiguration(OrmConfiguration $configuration)
-    {
-        $this->ormConfiguration[] = $configuration;
-    }
 }

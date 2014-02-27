@@ -89,8 +89,8 @@ class FSSolrExtension extends Extension
 
             $entityManagersNames = array_keys($entityManagers);
             foreach($entityManagersNames as $entityManager) {
-                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
-                    'addOrmConfiguration',
+                $container->getDefinition('solr.doctrine.classnameresolver.known_entity_namespaces')->addMethodCall(
+                    'addEntityNamespaces',
                     array(new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager)))
                 );
             }
@@ -101,7 +101,7 @@ class FSSolrExtension extends Extension
 
             $documentManagersNames = array_keys($documentManagers);
             foreach($documentManagersNames as $documentManager) {
-                $container->getDefinition('solr.doctrine.classnameresolver')->addMethodCall(
+                $container->getDefinition('solr.doctrine.addDocumentNamespaces')->addMethodCall(
                     'addOdmConfiguration',
                     array(new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $documentManager)))
                 );
