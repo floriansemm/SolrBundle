@@ -33,7 +33,12 @@ class ClassnameResolver
         $entityNamespaceAlias = $this->getNamespaceAlias($entityAlias);
 
         if ($this->knownNamespaceAliases->isKnownNamespaceAlias($entityNamespaceAlias) === false) {
-            throw new ClassnameResolverException(sprintf('could not resolve classname for entity %s', $entityNamespaceAlias));
+            $e = ClassnameResolverException::fromKnownNamespaces(
+                $entityNamespaceAlias,
+                $this->knownNamespaceAliases->getAllNamespaceAliases()
+            );
+
+            throw $e;
         }
 
         $foundNamespace = $this->knownNamespaceAliases->getFullyQualifiedNamespace($entityNamespaceAlias);
