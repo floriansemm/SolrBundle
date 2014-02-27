@@ -3,13 +3,13 @@
 namespace FS\SolrBundle\Doctrine\ClassnameResolver;
 
 use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
-use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ORM\Configuration as OrmConfiguration;
-use Doctrine\ORM\ORMException;
 
 class KnownNamespaceAliases
 {
-
+    /**
+     * @var array Namespace-Alias => Full Entity/Documentnamespace
+     */
     private $knownNamespaceAlias = array();
 
     /**
@@ -28,11 +28,19 @@ class KnownNamespaceAliases
         $this->knownNamespaceAlias = array_merge($this->knownNamespaceAlias, $configuration->getEntityNamespaces());
     }
 
+    /**
+     * @param string $alias
+     * @return bool
+     */
     public function isKnownNamespaceAlias($alias)
     {
         return isset($this->knownNamespaceAlias[$alias]);
     }
 
+    /**
+     * @param string $alias
+     * @return string
+     */
     public function getFullyQualifiedNamespace($alias)
     {
         if ($this->isKnownNamespaceAlias($alias)) {
@@ -42,6 +50,9 @@ class KnownNamespaceAliases
         return '';
     }
 
+    /**
+     * @return array
+     */
     public function getAllNamespaceAliases()
     {
         return array_keys($this->knownNamespaceAlias);

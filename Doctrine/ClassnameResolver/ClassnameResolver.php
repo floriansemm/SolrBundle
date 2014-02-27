@@ -1,13 +1,6 @@
 <?php
 namespace FS\SolrBundle\Doctrine\ClassnameResolver;
 
-use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
-use Doctrine\ODM\MongoDB\MongoDBException;
-use Doctrine\ORM\Configuration as OrmConfiguration;
-use Doctrine\ORM\ORMException;
-use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
-use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaces;
-
 class ClassnameResolver
 {
 
@@ -16,6 +9,9 @@ class ClassnameResolver
      */
     private $knownNamespaceAliases;
 
+    /**
+     * @param KnownNamespaceAliases $knownNamespaceAliases
+     */
     public function __construct(KnownNamespaceAliases $knownNamespaceAliases)
     {
         $this->knownNamespaceAliases = $knownNamespaceAliases;
