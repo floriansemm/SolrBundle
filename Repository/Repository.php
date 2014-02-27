@@ -35,8 +35,6 @@ class Repository implements RepositoryInterface
      */
     public function find($id)
     {
-        $this->entity->setId($id);
-
         $mapper = $this->solr->getMapper();
         $mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
         $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
