@@ -97,8 +97,10 @@ class FeatureContext extends BehatContext
         $ormConfiguration = new Doctrine\ORM\Configuration();
         $ormConfiguration->addEntityNamespace('FSTest:ValidTestEntity', 'FS\SolrBundle\Tests\Doctrine\Mapper');
 
-        $classnameResolver = new \FS\SolrBundle\Doctrine\ClassnameResolver();
-        $classnameResolver->addOrmConfiguration($ormConfiguration);
+        $knowNamespaces = new \FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases();
+        $knowNamespaces->addEntityNamespaces($ormConfiguration);
+
+        $classnameResolver = new \FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver($knowNamespaces);
 
         $metaFactory = new \FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory();
         $metaFactory->setClassnameResolver(
