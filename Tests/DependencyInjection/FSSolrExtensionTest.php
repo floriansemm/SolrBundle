@@ -206,7 +206,7 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase
      */
     private function getReferenzIdOfCalledMethod()
     {
-        $methodCalls = $this->container->getDefinition('solr.doctrine.classnameresolver')->getMethodCalls();
+        $methodCalls = $this->container->getDefinition('solr.doctrine.classnameresolver.known_entity_namespaces')->getMethodCalls();
 
         $firstMethodCall = $methodCalls[0];
         $references = $firstMethodCall[1];
