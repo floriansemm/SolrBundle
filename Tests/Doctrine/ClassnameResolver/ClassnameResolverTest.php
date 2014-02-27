@@ -2,7 +2,7 @@
 
 namespace FS\SolrBundle\Tests\Solr\Doctrine;
 
-use FS\SolrBundle\Doctrine\ClassnameResolver;
+use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
 
 /**
  * @group resolver
@@ -33,7 +33,7 @@ class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \FS\SolrBundle\Doctrine\ClassnameResolverException
+     * @expectedException \FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException
      */
     public function cantResolveClassnameFromUnknowClassWithValidNamespace()
     {
@@ -44,7 +44,7 @@ class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \FS\SolrBundle\Doctrine\ClassnameResolverException
+     * @expectedException \FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException
      */
     public function cantResolveClassnameIfEntityNamespaceIsUnknown()
     {

@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Doctrine;
+namespace FS\SolrBundle\Doctrine\ClassnameResolver;
 
 use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
 use Doctrine\ODM\MongoDB\MongoDBException;

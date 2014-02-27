@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
-use FS\SolrBundle\Doctrine\ClassnameResolverException;
+use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
@@ -13,7 +13,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 {
     private function getClassnameResolver($namespace)
     {
-        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver', array(), array(), '', false);
+        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver', array(), array(), '', false);
         $doctrineConfiguration->expects($this->any())
             ->method('resolveFullQualifiedClassname')
             ->will($this->returnValue($namespace));
@@ -23,7 +23,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
     private function getClassnameResolverCouldNotResolveClassname()
     {
-        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver', array(), array(), '', false);
+        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver', array(), array(), '', false);
         $doctrineConfiguration->expects($this->any())
             ->method('resolveFullQualifiedClassname')
             ->will($this->throwException(new ClassnameResolverException('could not resolve classname for entity')));
@@ -84,7 +84,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException FS\SolrBundle\Doctrine\ClassnameResolverException
+     * @expectedException FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException
      * @expectedExceptionMessage could not resolve classname for entity
      */
     public function testLoadInformation_EntityDoesNoExists()

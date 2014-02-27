@@ -2,7 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-use FS\SolrBundle\Doctrine\ClassnameResolver;
+use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
 use FS\SolrBundle\Doctrine\Configuration;
 
 /**

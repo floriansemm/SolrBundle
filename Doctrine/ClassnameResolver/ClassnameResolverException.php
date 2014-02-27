@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Doctrine;
+namespace FS\SolrBundle\Doctrine\ClassnameResolver;
 
 class ClassnameResolverException extends \RuntimeException
 {

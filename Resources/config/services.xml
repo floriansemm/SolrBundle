@@ -12,8 +12,10 @@
 
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
         <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
-        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver</parameter>
         
+        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver</parameter>
+        <parameter key="solr.doctrine.classnameresolver.known_entity_namespaces.class">FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases</parameter>
+
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
 
@@ -40,7 +42,7 @@
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />
 
-        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases" />
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="%solr.doctrine.classnameresolver.known_entity_namespaces.class%" />
 
     	<service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces" />
