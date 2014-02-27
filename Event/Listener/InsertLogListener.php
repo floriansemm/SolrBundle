@@ -17,7 +17,7 @@ class InsertLogListener extends AbstractLogListener
         $fieldList = $this->createFieldList($metaInformation);
 
         $this->logger->debug(
-            sprintf('use path %s, document %s with fields %s was added', $event->getCore(), $nameWithId, $fieldList)
+            sprintf('document %s with fields %s was added', $nameWithId, $fieldList)
         );
     }
 }

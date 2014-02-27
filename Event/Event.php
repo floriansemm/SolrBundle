@@ -57,20 +57,6 @@ class Event extends BaseEvent
     /**
      * @return string
      */
-    public function getCore()
-    {
-        $options = $this->client->getOptions();
-
-        if (isset($options['path'])) {
-            return $options['path'];
-        }
-
-        return '';
-    }
-
-    /**
-     * @return string
-     */
     public function getSolrAction()
     {
         return $this->solrAction;

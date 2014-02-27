@@ -17,7 +17,7 @@ class DeleteLogListener extends AbstractLogListener
         $fieldList = $this->createFieldList($metaInformation);
 
         $this->logger->debug(
-            sprintf('use path %s, document %s with fields %s was deleted', $event->getCore(), $nameWithId, $fieldList)
+            sprintf('document %s with fields %s was deleted', $nameWithId, $fieldList)
         );
     }
 }
