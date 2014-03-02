@@ -71,6 +71,11 @@ abstract class AbstractQuery extends Query
         return $this->solr;
     }
 
+    /**
+     * modes defined in FS\SolrBundle\Doctrine\Hydration\HydrationModes
+     *
+     * @param string $mode
+     */
     public function setHydrationMode($mode)
     {
         $this->getSolr()->getMapper()->setHydrationMode($mode);
