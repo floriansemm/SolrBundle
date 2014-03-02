@@ -16,7 +16,8 @@
         "doctrine/mongodb-odm": "*",
         "symfony/dependency-injection": "*",
         "symfony/http-kernel": "*",
-        "symfony/config": "*"
+        "symfony/config": "*",
+        "symfony/doctrine-bridge": "*"
     },
     "minimum-stability": "alpha",
     "autoload": {
