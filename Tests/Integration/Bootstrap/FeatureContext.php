@@ -66,15 +66,34 @@ class FeatureContext extends BehatContext
         $this->solrClient = $this->setupSolrClient();
         $factory = $this->setupCommandFactory();
         $metaFactory = $this->setupMetaInformationFactory();
+        $entityMapper = $this->setupEntityMapper();
 
         $solr = new \FS\SolrBundle\Solr(
             $this->solrClient,
             $factory,
             $this->eventDispatcher,
-            $metaFactory
+            $metaFactory,
+            $entityMapper
         );
 
         return $solr;
+    }
+
+    private function setupEntityMapper()
+    {
+        $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
+
+        $entityMapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper(
+            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator(
+                $registry,
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
+            ),
+            new \FS\SolrBundle\Doctrine\Hydration\IndexHydrator(
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
+            )
+        );
+
+        return $entityMapper;
     }
 
     /**
