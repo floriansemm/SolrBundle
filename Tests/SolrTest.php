@@ -31,7 +31,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     private $config = null;
     private $commandFactory = null;
     private $eventDispatcher = null;
-
+    private $mapper = null;
     private $solrClientFake = null;
 
     public function setUp()
@@ -46,6 +46,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
         $this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcher', array(), array(), '', false);
+        $this->mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
 
         $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
@@ -115,7 +116,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 
         $this->assertTrue($query instanceof SolrQuery);
@@ -131,7 +132,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $actual = $solr->getRepository('Tests:EntityWithRepository');
 
         $this->assertTrue($actual instanceof ValidEntityRepository);
@@ -148,7 +149,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->getRepository('Tests:EntityWithInvalidRepository');
     }
 
@@ -159,9 +160,11 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
+        $this->mapOneDocument();
+
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument(new ValidTestEntity());
     }
 
@@ -172,9 +175,11 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
+        $this->mapOneDocument();
+
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->updateDocument(new ValidTestEntity());
     }
 
@@ -187,7 +192,11 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->removeDocument(new ValidTestEntity());
     }
 
@@ -198,7 +207,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->assertDeleteQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->clearIndex();
     }
 
@@ -226,7 +235,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
@@ -243,7 +252,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
 
         $this->assertQueryWasExecuted(array($arrayObj));
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $document = new Document();
         $document->addField('document_name_s', 'name');
@@ -268,7 +277,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -288,7 +297,9 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $this->mapOneDocument();
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -305,7 +316,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory);
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         try {
             $solr->addDocument(new InvalidTestEntityFiltered());
 
@@ -313,6 +324,31 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         } catch (\BadMethodCallException $e) {
             $this->assertTrue(true);
         }
+    }
+
+    private function mapOneDocument()
+    {
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue($this->getMock('Solarium\QueryType\Update\Query\Document\DocumentInterface')));
+    }
+}
+
+class DocumentStub implements \Solarium\QueryType\Update\Query\Document\DocumentInterface
+{
+    public $id = 1;
+    public $document_name_s = 'stub_document';
+
+    /**
+     * Constructor
+     *
+     * @param array $fields
+     * @param array $boosts
+     * @param array $modifiers
+     */
+    public function __construct(array $fields = array(), array $boosts = array(), array $modifiers = array())
+    {
+
     }
 }
 

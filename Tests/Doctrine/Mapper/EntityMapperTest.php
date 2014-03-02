@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
@@ -15,9 +16,18 @@ use Solarium\QueryType\Update\Query\Document\Document;
 class EntityMapperTest extends \PHPUnit_Framework_TestCase
 {
 
+    private $doctrineHydrator = null;
+    private $indexHydrator = null;
+
+    public function setUp()
+    {
+        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+    }
+
     public function testToDocument_EntityMayNotIndexed()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertNull($actual);
@@ -25,7 +35,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testToDocument_DocumentIsUpdated()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
         $mapper->setMappingCommand(new MapAllFieldsCommand(new AnnotationReader()));
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
@@ -34,45 +44,46 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($actual->id);
     }
 
-    public function testToEntity_WithDocumentStub()
+    public function testToEntity_WithDocumentStub_HydrateIndexOnly()
     {
-        $obj = new SolrDocumentStub(array(
-            'id' => 1,
-            'title_t' => 'foo'
-        ));
-
         $targetEntity = new ValidTestEntity();
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
-        $entity = $mapper->toEntity($obj, $targetEntity);
+        $this->indexHydrator->expects($this->once())
+            ->method('hydrate')
+            ->will($this->returnValue($targetEntity));
+
+        $this->doctrineHydrator->expects($this->never())
+            ->method('hydrate');
+
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper->setHydrationMode(HydrationModes::HYDRATE_INDEX);
+        $entity = $mapper->toEntity(new SolrDocumentStub(), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
-
-        $this->assertEquals(1, $entity->getId());
-        $this->assertEquals('foo', $entity->getTitle());
     }
 
-    public function testToEntity_ConcreteDocumentClass()
+    public function testToEntity_ConcreteDocumentClass_WithDoctrine()
     {
-        $obj = new Document(array(
-            'id' => 1,
-            'title_t' => 'foo'
-        ));
-
         $targetEntity = new ValidTestEntity();
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper();
-        $entity = $mapper->toEntity($obj, $targetEntity);
+        $this->indexHydrator->expects($this->once())
+            ->method('hydrate')
+            ->will($this->returnValue($targetEntity));
+
+        $this->doctrineHydrator->expects($this->once())
+            ->method('hydrate')
+            ->will($this->returnValue($targetEntity));
+
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $entity = $mapper->toEntity(new Document(array()), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
-
-        $this->assertEquals(1, $entity->getId());
-        $this->assertEquals('foo', $entity->getTitle());
     }
 
-    public function testToCamelCase()
+    public function ToCamelCase()
     {
-        $mapper = new EntityMapper();
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator);
 
         $meta = new \ReflectionClass($mapper);
         $method = $meta->getMethod('toCamelCase');

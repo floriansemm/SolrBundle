@@ -100,5 +100,21 @@ class ValidTestEntity
     {
         return $this->costomField;
     }
+
+    /**
+     * @return \FS\SolrBundle\Tests\Doctrine\Mapper\date
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param \FS\SolrBundle\Tests\Doctrine\Mapper\date $created_at
+     */
+    public function setCreatedAt($created_at)
+    {
+        $this->created_at = $created_at;
+    }
 }
 

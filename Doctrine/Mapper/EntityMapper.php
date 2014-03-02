@@ -1,6 +1,8 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Hydration\Hydrator;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -13,6 +15,26 @@ class EntityMapper
     private $mappingCommand = null;
 
     /**
+     * @var Hydrator
+     */
+    private $doctrineHydrator;
+
+    /**
+     * @var Hydrator
+     */
+    private $indexHydrator;
+
+    private $hydrationMode = '';
+
+    public function __construct(Hydrator $doctrineHydrator, Hydrator $indexHydrator)
+    {
+        $this->doctrineHydrator = $doctrineHydrator;
+        $this->indexHydrator = $indexHydrator;
+
+        $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
+    }
+
+    /**
      * @param AbstractDocumentCommand $command
      */
     public function setMappingCommand(AbstractDocumentCommand $command)
@@ -21,7 +43,7 @@ class EntityMapper
     }
 
     /**
-     * @param object $entity
+     * @param MetaInformation $meta
      * @return Document
      */
     public function toDocument(MetaInformation $meta)
@@ -35,8 +57,10 @@ class EntityMapper
 
     /**
      * @param \ArrayAccess $document
-     * @param object $targetEntity
+     * @param object $sourceTargetEntity
      * @return object
+     *
+     * @throws \InvalidArgumentException if $sourceTargetEntity is null
      */
     public function toEntity(\ArrayAccess $document, $sourceTargetEntity)
     {
@@ -44,60 +68,23 @@ class EntityMapper
             throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
         }
 
-        $targetEntity = clone $sourceTargetEntity;
+        $metaInformationFactory = new MetaInformationFactory();
+        $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
 
-        $reflectionClass = new \ReflectionClass($targetEntity);
-        foreach ($document as $property => $value) {
-            try {
-                $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
-            } catch (\ReflectionException $e) {
-                try {
-                    $classProperty = $reflectionClass->getProperty(
-                        $this->toCamelCase($this->removeFieldSuffix($property))
-                    );
-                } catch (\ReflectionException $e) {
-                    continue;
-                }
-            }
-
-            $classProperty->setAccessible(true);
-            $classProperty->setValue($targetEntity, $value);
+        $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
+        if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {
+            return $hydratedDocument;
         }
 
-        return $targetEntity;
-    }
+        $metaInformation->setEntity($hydratedDocument);
 
-    /**
-     * returns the clean fieldname without type-suffix
-     *
-     * eg: title_s => title
-     *
-     * @param string $property
-     * @return string
-     */
-    private function removeFieldSuffix($property)
-    {
-        if (($pos = strrpos($property, '_')) !== false) {
-            return substr($property, 0, $pos);
+        if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
+            return $this->doctrineHydrator->hydrate($document, $metaInformation);
         }
-
-        return $property;
     }
 
-    /**
-     * returns field name camelcased if it has underlines
-     *
-     * eg: user_id => userId
-     *
-     * @param string $fieldname
-     * @return string
-     */
-    private function toCamelCase($fieldname)
+    public function setHydrationMode($mode)
     {
-        $words = str_replace('_', ' ', $fieldname);
-        $words = ucwords($words);
-        $pascalCased = str_replace(' ', '', $words);
-
-        return lcfirst($pascalCased);
+        $this->hydrationMode = $mode;
     }
 }

@@ -1,8 +1,6 @@
 <?php
 namespace FS\SolrBundle\Query;
 
-use FS\SolrBundle\Solr;
-
 class SolrQuery extends AbstractQuery
 {
 
@@ -25,28 +23,6 @@ class SolrQuery extends AbstractQuery
      * @var bool
      */
     private $useWildcards = true;
-
-    /**
-     *
-     * @var Solr
-     */
-    private $solr = null;
-
-    /**
-     * @param \FS\SolrBundle\Solr $solr
-     */
-    public function setSolr($solr)
-    {
-        $this->solr = $solr;
-    }
-
-    /**
-     * @return \FS\SolrBundle\Solr
-     */
-    public function getSolr()
-    {
-        return $this->solr;
-    }
 
     /**
      * @return array
@@ -176,4 +152,5 @@ class SolrQuery extends AbstractQuery
 
         return $term;
     }
+
 }

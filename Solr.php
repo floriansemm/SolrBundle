@@ -61,14 +61,15 @@ class Solr
         Client $client,
         CommandFactory $commandFactory,
         EventDispatcherInterface $manager,
-        MetaInformationFactory $metaInformationFactory
+        MetaInformationFactory $metaInformationFactory,
+        EntityMapper $entityMapper
     ) {
         $this->solrClient = $client;
         $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
         $this->metaInformationFactory = $metaInformationFactory;
 
-        $this->entityMapper = new EntityMapper();
+        $this->entityMapper = $entityMapper;
     }
 
     /**
@@ -343,7 +344,7 @@ class Solr
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()), $event);
             $errorEvent->setException($e);
-
+echo $e->getMessage();
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
         }
     }

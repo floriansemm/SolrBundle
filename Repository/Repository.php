@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Repository;
 
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Solr;
@@ -18,6 +19,8 @@ class Repository implements RepositoryInterface
      */
     private $entity = null;
 
+    protected $hydrationMode = '';
+
     /**
      * @param Solr $solr
      * @param object $entity
@@ -25,8 +28,9 @@ class Repository implements RepositoryInterface
     public function __construct(Solr $solr, $entity)
     {
         $this->solr = $solr;
-
         $this->entity = $entity;
+
+        $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
 
     /**
@@ -44,6 +48,8 @@ class Repository implements RepositoryInterface
         $query = new FindByIdentifierQuery();
         $query->setDocument($document);
         $query->setEntity($this->entity);
+        $query->setSolr($this->solr);
+        $query->setHydrationMode($this->hydrationMode);
         $found = $this->solr->query($query);
 
         if (count($found) == 0) {
@@ -73,6 +79,8 @@ class Repository implements RepositoryInterface
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
         $query->setEntity($this->entity);
+        $query->setSolr($this->solr);
+        $query->setHydrationMode($this->hydrationMode);
 
         return $this->solr->query($query);
     }
