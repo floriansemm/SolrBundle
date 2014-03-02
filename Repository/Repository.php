@@ -19,6 +19,8 @@ class Repository implements RepositoryInterface
      */
     private $entity = null;
 
+    protected $hydrationMode = '';
+
     /**
      * @param Solr $solr
      * @param object $entity
@@ -26,8 +28,9 @@ class Repository implements RepositoryInterface
     public function __construct(Solr $solr, $entity)
     {
         $this->solr = $solr;
-
         $this->entity = $entity;
+
+        $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
 
     /**
@@ -48,7 +51,7 @@ class Repository implements RepositoryInterface
         $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
-        $query->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $query->setHydrationMode($this->hydrationMode);
         $found = $this->solr->query($query);
 
         if (count($found) == 0) {
@@ -79,7 +82,7 @@ class Repository implements RepositoryInterface
         $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
-        $query->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $query->setHydrationMode($this->hydrationMode);
 
         return $this->solr->query($query);
     }
