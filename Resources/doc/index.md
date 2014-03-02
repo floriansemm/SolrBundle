@@ -216,6 +216,27 @@ To narrow the mapping, you can use the `addField()` method.
 In this case only the fields id and text will be mapped (addField()), so title and created_at will be
 empty. If nothing was found $result is empty.
 
+## Configure HydrationModes
+
+HydrationMode tells the Bundle how to create an entity from a document.
+
+1. `FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_INDEX` - use only the data from solr
+2. `FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_DOCTRINE` - merge the data from solr with the entire doctrine-entity
+
+With a custom query:
+
+        $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+        $query->setHydrationMode($mode)
+
+With a custom document-repository you have to set the property `$hydrationMode` itself:
+
+        public function find($id)
+        {
+            $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
+
+            return parent::find($id);
+        }
+
 ## Index manually an entity
 
 To index your entities manually, you can do it the following way:
