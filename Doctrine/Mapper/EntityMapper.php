@@ -24,8 +24,15 @@ class EntityMapper
      */
     private $indexHydrator;
 
+    /**
+     * @var string
+     */
     private $hydrationMode = '';
 
+    /**
+     * @param Hydrator $doctrineHydrator
+     * @param Hydrator $indexHydrator
+     */
     public function __construct(Hydrator $doctrineHydrator, Hydrator $indexHydrator)
     {
         $this->doctrineHydrator = $doctrineHydrator;
@@ -83,6 +90,9 @@ class EntityMapper
         }
     }
 
+    /**
+     * @param string $mode
+     */
     public function setHydrationMode($mode)
     {
         $this->hydrationMode = $mode;
