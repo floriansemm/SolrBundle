@@ -31,7 +31,7 @@ class EntityMapper
         $this->doctrineHydrator = $doctrineHydrator;
         $this->indexHydrator = $indexHydrator;
 
-        $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
+        $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
 
     /**
