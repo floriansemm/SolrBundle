@@ -19,6 +19,9 @@ class Repository implements RepositoryInterface
      */
     private $entity = null;
 
+    /**
+     * @var string
+     */
     protected $hydrationMode = '';
 
     /**
