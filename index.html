@@ -16,8 +16,8 @@
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="http://floriansemm.github.io/SolrBundle/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
-    <link href="http://floriansemm.github.io/SolrBundle/assets/themes/twitter/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="http://floriansemm.github.io/SolrBundle/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="http://floriansemm.github.io/SolrBundle/css/style.css" rel="stylesheet" type="text/css" media="all">
 
     <!-- Le fav and touch icons -->
   <!-- Update these with your own images
@@ -26,13 +26,15 @@
     <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
   -->
+
+
   </head>
 
   <body>
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-narrow">
-          <a class="brand" href="/">Documentation for SolrBundle</a>
+          <a class="brand" href="//SolrBundle">Documentation for SolrBundle</a>
           <ul class="nav">
             
             
@@ -66,7 +68,7 @@
 
 <div class="row-fluid">
   <div class="span12">
-    <p><a href="http://travis-ci.org/floriansemm/SolrBundle"><img src="https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master" alt="Build Status" /></a></p>
+    <p><a href="http://travis-ci.org/floriansemm/SolrBundle"><img src="https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master" alt="Build Status" /></a> <a href="http://waffle.io/floriansemm/solrbundle"><img src="http://badge.waffle.io/floriansemm/solrbundle.png" alt="Stories in Ready" /></a></p>
 
 <p>This Bundle provides a simple API to index and query a Solr Index.</p>
 
@@ -142,49 +144,49 @@ fs_solr:
 
 <p>To put an entity to the index, you must add some annotations to your entity:</p>
 
-<pre><code>	// your Entity
+<pre><code>// your Entity
 
-	// ....
-	use FS\SolrBundle\Doctrine\Annotation as Solr;
-	
+// ....
+use FS\SolrBundle\Doctrine\Annotation as Solr;
+
+/**
+ * @Solr\Document(repository=&quot;Full\Qualified\Class\Name&quot;)
+ * @ORM\Table()
+ */
+class Post
+{
 	/**
-	 * @Solr\Document(repository=&quot;Full\Qualified\Class\Name&quot;)
-	 * @ORM\Table()
+	 * @Solr\Id
+	 *
+	 * @ORM\Column(name=&quot;id&quot;, type=&quot;integer&quot;)
+	 * @ORM\Id
+	 * @ORM\GeneratedValue(strategy=&quot;AUTO&quot;)
 	 */
-	class Post
-	{
-		/**
-		 * @Solr\Id
-		 *
-		 * @ORM\Column(name=&quot;id&quot;, type=&quot;integer&quot;)
-		 * @ORM\Id
-		 * @ORM\GeneratedValue(strategy=&quot;AUTO&quot;)
-		 */
-		private $id;
 
-		/**
-		 *
-		 * @Solr\Field(type=&quot;string&quot;)
-		 *
-		 * @ORM\Column(name=&quot;title&quot;, type=&quot;string&quot;, length=255)
-		 */
-		private $title = '';
+	private $id;
+	/**
+	 *
+	 * @Solr\Field(type=&quot;string&quot;)
+	 *
+	 * @ORM\Column(name=&quot;title&quot;, type=&quot;string&quot;, length=255)
+	 */
+	private $title = '';
 
-		/**
-		 * 
-		 * @Solr\Field(type=&quot;string&quot;)
-		 *
-		 * @ORM\Column(name=&quot;text&quot;, type=&quot;text&quot;)
-		 */
-		private $text = '';
+	/**
+	* 
+	* @Solr\Field(type=&quot;string&quot;)
+	*
+	* @ORM\Column(name=&quot;text&quot;, type=&quot;text&quot;)
+	*/
+	private $text = '';
 
-		/**
-		 * @Solr\Field(type=&quot;date&quot;)
-		 *
-		 * @ORM\Column(name=&quot;created_at&quot;, type=&quot;datetime&quot;)
-		 */
-		private $created_at = null;
-	}</code></pre>
+	/**
+	* @Solr\Field(type=&quot;date&quot;)
+	*
+	* @ORM\Column(name=&quot;created_at&quot;, type=&quot;datetime&quot;)
+	*/
+	private $created_at = null;
+}</code></pre>
 
 <h3 id="supported_field_types">Supported field types</h3>
 
@@ -199,6 +201,12 @@ fs_solr:
 
 <li>integer</li>
 
+<li>float</li>
+
+<li>double</li>
+
+<li>long</li>
+
 <li>boolean</li>
 </ul>
 
@@ -208,18 +216,20 @@ fs_solr:
 
 <p>In some cases a entity should not be index. For this you have the <code>SynchronizationFilter</code> Annotation.</p>
 
-<pre><code>	/**
-	 * @Solr\Document
-	 * @Solr\SynchronizationFilter(callback=&quot;shouldBeIndex&quot;)
-	 */
-	class SomeEntity {
-		/**
-		 * @return boolean
-		 */
-		public function shouldBeIndex() {
-			// put your logic here
-		}
-	}</code></pre>
+<pre><code>/**
+* @Solr\Document
+* @Solr\SynchronizationFilter(callback=&quot;shouldBeIndex&quot;)
+*/
+class SomeEntity
+{
+	/**
+	* @return boolean
+	*/
+	public function shouldBeIndex()
+	{
+		// put your logic here
+	}
+}</code></pre>
 
 <p>The callback property specifies an callable function, which decides whether the should index or not.</p>
 
@@ -241,11 +251,11 @@ fs_solr:
 
 <p>So if you have an entity with a property “category”, then you don’t need a type-declaration in the annotation:</p>
 
-<pre><code>		/**
-		 * @Solr\Field
-		 * @ORM\Column(name=&quot;category&quot;, type=&quot;text&quot;)
-		 */
-		private $category = '';</code></pre>
+<pre><code>	/**
+	* @Solr\Field
+	* @ORM\Column(name=&quot;category&quot;, type=&quot;text&quot;)
+	*/
+	private $category = '';</code></pre>
 
 <p>The field has in this case automaticaly the type “general_text”.</p>
 
@@ -283,6 +293,30 @@ fs_solr:
 	$result = $query-&gt;getResult();</code></pre>
 
 <p>In this case only the fields id and text will be mapped (addField()), so title and created_at will be empty. If nothing was found $result is empty.</p>
+
+<h2 id="configure_hydrationmodes">Configure HydrationModes</h2>
+
+<p>HydrationMode tells the Bundle how to create an entity from a document.</p>
+
+<ol>
+<li><code>FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_INDEX</code> - use only the data from solr</li>
+
+<li><code>FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_DOCTRINE</code> - merge the data from solr with the entire doctrine-entity</li>
+</ol>
+
+<p>With a custom query:</p>
+
+<pre><code>    $query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+    $query-&gt;setHydrationMode($mode)</code></pre>
+
+<p>With a custom document-repository you have to set the property <code>$hydrationMode</code> itself:</p>
+
+<pre><code>    public function find($id)
+    {
+        $this-&gt;hydrationMode = HydrationModes::HYDRATE_INDEX;
+
+        return parent::find($id);
+    }</code></pre>
 
 <h2 id="index_manually_an_entity">Index manually an entity</h2>
 
