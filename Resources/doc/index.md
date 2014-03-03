@@ -170,11 +170,11 @@ For details have a look into your schema.xml.
 
 So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:
 
-		/**
-		* @Solr\Field
-		* @ORM\Column(name="category", type="text")
-		*/
-		private $category = '';
+    /**
+    * @Solr\Field
+    * @ORM\Column(name="category", type="text")
+    */
+    private $category = '';
 
 The field has in this case automaticaly the type "general_text".
 
@@ -184,10 +184,10 @@ If you persist this entity, it will put automaticlly to the index. Update and de
 
 To query the index you have to call some services.
 
-		$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-		$query->addSearchTerm('title', 'my title');
-		
-		$result = $result = $query->getResult();
+    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query->addSearchTerm('title', 'my title');
+
+    $result = $result = $query->getResult();
 		
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
 to your entity for you.
@@ -196,22 +196,22 @@ to your entity for you.
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
-    	$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-    	$query->queryAllFields('my title);
-    		
-    	$result = $query->getResult();
+    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query->queryAllFields('my title);
+
+    $result = $query->getResult();
 
 
 ## Define Result-Mapping
 
 To narrow the mapping, you can use the `addField()` method.
 
-		$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-		$query->addSearchTerm('title', 'my title');
-		$query->addField('id');
-		$query->addField('text');
-		
-		$result = $query->getResult();
+    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query->addSearchTerm('title', 'my title');
+    $query->addField('id');
+    $query->addField('text');
+
+    $result = $query->getResult();
 
 In this case only the fields id and text will be mapped (addField()), so title and created_at will be
 empty. If nothing was found $result is empty.
@@ -225,25 +225,25 @@ HydrationMode tells the Bundle how to create an entity from a document.
 
 With a custom query:
 
-        $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-        $query->setHydrationMode($mode)
+    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query->setHydrationMode($mode)
 
 With a custom document-repository you have to set the property `$hydrationMode` itself:
 
-        public function find($id)
-        {
-            $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
+    public function find($id)
+    {
+        $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
 
-            return parent::find($id);
-        }
+        return parent::find($id);
+    }
 
 ## Index manually an entity
 
 To index your entities manually, you can do it the following way:
 
-		$this->get('solr')->addDocument($entity);
-		$this->get('solr')->updateDocument($entity);
-		$this->get('solr')->deleteDocument($entity);
+    $this->get('solr')->addDocument($entity);
+    $this->get('solr')->updateDocument($entity);
+    $this->get('solr')->deleteDocument($entity);
 
 `deleteDocument()` requires that the entity-id is set.
 
