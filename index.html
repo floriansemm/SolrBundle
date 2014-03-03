@@ -16,8 +16,8 @@
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="http://floriansemm.github.io/SolrBundle/assets/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
-    <link href="http://floriansemm.github.io/SolrBundle/assets/bootstrap/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="http://floriansemm.github.io/SolrBundle/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="http://floriansemm.github.io/SolrBundle/assets/themes/twitter/css/style.css" rel="stylesheet" type="text/css" media="all">
 
     <!-- Le fav and touch icons -->
   <!-- Update these with your own images
@@ -251,11 +251,11 @@ class SomeEntity
 
 <p>So if you have an entity with a property “category”, then you don’t need a type-declaration in the annotation:</p>
 
-<pre><code>	/**
-	* @Solr\Field
-	* @ORM\Column(name=&quot;category&quot;, type=&quot;text&quot;)
-	*/
-	private $category = '';</code></pre>
+<pre><code>/**
+* @Solr\Field
+* @ORM\Column(name=&quot;category&quot;, type=&quot;text&quot;)
+*/
+private $category = '';</code></pre>
 
 <p>The field has in this case automaticaly the type “general_text”.</p>
 
@@ -265,10 +265,10 @@ class SomeEntity
 
 <p>To query the index you have to call some services.</p>
 
-<pre><code>	$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
-	$query-&gt;addSearchTerm('title', 'my title');
-	
-	$result = $result = $query-&gt;getResult();</code></pre>
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;addSearchTerm('title', 'my title');
+
+$result = $result = $query-&gt;getResult();</code></pre>
 
 <p>The $result array contains all found entities. The solr-service does all mappings from SolrDocument to your entity for you.</p>
 
@@ -276,21 +276,21 @@ class SomeEntity
 
 <p>The pervious examples have queried only the field ‘title’. You can also query all fields with a string.</p>
 
-<pre><code>	$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
-	$query-&gt;queryAllFields('my title);
-		
-	$result = $query-&gt;getResult();</code></pre>
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;queryAllFields('my title);
+
+$result = $query-&gt;getResult();</code></pre>
 
 <h2 id="define_resultmapping">Define Result-Mapping</h2>
 
 <p>To narrow the mapping, you can use the <code>addField()</code> method.</p>
 
-<pre><code>	$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
-	$query-&gt;addSearchTerm('title', 'my title');
-	$query-&gt;addField('id');
-	$query-&gt;addField('text');
-	
-	$result = $query-&gt;getResult();</code></pre>
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;addSearchTerm('title', 'my title');
+$query-&gt;addField('id');
+$query-&gt;addField('text');
+
+$result = $query-&gt;getResult();</code></pre>
 
 <p>In this case only the fields id and text will be mapped (addField()), so title and created_at will be empty. If nothing was found $result is empty.</p>
 
@@ -306,25 +306,25 @@ class SomeEntity
 
 <p>With a custom query:</p>
 
-<pre><code>    $query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
-    $query-&gt;setHydrationMode($mode)</code></pre>
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;setHydrationMode($mode)</code></pre>
 
 <p>With a custom document-repository you have to set the property <code>$hydrationMode</code> itself:</p>
 
-<pre><code>    public function find($id)
-    {
-        $this-&gt;hydrationMode = HydrationModes::HYDRATE_INDEX;
+<pre><code>public function find($id)
+{
+    $this-&gt;hydrationMode = HydrationModes::HYDRATE_INDEX;
 
-        return parent::find($id);
-    }</code></pre>
+    return parent::find($id);
+}</code></pre>
 
 <h2 id="index_manually_an_entity">Index manually an entity</h2>
 
 <p>To index your entities manually, you can do it the following way:</p>
 
-<pre><code>	$this-&gt;get('solr')-&gt;addDocument($entity);
-	$this-&gt;get('solr')-&gt;updateDocument($entity);
-	$this-&gt;get('solr')-&gt;deleteDocument($entity);</code></pre>
+<pre><code>$this-&gt;get('solr')-&gt;addDocument($entity);
+$this-&gt;get('solr')-&gt;updateDocument($entity);
+$this-&gt;get('solr')-&gt;deleteDocument($entity);</code></pre>
 
 <p><code>deleteDocument()</code> requires that the entity-id is set.</p>
 
