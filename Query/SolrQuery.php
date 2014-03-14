@@ -25,6 +25,11 @@ class SolrQuery extends AbstractQuery
     private $useWildcards = true;
 
     /**
+     * @var string
+     */
+    private $customQuery = '';
+
+    /**
      * @return array
      */
     public function getResult()
@@ -62,6 +67,22 @@ class SolrQuery extends AbstractQuery
     public function setUseWildcard($boolean)
     {
         $this->useWildcards = $boolean;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomQuery()
+    {
+        return $this->customQuery;
+    }
+
+    /**
+     * @param string $query
+     */
+    public function setCustomQuery($query)
+    {
+        $this->customQuery = $query;
     }
 
     /**
@@ -122,6 +143,11 @@ class SolrQuery extends AbstractQuery
      */
     public function getQuery()
     {
+        if ($this->customQuery) {
+            $this->setQuery($this->customQuery);
+            return $this->customQuery;
+        }
+
         $term = '';
         if (count($this->searchTerms) == 0) {
             return $term;
