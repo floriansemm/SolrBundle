@@ -197,7 +197,7 @@ to your entity for you.
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
     $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-    $query->queryAllFields('my title);
+    $query->queryAllFields('my title');
 
     $result = $query->getResult();
 
