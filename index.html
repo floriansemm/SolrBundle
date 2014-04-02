@@ -277,7 +277,7 @@ $result = $result = $query-&gt;getResult();</code></pre>
 <p>The pervious examples have queried only the field ‘title’. You can also query all fields with a string.</p>
 
 <pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
-$query-&gt;queryAllFields('my title);
+$query-&gt;queryAllFields('my title');
 
 $result = $query-&gt;getResult();</code></pre>
 
