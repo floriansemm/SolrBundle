@@ -24,27 +24,27 @@ class Solr
     /**
      * @var Client
      */
-    private $solrClient = null;
+    protected $solrClient = null;
 
     /**
      * @var EntityMapper
      */
-    private $entityMapper = null;
+    protected $entityMapper = null;
 
     /**
      * @var CommandFactory
      */
-    private $commandFactory = null;
+    protected $commandFactory = null;
 
     /**
      * @var EventDispatcher
      */
-    private $eventManager = null;
+    protected $eventManager = null;
 
     /**
      * @var MetaInformationFactory
      */
-    private $metaInformationFactory = null;
+    protected $metaInformationFactory = null;
 
     /**
      * @var int numFound
@@ -70,6 +70,14 @@ class Solr
         $this->metaInformationFactory = $metaInformationFactory;
 
         $this->entityMapper = $entityMapper;
+    }
+    
+    /**
+     * @return Client
+     */
+    public function getClient()
+    {
+        return $this->solrClient;
     }
 
     /**
