@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\DependencyInjection\Compiler\InjectDoctrineManagerRegistryPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use FS\SolrBundle\DependencyInjection\Compiler\AddCreateDocumentCommandPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -13,5 +14,6 @@ class FSSolrBundle extends Bundle
 		parent::build($container);
 
 		$container->addCompilerPass(new AddCreateDocumentCommandPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
+    $container->addCompilerPass(new InjectDoctrineManagerRegistryPass());
 	}
 }

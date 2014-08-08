@@ -3,15 +3,15 @@
 namespace FS\SolrBundle\Doctrine\Hydration;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class DoctrineHydrator implements Hydrator
 {
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
-    private $doctrine;
+    private $doctrineManagerRegistry;
 
     /**
      * @var Hydrator
@@ -19,13 +19,19 @@ class DoctrineHydrator implements Hydrator
     private $valueHydrator;
 
     /**
-     * @param RegistryInterface $doctrine
      * @param Hydrator $valueHydrator
      */
-    public function __construct(RegistryInterface $doctrine, Hydrator $valueHydrator)
+    public function __construct(Hydrator $valueHydrator)
     {
-        $this->doctrine = $doctrine;
         $this->valueHydrator = $valueHydrator;
+    }
+
+    /**
+     * @param ManagerRegistry $doctrineManagerRegistry
+     */
+    public function setDoctrineManagerRegistry(ManagerRegistry $doctrineManagerRegistry)
+    {
+        $this->doctrineManagerRegistry = $doctrineManagerRegistry;
     }
 
     /**
@@ -36,7 +42,8 @@ class DoctrineHydrator implements Hydrator
     public function hydrate($document, MetaInformation $metaInformation)
     {
         $entityId = $document->id;
-        $doctrineEntity = $this->doctrine
+
+        $doctrineEntity = $this->doctrineManagerRegistry
             ->getManager()
             ->getRepository($metaInformation->getClassName())
             ->find($entityId);
