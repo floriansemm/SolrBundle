@@ -12,14 +12,18 @@ class InjectDoctrineManagerRegistryPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        $managerRegistryServiceId = $this->findManagerRegistryServiceId($container);
+        $container->setParameter('solr.doctrine.manager_registry_service_id', $managerRegistryServiceId);
+
         $definition = $container->getDefinition('solr.doctrine.hydration.doctrine_hydrator');
 
         $definition->addMethodCall(
             'setDoctrineManagerRegistry',
             array(
-                new Reference($this->findManagerRegistryServiceId($container))
+                new Reference($managerRegistryServiceId),
             )
         );
+
     }
 
     /**
