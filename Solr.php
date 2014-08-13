@@ -162,6 +162,10 @@ class Solr
 
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
+        if (!$metaInformations) {
+            return null;
+        }
+
         if ($document = $this->entityMapper->toDocument($metaInformations)) {
             $deleteQuery = new FindByIdentifierQuery();
             $deleteQuery->setDocument($document);
@@ -192,6 +196,10 @@ class Solr
     public function addDocument($entity)
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        if (!$metaInformation) {
+            return null;
+        }
 
         if (!$this->addToIndex($metaInformation, $entity)) {
             return;
