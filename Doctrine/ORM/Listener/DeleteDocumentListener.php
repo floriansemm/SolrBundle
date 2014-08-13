@@ -27,9 +27,6 @@ class DeleteDocumentListener
     {
         $entity = $args->getEntity();
 
-        try {
-            $this->solr->removeDocument($entity);
-        } catch (\RuntimeException $e) {
-        }
+        $this->solr->removeDocument($entity);
     }
 }
