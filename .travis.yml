@@ -10,7 +10,6 @@ before_script:
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
-    - wget https://github.com/downloads/Behat/Behat/behat.phar
     - curl https://raw.github.com/moliware/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.6.0 DEBUG=1 bash
 
 
