@@ -5,7 +5,6 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-
         <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
         <parameter key="solr.builder.class">FS\SolrBundle\Builder\SolrBuilder</parameter>
         <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
@@ -22,6 +21,12 @@
         <parameter key="solr.console.command.result.class">FS\SolrBundle\Console\ConsoleCommandResults</parameter>
         <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
         <parameter key="solr.console.result.factory.class">FS\SolrBundle\Console\ConsoleResultFactory</parameter>
+
+        <parameter key="solr.doctrine.mapper.entity_mapper.class">FS\SolrBundle\Doctrine\Mapper\EntityMapper</parameter>
+
+        <parameter key="solr.doctrine.hydration.doctrine_hydrator.class">FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator</parameter>
+        <parameter key="solr.doctrine.hydration.value_hydrator.class">FS\SolrBundle\Doctrine\Hydration\ValueHydrator</parameter>
+        <parameter key="solr.doctrine.hydration.index_hydrator.class">FS\SolrBundle\Doctrine\Hydration\IndexHydrator</parameter>
     </parameters>
 
     <services>
@@ -72,20 +77,19 @@
             <tag name="kernel.event_listener" event="post_update" method="onSolrSuccess" />
         </service>
 
-        <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">
+        <service id="solr.doctrine.entity_mapper" class="%solr.doctrine.mapper.entity_mapper.class%">
             <argument id="solr.doctrine.hydration.doctrine_hydrator" type="service" />
             <argument id="solr.doctrine.hydration.index_hydrator" type="service" />
         </service>
 
-        <service id="solr.doctrine.hydration.doctrine_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">
-            <argument id="doctrine" type="service" />
+        <service id="solr.doctrine.hydration.doctrine_hydrator" class="%solr.doctrine.hydration.doctrine_hydrator.class%">
             <argument id="solr.doctrine.hydration.value_hydrator" type="service" />
         </service>
 
-        <service id="solr.doctrine.hydration.value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\ValueHydrator">
+        <service id="solr.doctrine.hydration.value_hydrator" class="%solr.doctrine.hydration.value_hydrator.class%">
         </service>
 
-        <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
+        <service id="solr.doctrine.hydration.index_hydrator" class="%solr.doctrine.hydration.index_hydrator.class%">
             <argument id="solr.doctrine.hydration.value_hydrator" type="service" />
         </service>
     </services>

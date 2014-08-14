@@ -31,14 +31,17 @@
 		<!-- ODM Listener -->
         <service id="solr.delete.document.odm.listener" class="%solr.delete.document.odm.listener.class%" public="false">
             <argument type="service" id="solr.client.default" />
+            <tag name="doctrine.event_listener" event="postRemove" />
         </service>
 
         <service id="solr.update.document.odm.listener" class="%solr.update.document.odm.listener.class%" public="false">
             <argument type="service" id="solr.client.default" />
+            <tag name="doctrine.event_listener" event="postUpdate" />
         </service>      
         
         <service id="solr.add.document.odm.listener" class="%solr.add.document.odm.listener.class%" public="false">
             <argument type="service" id="solr.client.default" />
+            <tag name="doctrine.event_listener" event="postPersist" />
         </service>	
 	</services>
 </container>
