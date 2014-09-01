@@ -85,9 +85,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         $objectManager = null;
 
         if ($source == 'relational') {
-            $objectManager = $this->getContainer()->get(
-              $this->getContainer()->getParameter('solr.doctrine.manager_registry_service_id')
-            );
+            $objectManager = $this->getContainer()->get('doctrine');
         } else {
             if ($source == 'mongodb') {
                 $objectManager = $this->getContainer()->get('doctrine_mongodb');
