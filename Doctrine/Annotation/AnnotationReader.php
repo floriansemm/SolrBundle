@@ -53,55 +53,12 @@ class AnnotationReader
     }
 
     /**
-     * reads the entity and returns a set of annotations
-     *
-     * @param string $entity
-     * @param string $type
-     * @throws AnnotationException
-     * @return array
-     */
-    private function getMethodsByType($entity, $type)
-    {
-          $reflectionClass = new \ReflectionClass($entity);
-          $methods = $reflectionClass->getMethods();
-
-          $fields = array();
-          foreach ($methods as $method) {
-                $annotation = $this->reader->getMethodAnnotation($method, $type);
-
-                if (null === $annotation) {
-                    continue;
-                }
-
-                if (!$method->isPublic()) {
-                    throw new AnnotationException(sprintf('Method "%s" in class "%s" is not callabe. Change visibility from %s to %s.',
-                        $method->getName(),
-                        $method->getDeclaringClass(),
-                        $method->isPrivate() ? 'private' : 'protected'
-                    ));
-                }
-
-                $annotation->value = $method->invoke($entity);
-                if ($annotation->name == '') {
-                    $annotation->name = $method->getName();
-                }
-
-                $fields[] = $annotation;
-          }
-
-          return $fields;
-    }
-
-    /**
      * @param object $entity
      * @return array
      */
     public function getFields($entity)
     {
-        return array_merge(
-            $this->getPropertiesByType($entity, self::FIELD_CLASS),
-            $this->getMethodsByType($entity, self::FIELD_CLASS)
-        );
+        return $this->getPropertiesByType($entity, self::FIELD_CLASS);
     }
 
     /**
@@ -165,7 +122,7 @@ class AnnotationReader
      */
     public function getFieldMapping($entity)
     {
-        $fields = $this->getFields($entity);
+        $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS);
 
         $mapping = array();
         foreach ($fields as $field) {

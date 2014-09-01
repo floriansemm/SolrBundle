@@ -27,6 +27,9 @@ class UpdateDocumentListener
     {
         $entity = $args->getEntity();
 
-        $this->solr->updateDocument($entity);
+        try {
+            $this->solr->updateDocument($entity);
+        } catch (\RuntimeException $e) {
+        }
     }
 }
