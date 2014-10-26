@@ -12,12 +12,12 @@ class Repository implements RepositoryInterface
     /**
      * @var Solr
      */
-    private $solr = null;
+    protected $solr = null;
 
     /**
      * @var object
      */
-    private $entity = null;
+    protected $entity = null;
 
     /**
      * @var string
