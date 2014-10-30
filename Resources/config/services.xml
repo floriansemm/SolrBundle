@@ -7,7 +7,7 @@
     <parameters>
 
         <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
-        <parameter key="solr.builder.class">FS\SolrBundle\Builder\SolrBuilder</parameter>
+        <parameter key="solr.client.adapter.builder.class">FS\SolrBundle\Client\SolrBuilder</parameter>
         <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
 
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
@@ -35,7 +35,7 @@
 
         <service id="solr.client.adapter" class="%solr.client.adapter.class%" abstract="true" factory-service="solr.client.adapter.builder" factory-method="build" />
 
-        <service id="solr.client.adapter.builder" abstract="true" class="%solr.builder.class%">
+        <service id="solr.client.adapter.builder" abstract="true" class="%solr.client.adapter.builder.class%">
             <argument type="collection" />
         </service>
 

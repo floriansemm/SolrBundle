@@ -1,5 +1,5 @@
 <?php
-namespace FS\SolrBundle\Builder;
+namespace FS\SolrBundle\Client;
 
 
 interface Builder

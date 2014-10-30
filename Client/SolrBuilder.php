@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Builder;
+namespace FS\SolrBundle\Client;
 
 use Solarium\Client;
 
