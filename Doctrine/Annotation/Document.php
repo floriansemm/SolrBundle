@@ -10,6 +10,7 @@ class Document extends Annotation
 {
     public $repository = '';
     public $boost = 0;
+    public $index = 'default';
 
     /**
      * @throws \InvalidArgumentException if boost is not a number
@@ -23,5 +24,13 @@ class Document extends Annotation
         
         $float = floatval($this->boost);
         return $float ?: null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIndex()
+    {
+        return $this->index;
     }
 }

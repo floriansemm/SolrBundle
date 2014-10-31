@@ -52,6 +52,11 @@ class MetaInformation
     private $synchronizationCallback = '';
 
     /**
+     * @var string
+     */
+    private $index = '';
+
+    /**
      *
      * @return number
      */
@@ -253,5 +258,21 @@ class MetaInformation
     public function setSynchronizationCallback($synchronizationCallback)
     {
         $this->synchronizationCallback = $synchronizationCallback;
+    }
+
+    /**
+     * @param string $index
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIndex()
+    {
+        return $this->index;
     }
 }

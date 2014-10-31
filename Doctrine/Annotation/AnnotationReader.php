@@ -84,6 +84,21 @@ class AnnotationReader
     }
 
     /**
+     * @param $entity
+     *
+     * @return string
+     */
+    public function getDocumentIndex($entity)
+    {
+        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
+        if (!$annotation instanceof Document) {
+            return '';
+        }
+
+        return $annotation->getIndex();
+    }
+
+    /**
      * @param object $entity
      * @return Type
      * @throws \RuntimeException

@@ -23,7 +23,7 @@ class Solr
 
 
     /**
-     * @var Client
+     * @var ClientPool
      */
     protected $solrClient = null;
 
@@ -53,7 +53,7 @@ class Solr
     private $numberOfFoundDocuments = 0;
 
     /**
-     * @param Client $client
+     * @param ClientPool $client
      * @param CommandFactory $commandFactory
      * @param EventManager $manager
      * @param MetaInformationFactory $metaInformationFactory
@@ -345,13 +345,16 @@ class Solr
     private function addDocumentToIndex($doc, MetaInformation $metaInformation, Event $event)
     {
         try {
-            $update = $this->solrClient->createUpdate();
+            $indexName = $metaInformation->getIndex();
+            $solrClient = $this->solrClient->getClient($indexName);
+
+            $update = $solrClient->createUpdate();
             $update->addDocument($doc);
             $update->addCommit();
 
-            $this->solrClient->update($update);
+            $solrClient->update($update);
         } catch (\Exception $e) {
-            $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($this->solrClient->getOptions()), $event);
+            $errorEvent = new ErrorEvent(null, $metaInformation, json_encode($solrClient->getOptions()), $event);
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);

@@ -68,6 +68,7 @@ class MetaInformationFactory
         $metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
         $metaInformation->setSynchronizationCallback($this->annotationReader->getSynchronizationCallback($entity));
+        $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
 
         return $metaInformation;
     }

@@ -31,7 +31,7 @@ class ClientPool
     public function getClient($clientName)
     {
         $clients = array_keys($this->clients);
-
+var_dump($clients);exit;
         if (!isset($clientName)) {
             throw new \RuntimeException(sprintf('Unknow client %s, knowns clients: %s', $clientName, implode(', ', $clients)));
         }
