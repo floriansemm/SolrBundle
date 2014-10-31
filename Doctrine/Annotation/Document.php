@@ -11,6 +11,7 @@ class Document extends Annotation
     public $repository = '';
     public $boost = 0;
     public $index = 'default';
+    public $indexHandler;
 
     /**
      * @throws \InvalidArgumentException if boost is not a number

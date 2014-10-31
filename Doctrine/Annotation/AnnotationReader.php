@@ -95,6 +95,11 @@ class AnnotationReader
             return '';
         }
 
+        $indexHandler = $annotation->indexHandler;
+        if ($indexHandler != '' && method_exists($entity, $indexHandler)) {
+            return $entity->$indexHandler();
+        }
+
         return $annotation->getIndex();
     }
 
