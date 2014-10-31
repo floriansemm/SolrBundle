@@ -10,7 +10,7 @@ class Document extends Annotation
 {
     public $repository = '';
     public $boost = 0;
-    public $index = 'default';
+    public $index = null;
     public $indexHandler;
 
     /**

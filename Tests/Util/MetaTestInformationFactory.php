@@ -34,6 +34,7 @@ class MetaTestInformationFactory
         $metaInformation->setEntity($entity);
         $metaInformation->setDocumentName('validtestentity');
         $metaInformation->setClassName(get_class($entity));
+        $metaInformation->setIndex(null);
 
         return $metaInformation;
     }

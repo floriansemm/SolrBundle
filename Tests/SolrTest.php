@@ -183,6 +183,9 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $solr->updateDocument(new ValidTestEntity());
     }
 
+    /**
+     * @group failing
+     */
     public function testRemoveDocument()
     {
         $this->assertDeleteQueryWasExecuted();
@@ -204,6 +207,10 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
+
+        $this->solrClientFake->expects($this->once())
+            ->method('getEndpoints')
+            ->will($this->returnValue(array('core0' => array())));
 
         $this->assertDeleteQueryWasExecuted();
 

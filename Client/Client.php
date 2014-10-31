@@ -47,7 +47,7 @@ class Client
         $deleteQuery = new FindByIdentifierQuery();
         $deleteQuery->setDocument($document);
 
-        $delete = $this->solrClientCore->createUpdate();
+        $delete = $this->solariumClient->createUpdate();
         $delete->addDeleteQuery($deleteQuery->getQuery());
         $delete->addCommit();
 
