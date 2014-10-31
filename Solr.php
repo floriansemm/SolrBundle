@@ -279,11 +279,8 @@ class Solr
         $this->eventManager->dispatch(Events::PRE_CLEAR_INDEX, new Event($this->solrClientCore));
 
         try {
-            $delete = $this->solrClientCore->createUpdate();
-            $delete->addDeleteQuery('*:*');
-            $delete->addCommit();
-
-            $this->solrClientCore->update($delete);
+            $client = new \FS\SolrBundle\Client\Client($this->solrClientCore);
+            $client->clearCores();
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
             $errorEvent->setException($e);

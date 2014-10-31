@@ -47,7 +47,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             return;
         }
 
-        $solr = $this->getContainer()->get('solr.client.default');
+        $solr = $this->getContainer()->get('solr.client');
 
         foreach ($entities as $entity) {
             try {

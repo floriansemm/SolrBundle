@@ -19,7 +19,7 @@ class ClearIndexCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $solr = $this->getContainer()->get('solr.client.default');
+        $solr = $this->getContainer()->get('solr.client');
 
         try {
             $solr->clearIndex();
