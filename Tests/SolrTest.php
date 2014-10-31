@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Solr;
+namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
@@ -27,12 +27,12 @@ use Solarium\QueryType\Update\Query\Document\Document;
 class SolrTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $metaFactory = null;
-    private $config = null;
-    private $commandFactory = null;
-    private $eventDispatcher = null;
-    private $mapper = null;
-    private $solrClientFake = null;
+    protected $metaFactory = null;
+    protected $config = null;
+    protected $commandFactory = null;
+    protected $eventDispatcher = null;
+    protected $mapper = null;
+    protected $solrClientFake = null;
 
     public function setUp()
     {
@@ -80,7 +80,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
             ->method('createUpdate');
     }
 
-    private function assertDeleteQueryWasExecuted()
+    protected function assertDeleteQueryWasExecuted()
     {
         $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $deleteQuery->expects($this->once())
@@ -101,7 +101,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
             ->with($deleteQuery);
     }
 
-    private function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
+    protected function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
     {
         if (null === $metaInformation) {
             $metaInformation = MetaTestInformationFactory::getMetaInformation();
@@ -183,9 +183,6 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $solr->updateDocument(new ValidTestEntity());
     }
 
-    /**
-     * @group failing
-     */
     public function testRemoveDocument()
     {
         $this->assertDeleteQueryWasExecuted();
@@ -333,7 +330,7 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private function mapOneDocument()
+    protected function mapOneDocument()
     {
         $this->mapper->expects($this->once())
             ->method('toDocument')
@@ -341,21 +338,5 @@ class SolrTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class DocumentStub implements \Solarium\QueryType\Update\Query\Document\DocumentInterface
-{
-    public $id = 1;
-    public $document_name_s = 'stub_document';
 
-    /**
-     * Constructor
-     *
-     * @param array $fields
-     * @param array $boosts
-     * @param array $modifiers
-     */
-    public function __construct(array $fields = array(), array $boosts = array(), array $modifiers = array())
-    {
-
-    }
-}
 
