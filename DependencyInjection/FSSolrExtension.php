@@ -42,37 +42,26 @@ class FSSolrExtension extends Extension
      */
     private function setupClients(array $config, ContainerBuilder $container)
     {
-        $clients = $config['clients'];
-
-        if (count($clients) == 0) {
-            $endpoints = array_keys($config['endpoints']);
-            $defaultClient = $endpoints[0];
-
-            $clients[$defaultClient] = array('endpoints' => array($defaultClient));
-        }
+        $endpoints = $config['endpoints'];
 
         $clientPoolDefnition = $container->getDefinition('solr.client.pool');
 
-        foreach ($clients as $clientName => $client) {
-            $endpoint = array_pop($client['endpoints']);
+        foreach ($endpoints as $endpointName => $endpointConfiguration) {
+            $clientBuilderName = sprintf('solr.client.adapter.builder.%s', $endpointName);
 
             $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
-            $clientBuilderName = sprintf('solr.client.adapter.builder.%s', $clientName);
-            $container->setDefinition($clientBuilderName, $builderDefinition);
-
-            if (!isset($config['endpoints'][$endpoint])) {
-                throw new RuntimeException(sprintf('The endpoint %s is not defined', $endpoint));
-            }
-
-            $connectInformation[$endpoint] = $config['endpoints'][$endpoint];
+            $connectInformation = array();
+            $connectInformation[$endpointName] = $endpointConfiguration;
             $builderDefinition->replaceArgument(0, $connectInformation);
 
+            $container->setDefinition($clientBuilderName, $builderDefinition);
+
             $clientAdapterDefinition = new DefinitionDecorator('solr.client.adapter');
-            $clientAdapter = sprintf('solr.client.adapter.%s', $clientName);
+            $clientAdapter = sprintf('solr.client.adapter.%s', $endpointName);
             $container->setDefinition($clientAdapter, $clientAdapterDefinition);
             $clientAdapterDefinition->setFactoryService($clientBuilderName);
 
-            $clientPoolDefnition->addMethodCall('addClient', array($clientName, new Reference($clientAdapter)));
+            $clientPoolDefnition->addMethodCall('addClient', array($endpointName, new Reference($clientAdapter)));
         }
     }
 
