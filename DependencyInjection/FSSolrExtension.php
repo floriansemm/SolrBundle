@@ -44,25 +44,8 @@ class FSSolrExtension extends Extension
     {
         $endpoints = $config['endpoints'];
 
-        $clientPoolDefnition = $container->getDefinition('solr.client.pool');
-
-        foreach ($endpoints as $endpointName => $endpointConfiguration) {
-            $clientBuilderName = sprintf('solr.client.adapter.builder.%s', $endpointName);
-
-            $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
-            $connectInformation = array();
-            $connectInformation[$endpointName] = $endpointConfiguration;
-            $builderDefinition->replaceArgument(0, $connectInformation);
-
-            $container->setDefinition($clientBuilderName, $builderDefinition);
-
-            $clientAdapterDefinition = new DefinitionDecorator('solr.client.adapter');
-            $clientAdapter = sprintf('solr.client.adapter.%s', $endpointName);
-            $container->setDefinition($clientAdapter, $clientAdapterDefinition);
-            $clientAdapterDefinition->setFactoryService($clientBuilderName);
-
-            $clientPoolDefnition->addMethodCall('addClient', array($endpointName, new Reference($clientAdapter)));
-        }
+        $builderDefinition = $container->getDefinition('solr.client.adapter.builder');
+        $builderDefinition->replaceArgument(0, $endpoints);
     }
 
     /**

@@ -26,16 +26,16 @@
 
     <services>
 		<service id="solr.client" class="%solr.class%">
-			<argument type="service" id="solr.client.pool" />
+			<argument type="service" id="solr.client.adapter" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="event_dispatcher" />
 			<argument type="service" id="solr.meta.information.factory" />
 			<argument type="service" id="solr.doctrine.entity_mapper" />
 		</service>
 
-        <service id="solr.client.adapter" class="%solr.client.adapter.class%" abstract="true" factory-service="solr.client.adapter.builder" factory-method="build" />
+        <service id="solr.client.adapter" class="%solr.client.adapter.class%" factory-service="solr.client.adapter.builder" factory-method="build" />
 
-        <service id="solr.client.adapter.builder" abstract="true" class="%solr.client.adapter.builder.class%">
+        <service id="solr.client.adapter.builder" class="%solr.client.adapter.builder.class%">
             <argument type="collection" />
         </service>
 
