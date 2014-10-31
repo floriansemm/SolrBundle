@@ -39,6 +39,9 @@
             <argument type="collection" />
         </service>
 
+        <service id="solr.client.pool" class="FS\SolrBundle\Client\ClientPool">
+        </service>
+
 		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
 
     	<service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false" />

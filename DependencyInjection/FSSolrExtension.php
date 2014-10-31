@@ -51,6 +51,8 @@ class FSSolrExtension extends Extension
             $clients[$defaultClient] = array('endpoints' => array($defaultClient));
         }
 
+        $clientPoolDefnition = $container->getDefinition('solr.client.pool');
+
         foreach ($clients as $clientName => $client) {
             $endpoint = array_pop($client['endpoints']);
 
@@ -71,9 +73,12 @@ class FSSolrExtension extends Extension
             $clientAdapterDefinition->setFactoryService($builder);
 
             $clientDefinition = new DefinitionDecorator('solr.client');
-            $container->setDefinition(sprintf('solr.client.%s', $clientName), $clientDefinition);
+            $clientName = sprintf('solr.client.%s', $clientName);
+            $container->setDefinition($clientName, $clientDefinition);
 
             $clientDefinition->replaceArgument(0, new Reference($clientAdapter));
+
+            $clientPoolDefnition->addMethodCall('addClient', array(new Reference($clientName)));
         }
     }
 
