@@ -63,9 +63,6 @@ You have to setup the connection options
           path: /solr/
           core: corename
           timeout: 5
-      clients:
-        default:
-          endpoints: [default]
           
 With this config you have access to the service `solr.client.default`. If you have more client you can access them with the call `solr.client.clientname`
 
@@ -156,6 +153,36 @@ In some cases a entity should not be index. For this you have the `Synchronizati
 
 The callback property specifies an callable function, which decides whether the should index or not. 	
 
+### Specify cores
+
+It is possible to specify a core dedicated to a document
+
+       /**
+    	* @Solr\Document(index="core0")
+    	*/
+    	class SomeEntity
+    	{
+    	    // ...
+    	}
+
+All documents will be indexed in the core `core0`. If your entities/document have different languages then you can setup
+a callback method, which returns the preferred core for the entity.
+
+       /**
+    	* @Solr\Document(indexHandler="indexHandler")
+    	*/
+    	class SomeEntity
+    	{
+    	    public function indexHandler()
+    	    {
+    	        if ($this->language == 'en') {
+    	            return 'core0';
+    	        }
+    	    }
+    	}
+
+ Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
+ then a default core will be used (first in the `endpoints` list).
 
 ## Solr field configuration
 
