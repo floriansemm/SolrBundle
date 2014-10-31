@@ -51,6 +51,7 @@ class EntityMapper
 
     /**
      * @param MetaInformation $meta
+     *
      * @return Document
      */
     public function toDocument(MetaInformation $meta)
@@ -65,6 +66,7 @@ class EntityMapper
     /**
      * @param \ArrayAccess $document
      * @param object $sourceTargetEntity
+     *
      * @return object
      *
      * @throws \InvalidArgumentException if $sourceTargetEntity is null

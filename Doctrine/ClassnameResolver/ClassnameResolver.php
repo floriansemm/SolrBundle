@@ -19,6 +19,7 @@ class ClassnameResolver
 
     /**
      * @param string $entityAlias
+     *
      * @return string
      *
      * @throws ClassnameResolverException if the entityAlias could not find in any configured namespace or the class
@@ -49,6 +50,7 @@ class ClassnameResolver
 
     /**
      * @param string $entity
+     *
      * @return string
      */
     public function getNamespaceAlias($entity)
@@ -60,6 +62,7 @@ class ClassnameResolver
 
     /**
      * @param string $entity
+     *
      * @return string
      */
     public function getClassname($entity)
@@ -72,6 +75,7 @@ class ClassnameResolver
     /**
      * @param string $namespace
      * @param string $entityAlias
+     *
      * @return string
      */
     private function getFullyQualifiedClassname($namespace, $entityAlias)

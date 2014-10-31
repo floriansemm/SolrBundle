@@ -11,8 +11,10 @@ class CommandFactory
 
     /**
      * @param string $command
-     * @throws \RuntimeException
+     *
      * @return AbstractDocumentCommand
+     *
+     * @throws \RuntimeException
      */
     public function get($command)
     {

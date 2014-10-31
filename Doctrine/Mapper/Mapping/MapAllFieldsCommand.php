@@ -14,6 +14,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
 
     /**
      * @param MetaInformation $meta
+     *
      * @return null|\Solarium\QueryType\Update\Query\Document\Document
      */
     public function createDocument(MetaInformation $meta)

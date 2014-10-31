@@ -9,6 +9,7 @@ interface Hydrator
     /**
      * @param $document
      * @param MetaInformation $metaInformation
+     *
      * @return object
      */
     public function hydrate($document, MetaInformation $metaInformation);

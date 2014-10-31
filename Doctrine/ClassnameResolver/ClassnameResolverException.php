@@ -7,6 +7,7 @@ class ClassnameResolverException extends \RuntimeException
     /**
      * @param string $entityNamespaceAlias
      * @param array $knownNamespaces
+     *
      * @return ClassnameResolverException
      */
     public static function fromKnownNamespaces($entityNamespaceAlias, array $knownNamespaces)

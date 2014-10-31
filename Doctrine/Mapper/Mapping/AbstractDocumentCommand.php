@@ -12,6 +12,7 @@ abstract class AbstractDocumentCommand
 
     /**
      * @param MetaInformation $meta
+     *
      * @return Document
      */
     public function createDocument(MetaInformation $meta)

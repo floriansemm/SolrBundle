@@ -42,8 +42,11 @@ class MetaInformationFactory
     }
 
     /**
-     * @param string|object entityAlias
+     * @param $entity
+     *
      * @return MetaInformation
+     *
+     * @throws \RuntimeException if no declaration for document found in $entity
      */
     public function loadInformation($entity)
     {
@@ -75,8 +78,10 @@ class MetaInformationFactory
 
     /**
      * @param object $entity
-     * @throws \RuntimeException
+     *
      * @return string
+     *
+     * @throws \RuntimeException
      */
     private function getClass($entity)
     {
@@ -95,6 +100,7 @@ class MetaInformationFactory
 
     /**
      * @param string $fullClassName
+     *
      * @return string
      */
     private function getDocumentName($fullClassName)

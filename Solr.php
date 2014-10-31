@@ -53,10 +53,11 @@ class Solr
     private $numberOfFoundDocuments = 0;
 
     /**
-     * @param Client $client
-     * @param CommandFactory $commandFactory
-     * @param EventManager $manager
-     * @param MetaInformationFactory $metaInformationFactory
+     * @param Client                   $client
+     * @param CommandFactory           $commandFactory
+     * @param EventDispatcherInterface $manager
+     * @param MetaInformationFactory   $metaInformationFactory
+     * @param EntityMapper             $entityMapper
      */
     public function __construct(
         Client $client,
@@ -107,6 +108,7 @@ class Solr
 
     /**
      * @param object $entity
+     *
      * @return SolrQuery
      */
     public function createQuery($entity)
@@ -125,8 +127,11 @@ class Solr
     }
 
     /**
-     * @param string repositoryClassity
-     * @return RepositoryInterface
+     * @param string $entityAlias
+     *
+     * @return Repository
+     *
+     * @throws \RuntimeException if repository does not extend FS\SolrBundle\Repository\Repository
      */
     public function getRepository($entityAlias)
     {
@@ -208,8 +213,10 @@ class Solr
     /**
      * @param MetaInformation $metaInformation
      * @param object $entity
-     * @throws \BadMethodCallException if callback method not exists
+     *
      * @return boolean
+     *
+     * @throws \BadMethodCallException if callback method not exists
      */
     private function addToIndex(MetaInformation $metaInformation, $entity)
     {
@@ -227,6 +234,7 @@ class Solr
 
     /**
      * @param AbstractQuery $query
+     *
      * @return array of found documents
      */
     public function query(AbstractQuery $query)
@@ -264,6 +272,7 @@ class Solr
 
     /**
      * Number of results found by query
+     *
      * @return integer
      */
     public function getNumFound()
@@ -301,6 +310,8 @@ class Solr
 
     /**
      * @param object $entity
+     *
+     * @return bool
      */
     public function updateDocument($entity)
     {
@@ -319,8 +330,9 @@ class Solr
     }
 
     /**
-     * @param MetaInformation metaInformationsy
-     * @return Document|null
+     * @param MetaInformation $metaInformation
+     *
+     * @return Document
      */
     private function toDocument(MetaInformation $metaInformation)
     {
@@ -333,8 +345,9 @@ class Solr
     }
 
     /**
-     * @param Document $doc
+     * @param object          $doc
      * @param MetaInformation $metaInformation
+     * @param Event           $event
      */
     private function addDocumentToIndex($doc, MetaInformation $metaInformation, Event $event)
     {

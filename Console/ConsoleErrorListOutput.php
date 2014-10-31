@@ -25,7 +25,8 @@ class ConsoleErrorListOutput
 
     /**
      * @param OutputInterface $output
-     * @param array $errors
+     * @param TableHelper     $tableHelperSet
+     * @param array           $errors
      */
     public function __construct(OutputInterface $output, TableHelper $tableHelperSet, array $errors)
     {

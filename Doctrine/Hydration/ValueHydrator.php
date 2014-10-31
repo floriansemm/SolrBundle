@@ -9,6 +9,7 @@ class ValueHydrator implements Hydrator
     /**
      * @param $document
      * @param MetaInformation $metaInformation
+     *
      * @return object
      */
     public function hydrate($document, MetaInformation $metaInformation)
@@ -42,6 +43,7 @@ class ValueHydrator implements Hydrator
      * eg: title_s => title
      *
      * @param string $property
+     *
      * @return string
      */
     private function removeFieldSuffix($property)
@@ -59,6 +61,7 @@ class ValueHydrator implements Hydrator
      * eg: user_id => userId
      *
      * @param string $fieldname
+     *
      * @return string
      */
     private function toCamelCase($fieldname)

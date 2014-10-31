@@ -30,6 +30,7 @@ class KnownNamespaceAliases
 
     /**
      * @param string $alias
+     *
      * @return bool
      */
     public function isKnownNamespaceAlias($alias)
@@ -39,6 +40,7 @@ class KnownNamespaceAliases
 
     /**
      * @param string $alias
+     *
      * @return string
      */
     public function getFullyQualifiedNamespace($alias)

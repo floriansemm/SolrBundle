@@ -27,6 +27,7 @@ class AnnotationReader
      *
      * @param string $entity
      * @param string $type
+     *
      * @return array
      */
     private function getPropertiesByType($entity, $type)
@@ -54,6 +55,7 @@ class AnnotationReader
 
     /**
      * @param object $entity
+     *
      * @return array
      */
     public function getFields($entity)
@@ -64,6 +66,7 @@ class AnnotationReader
     /**
      * @param object $entity
      * @throws \InvalidArgumentException if the boost value is not numeric
+     *
      * @return number
      */
     public function getEntityBoost($entity)
@@ -106,6 +109,7 @@ class AnnotationReader
     /**
      * @param object $entity
      * @return Type
+     *
      * @throws \RuntimeException
      */
     public function getIdentifier($entity)
@@ -121,6 +125,7 @@ class AnnotationReader
 
     /**
      * @param object $entity
+     *
      * @return string classname of repository
      */
     public function getRepository($entity)
@@ -138,6 +143,7 @@ class AnnotationReader
      * returns all fields and field for idendification
      *
      * @param object $entity
+     *
      * @return array
      */
     public function getFieldMapping($entity)
@@ -170,6 +176,7 @@ class AnnotationReader
 
     /**
      * @param string $entity
+     *
      * @return string
      */
     public function getSynchronizationCallback($entity)
@@ -186,6 +193,7 @@ class AnnotationReader
     /**
      * @param string $entity
      * @param string $annotation
+     *
      * @return string
      */
     private function getClassAnnotation($entity, $annotation)
