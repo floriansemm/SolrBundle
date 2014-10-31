@@ -3,6 +3,8 @@
 namespace FS\SolrBundle\Tests\Doctrine\Mapping\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexHandler;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexProperty;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoBoost;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoTypes;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
@@ -175,6 +177,28 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expectedFields, $actualFields);
+    }
+
+    /**
+     * @test
+     */
+    public function getIndexFromAnnotationProperty()
+    {
+        $reader = new AnnotationReader();
+        $index = $reader->getDocumentIndex(new ValidTestEntityIndexProperty());
+
+        $this->assertEquals('my_core', $index);
+    }
+
+    /**
+     * @test
+     */
+    public function getIndexFromIndexHandler()
+    {
+        $reader = new AnnotationReader();
+        $index = $reader->getDocumentIndex(new ValidTestEntityIndexHandler());
+
+        $this->assertEquals('my_core', $index);
     }
 }
 
