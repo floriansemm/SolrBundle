@@ -57,8 +57,8 @@ class FSSolrExtension extends Extension
             $endpoint = array_pop($client['endpoints']);
 
             $builderDefinition = new DefinitionDecorator('solr.client.adapter.builder');
-            $builder = sprintf('solr.client.adapter.builder.%s', $clientName);
-            $container->setDefinition($builder, $builderDefinition);
+            $clientBuilderName = sprintf('solr.client.adapter.builder.%s', $clientName);
+            $container->setDefinition($clientBuilderName, $builderDefinition);
 
             if (!isset($config['endpoints'][$endpoint])) {
                 throw new RuntimeException(sprintf('The endpoint %s is not defined', $endpoint));
@@ -70,15 +70,9 @@ class FSSolrExtension extends Extension
             $clientAdapterDefinition = new DefinitionDecorator('solr.client.adapter');
             $clientAdapter = sprintf('solr.client.adapter.%s', $clientName);
             $container->setDefinition($clientAdapter, $clientAdapterDefinition);
-            $clientAdapterDefinition->setFactoryService($builder);
+            $clientAdapterDefinition->setFactoryService($clientBuilderName);
 
-            $clientDefinition = new DefinitionDecorator('solr.client');
-            $clientName = sprintf('solr.client.%s', $clientName);
-            $container->setDefinition($clientName, $clientDefinition);
-
-            $clientDefinition->replaceArgument(0, new Reference($clientAdapter));
-
-            $clientPoolDefnition->addMethodCall('addClient', array(new Reference($clientName)));
+            $clientPoolDefnition->addMethodCall('addClient', array($clientName, new Reference($clientAdapter)));
         }
     }
 

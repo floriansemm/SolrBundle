@@ -25,8 +25,8 @@
     </parameters>
 
     <services>
-		<service id="solr.client" class="%solr.class%" abstract="true">
-			<argument type="service" id="solr.client" />
+		<service id="solr.client" class="%solr.class%">
+			<argument type="service" id="solr.client.pool" />
 			<argument type="service" id="solr.mapping.factory" />
 			<argument type="service" id="event_dispatcher" />
 			<argument type="service" id="solr.meta.information.factory" />
@@ -39,8 +39,7 @@
             <argument type="collection" />
         </service>
 
-        <service id="solr.client.pool" class="FS\SolrBundle\Client\ClientPool">
-        </service>
+        <service id="solr.client.pool" class="FS\SolrBundle\Client\ClientPool" />
 
 		<service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false" />
 

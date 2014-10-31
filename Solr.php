@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Client\ClientPool;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -58,7 +59,7 @@ class Solr
      * @param MetaInformationFactory $metaInformationFactory
      */
     public function __construct(
-        Client $client,
+        ClientPool $client,
         CommandFactory $commandFactory,
         EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory,
