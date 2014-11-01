@@ -1,5 +1,0 @@
-
-http://floriansemm.github.io/sitemap.txt
-http://floriansemm.github.io/index.html
-
-http://floriansemm.github.io/lessons/2011/12/29/jekyll-introduction
