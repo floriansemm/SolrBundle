@@ -51,14 +51,20 @@ You have to setup the connection options
     # app/config/config.yml
     fs_solr:
       endpoints:
-        default:
+        core1:
           host: host
           port: 8983
-          path: /solr/
+          path: /solr/core1
           core: corename
           timeout: 5
-          
-With this config you have access to the service `solr.client.default`. If you have more client you can access them with the call `solr.client.clientname`
+        core1:
+          host: host
+          port: 8983
+          path: /solr/core1
+          core: corename
+          timeout: 5
+
+With this config you can setup two cores: `core1` and `core2`. See section `Specify cores` for more information.
 
 # Usage #
 
