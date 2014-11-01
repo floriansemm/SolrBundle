@@ -1,9 +1,3 @@
- ---
-layout: page
-title: SolrBundle
-tagline: symfony2 doctrine2 solr
----
-{% include JB/setup %}
 
 [![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle) [![Stories in Ready](http://badge.waffle.io/floriansemm/solrbundle.png)](http://waffle.io/floriansemm/solrbundle)
 
