@@ -28,37 +28,343 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+          <p><a href="http://travis-ci.org/floriansemm/SolrBundle"><img src="https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master" alt="Build Status"></a> <a href="http://waffle.io/floriansemm/solrbundle"><img src="http://badge.waffle.io/floriansemm/solrbundle.png" alt="Stories in Ready"></a></p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>This Bundle provides a simple API to index and query a Solr Index. </p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<h1>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h1>
+
+<p>The bundle requires a working doctrine-orm or doctrine-mongodb configuration. There are no differences in the use.</p>
+
+<h2>
+<a name="install-the-bundle" class="anchor" href="#install-the-bundle"><span class="octicon octicon-link"></span></a>Install the Bundle</h2>
+
+<p>Bundle</p>
+
+<ol>
+<li>
+<p>Register bundle in AppKernel.php</p>
+
+<pre><code># app/AppKernel.php
+
+$bundles = array(
+    // ...
+    new FS\SolrBundle\FSSolrBundle(),
+    // ...
+);
+</code></pre>
+</li>
+<li>
+<p>Add Bundle to autoload</p>
+
+<p>A. Via composer, add in your composer.json</p>
+
+<pre><code>"require": {
+    // ...  
+    "floriansemm/solr-bundle": "dev-master"
+}
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>B.  or manually, in app/autoload.php</p>
+
+<p>i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)</p>
+
+<pre><code>$loader-&gt;add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));        
+</code></pre>
+
+<p>ii. in older version it could be</p>
+
+<pre><code>$loader-&gt;registerNamespaces(array(
+    // ...
+    'FS' =&gt; __DIR__.'/../vendor/bundles',
+    // ...
+));
+</code></pre>
+</li>
+</ol>
+
+<h2>
+<a name="multiple-indexes" class="anchor" href="#multiple-indexes"><span class="octicon octicon-link"></span></a>Multiple Indexes</h2>
+
+<p>You have to setup the connection options</p>
+
+<pre><code># app/config/config.yml
+fs_solr:
+  endpoints:
+    default:
+      host: host
+      port: 8983
+      path: /solr/
+      core: corename
+      timeout: 5
+</code></pre>
+
+<p>With this config you have access to the service <code>solr.client.default</code>. If you have more client you can access them with the call <code>solr.client.clientname</code></p>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<h2>
+<a name="annotations" class="anchor" href="#annotations"><span class="octicon octicon-link"></span></a>Annotations</h2>
+
+<p>To put an entity to the index, you must add some annotations to your entity:</p>
+
+<pre><code>// your Entity
+
+// ....
+use FS\SolrBundle\Doctrine\Annotation as Solr;
+
+/**
+ * @Solr\Document(repository="Full\Qualified\Class\Name")
+ * @ORM\Table()
+ */
+class Post
+{
+    /**
+     * @Solr\Id
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+
+    private $id;
+    /**
+     *
+     * @Solr\Field(type="string")
+     *
+     * @ORM\Column(name="title", type="string", length=255)
+     */
+    private $title = '';
+
+    /**
+    * 
+    * @Solr\Field(type="string")
+    *
+    * @ORM\Column(name="text", type="text")
+    */
+    private $text = '';
+
+    /**
+    * @Solr\Field(type="date")
+    *
+    * @ORM\Column(name="created_at", type="datetime")
+    */
+    private $created_at = null;
+}
+</code></pre>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="supported-field-types" class="anchor" href="#supported-field-types"><span class="octicon octicon-link"></span></a>Supported field types</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Currently is a basic set of types implemented.</p>
+
+<ul>
+<li>string</li>
+<li>text</li>
+<li>date</li>
+<li>integer</li>
+<li>float</li>
+<li>double</li>
+<li>long</li>
+<li>boolean</li>
+</ul>
+
+<p>It is possible to use custum field types (schema.xml).</p>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="filter-annotation" class="anchor" href="#filter-annotation"><span class="octicon octicon-link"></span></a>Filter annotation</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>In some cases a entity should not be index. For this you have the <code>SynchronizationFilter</code> Annotation.</p>
+
+<pre><code>/**
+* @Solr\Document
+* @Solr\SynchronizationFilter(callback="shouldBeIndex")
+*/
+class SomeEntity
+{
+    /**
+    * @return boolean
+    */
+    public function shouldBeIndex()
+    {
+        // put your logic here
+    }
+}
+</code></pre>
+
+<p>The callback property specifies an callable function, which decides whether the should index or not.    </p>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="specify-cores" class="anchor" href="#specify-cores"><span class="octicon octicon-link"></span></a>Specify cores</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>It is possible to specify a core dedicated to a document</p>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<pre><code>   /**
+    * @Solr\Document(index="core0")
+    */
+    class SomeEntity
+    {
+        // ...
+    }
+</code></pre>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>All documents will be indexed in the core <code>core0</code>. If your entities/document have different languages then you can setup
+a callback method, which returns the preferred core for the entity.</p>
+
+<pre><code>   /**
+    * @Solr\Document(indexHandler="indexHandler")
+    */
+    class SomeEntity
+    {
+        public function indexHandler()
+        {
+            if ($this-&gt;language == 'en') {
+                return 'core0';
+            }
+        }
+    }
+</code></pre>
+
+<p>Each core must setup up in the config.yml under <code>endpoints</code>. If you leave the <code>index</code> or <code>indexHandler</code> property empty,
+then a default core will be used (first in the <code>endpoints</code> list). To index a document in all cores use <code>*</code> as index value:</p>
+
+<pre><code>    @Solr\Document(index="*")
+</code></pre>
+
+<h2>
+<a name="solr-field-configuration" class="anchor" href="#solr-field-configuration"><span class="octicon octicon-link"></span></a>Solr field configuration</h2>
+
+<p>Solr comes with a set of predefined field-name/field-types mapping:</p>
+
+<ul>
+<li>title (solr-type: general_text)</li>
+<li>text (solr-type: general_text)</li>
+<li>category (solr-type: general_text)</li>
+<li>content_type (solr-type: string)</li>
+</ul>
+
+<p>For details have a look into your schema.xml.</p>
+
+<p>So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:</p>
+
+<pre><code>/**
+* @Solr\Field
+* @ORM\Column(name="category", type="text")
+*/
+private $category = '';
+</code></pre>
+
+<p>The field has in this case automaticaly the type "general_text".</p>
+
+<p>If you persist this entity, it will put automaticlly to the index. Update and delete happens automatically too.</p>
+
+<h2>
+<a name="query-a-field-of-a-document" class="anchor" href="#query-a-field-of-a-document"><span class="octicon octicon-link"></span></a>Query a field of a document</h2>
+
+<p>To query the index you have to call some services.</p>
+
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;addSearchTerm('title', 'my title');
+
+$result = $result = $query-&gt;getResult();
+</code></pre>
+
+<p>The $result array contains all found entities. The solr-service does all mappings from SolrDocument
+to your entity for you.</p>
+
+<h2>
+<a name="query-all-fields-of-a-document" class="anchor" href="#query-all-fields-of-a-document"><span class="octicon octicon-link"></span></a>Query all fields of a document</h2>
+
+<p>The pervious examples have queried only the field 'title'. You can also query all fields with a string.</p>
+
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;queryAllFields('my title');
+
+$result = $query-&gt;getResult();
+</code></pre>
+
+<h2>
+<a name="define-result-mapping" class="anchor" href="#define-result-mapping"><span class="octicon octicon-link"></span></a>Define Result-Mapping</h2>
+
+<p>To narrow the mapping, you can use the <code>addField()</code> method.</p>
+
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;addSearchTerm('title', 'my title');
+$query-&gt;addField('id');
+$query-&gt;addField('text');
+
+$result = $query-&gt;getResult();
+</code></pre>
+
+<p>In this case only the fields id and text will be mapped (addField()), so title and created_at will be
+empty. If nothing was found $result is empty.</p>
+
+<h2>
+<a name="configure-hydrationmodes" class="anchor" href="#configure-hydrationmodes"><span class="octicon octicon-link"></span></a>Configure HydrationModes</h2>
+
+<p>HydrationMode tells the Bundle how to create an entity from a document.</p>
+
+<ol>
+<li>
+<code>FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_INDEX</code> - use only the data from solr</li>
+<li>
+<code>FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_DOCTRINE</code> - merge the data from solr with the entire doctrine-entity</li>
+</ol>
+
+<p>With a custom query:</p>
+
+<pre><code>$query = $this-&gt;get('solr')-&gt;createQuery('AcmeDemoBundle:Post');
+$query-&gt;setHydrationMode($mode)
+</code></pre>
+
+<p>With a custom document-repository you have to set the property <code>$hydrationMode</code> itself:</p>
+
+<pre><code>public function find($id)
+{
+    $this-&gt;hydrationMode = HydrationModes::HYDRATE_INDEX;
+
+    return parent::find($id);
+}
+</code></pre>
+
+<h2>
+<a name="index-manually-an-entity" class="anchor" href="#index-manually-an-entity"><span class="octicon octicon-link"></span></a>Index manually an entity</h2>
+
+<p>To index your entities manually, you can do it the following way:</p>
+
+<pre><code>$this-&gt;get('solr')-&gt;addDocument($entity);
+$this-&gt;get('solr')-&gt;updateDocument($entity);
+$this-&gt;get('solr')-&gt;deleteDocument($entity);
+</code></pre>
+
+<p><code>deleteDocument()</code> requires that the entity-id is set.</p>
+
+<h2>
+<a name="use-document-repositories" class="anchor" href="#use-document-repositories"><span class="octicon octicon-link"></span></a>Use document repositories</h2>
+
+<p>If you specify your own repository you must extend the <code>FS\SolrBundle\Repository\Repository</code> class. The useage is the same
+like Doctrine-Repositories:</p>
+
+<pre><code>$myRepository = $this-&gt;get('solr')-&gt;getRepository('AcmeDemoBundle:Post');
+$result = $myRepository-&gt;mySpecialFindMethod();
+</code></pre>
+
+<p>If you haven't declared a concrete repository in your entity and you calling <code>$this-&gt;get('solr')-&gt;getRepository('AcmeDemoBundle:Post')</code>, you will
+get an instance of <code>FS\SolrBundle\Repository\Repository</code>.</p>
+
+<h2>
+<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
+
+<p>There are comming two commands with this bundle:</p>
+
+<ul>
+<li>
+<code>solr:index:clear</code> - delete all documents in the index</li>
+<li>
+<code>solr:synchronize</code> - synchronize the db with the index</li>
+</ul>
         </section>
 
         <aside id="sidebar">
