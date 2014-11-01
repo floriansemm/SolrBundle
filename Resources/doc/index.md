@@ -181,8 +181,10 @@ a callback method, which returns the preferred core for the entity.
     	    }
     	}
 
- Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
- then a default core will be used (first in the `endpoints` list).
+Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
+then a default core will be used (first in the `endpoints` list). To index a document in all cores use `*` as index value:
+
+        @Solr\Document(index="*")
 
 ## Solr field configuration
 
