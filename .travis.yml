@@ -16,7 +16,6 @@ before_script:
 
 script:
     - phpunit
-    - php behat.phar
 notifications:
   email:
     - fsemm.travis-ci@gmx.de    
