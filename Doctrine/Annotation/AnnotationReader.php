@@ -33,7 +33,7 @@ class AnnotationReader
     private function getPropertiesByType($entity, $type)
     {
         $reflectionClass = new \ReflectionClass($entity);
-        $properties = $reflectionClass->getProperties();
+        $properties = array_merge($reflectionClass->getProperties(), $this->getParentProperties($reflectionClass));
 
         $fields = array();
         foreach ($properties as $property) {
@@ -54,6 +54,21 @@ class AnnotationReader
     }
 
     /**
+     * @param \ReflectionClass $reflectionClass
+     *
+     * @return \ReflectionProperty[]
+     */
+    private function getParentProperties(\ReflectionClass $reflectionClass)
+    {
+        $parent = $reflectionClass->getParentClass();
+        if ($parent == null) {
+            return array();
+        }
+
+        return $parent->getProperties();
+    }
+
+    /**
      * @param object $entity
      *
      * @return array
@@ -65,9 +80,10 @@ class AnnotationReader
 
     /**
      * @param object $entity
-     * @throws \InvalidArgumentException if the boost value is not numeric
      *
      * @return number
+     *
+     * @throws \InvalidArgumentException if the boost value is not numeric
      */
     public function getEntityBoost($entity)
     {
@@ -108,6 +124,7 @@ class AnnotationReader
 
     /**
      * @param object $entity
+     *
      * @return Type
      *
      * @throws \RuntimeException
@@ -165,6 +182,7 @@ class AnnotationReader
 
     /**
      * @param object $entity
+     *
      * @return boolean
      */
     public function hasDocumentDeclaration($entity)
@@ -192,14 +210,20 @@ class AnnotationReader
 
     /**
      * @param string $entity
-     * @param string $annotation
+     * @param string $annotationName
      *
      * @return string
      */
-    private function getClassAnnotation($entity, $annotation)
+    private function getClassAnnotation($entity, $annotationName)
     {
         $reflectionClass = new \ReflectionClass($entity);
 
-        return $this->reader->getClassAnnotation($reflectionClass, $annotation);
+        $annotation = $this->reader->getClassAnnotation($reflectionClass, $annotationName);
+
+        if ($annotation === null && $reflectionClass->getParentClass()) {
+            $annotation = $this->reader->getClassAnnotation($reflectionClass->getParentClass(), $annotationName);
+        }
+
+        return $annotation;
     }
 }

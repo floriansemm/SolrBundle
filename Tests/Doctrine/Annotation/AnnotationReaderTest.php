@@ -200,5 +200,39 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('my_core', $index);
     }
+
+    /**
+     * @test
+     */
+    public function readAnnotationsFromBaseClass()
+    {
+        $reader = new AnnotationReader();
+        $fields = $reader->getFields(new ChildEntity());
+
+        $this->assertEquals(2, count($fields));
+        $this->assertTrue($reader->hasDocumentDeclaration(new ChildEntity()));
+    }
 }
 
+use FS\SolrBundle\Doctrine\Annotation as Solr;
+
+/**
+ *
+ * @Solr\Document
+ */
+abstract class BaseEntity
+{
+    /**
+     *
+     * @Solr\Field(type="integer")
+     */
+    private $field;
+}
+
+class ChildEntity extends BaseEntity
+{
+    /**
+     * @Solr\Field(type="integer")
+     */
+    private $childField;
+}
