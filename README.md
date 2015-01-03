@@ -1,8 +1,6 @@
 
 [![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle) 
-
 [![Latest Stable Version](https://poser.pugx.org/floriansemm/solr-bundle/v/stable.svg)](https://packagist.org/packages/floriansemm/solr-bundle)
-
 [![Total Downloads](https://poser.pugx.org/floriansemm/solr-bundle/downloads.svg)](https://packagist.org/packages/floriansemm/solr-bundle)
 
 This Bundle provides a simple API to index and query a Solr Index. 
