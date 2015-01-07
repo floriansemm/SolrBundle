@@ -227,7 +227,7 @@ to your entity for you.
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
-    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
     $query->queryAllFields('my title');
 
     $result = $query->getResult();
@@ -237,7 +237,7 @@ The pervious examples have queried only the field 'title'. You can also query al
 
 To narrow the mapping, you can use the `addField()` method.
 
-    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+    $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
     $query->addSearchTerm('title', 'my title');
     $query->addField('id');
     $query->addField('text');
