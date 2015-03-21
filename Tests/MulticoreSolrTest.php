@@ -8,10 +8,10 @@ use FS\SolrBundle\Tests\DocumentStub;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 
-class MulticoreSolrTest extends SolrTest
+class MulticoreSolrTest extends AbstractSolrTest
 {
 
-    private function assertUpdateQueryExecuted()
+    protected function assertUpdateQueryExecuted()
     {
         $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $updateQuery->expects($this->once())
