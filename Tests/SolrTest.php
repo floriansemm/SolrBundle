@@ -183,6 +183,24 @@ class SolrTest extends \PHPUnit_Framework_TestCase
         $solr->updateDocument(new ValidTestEntity());
     }
 
+    public function testDoNotUpdateDocumentIfDocumentCallbackAvoidIt()
+    {
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->assertUpdateQueryWasNotExecuted();
+
+        $information = new MetaInformation();
+        $information->setSynchronizationCallback('shouldBeIndex');
+        $this->setupMetaFactoryLoadOneCompleteInformation($information);
+
+        $filteredEntity = new ValidTestEntityFiltered();
+        $filteredEntity->shouldIndex = true;
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr->updateDocument($filteredEntity);
+    }
+
     public function testRemoveDocument()
     {
         $this->assertDeleteQueryWasExecuted();
