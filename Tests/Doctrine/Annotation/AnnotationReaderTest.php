@@ -209,8 +209,19 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $reader = new AnnotationReader();
         $fields = $reader->getFields(new ChildEntity());
 
-        $this->assertEquals(2, count($fields));
+        $this->assertEquals(3, count($fields));
         $this->assertTrue($reader->hasDocumentDeclaration(new ChildEntity()));
+    }
+
+    /**
+     * @test
+     */
+    public function readAnnotationsFromMultipleClassHierarchy()
+    {
+        $reader = new AnnotationReader();
+        $fields = $reader->getFields(new ChildEntity2());
+
+        $this->assertEquals(4, count($fields));
     }
 }
 
@@ -226,7 +237,13 @@ abstract class BaseEntity
      *
      * @Solr\Field(type="integer")
      */
-    private $field;
+    private $baseField1;
+
+    /**
+     *
+     * @Solr\Field(type="integer")
+     */
+    protected $baseField2;
 }
 
 class ChildEntity extends BaseEntity
@@ -234,5 +251,13 @@ class ChildEntity extends BaseEntity
     /**
      * @Solr\Field(type="integer")
      */
-    private $childField;
+    protected $childField1;
+}
+
+class ChildEntity2 extends ChildEntity
+{
+    /**
+     * @Solr\Field(type="integer")
+     */
+    protected $childField2;
 }
