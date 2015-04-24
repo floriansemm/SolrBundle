@@ -5,9 +5,9 @@
 
 This Bundle provides a simple API to index and query a Solr Index. 
 
-# Configuration
+And do not forget to [![join the chat at https://gitter.im/floriansemm/SolrBundle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/floriansemm/SolrBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-[![Join the chat at https://gitter.im/floriansemm/SolrBundle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/floriansemm/SolrBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Configuration
 
 The bundle requires a working doctrine-orm or doctrine-mongodb configuration. There are no differences in the use.
 
