@@ -61,10 +61,10 @@ You have to setup the connection options
           path: /solr/core1
           core: corename
           timeout: 5
-        core1:
+        core2:
           host: host
           port: 8983
-          path: /solr/core1
+          path: /solr/core2
           core: corename
           timeout: 5
 
