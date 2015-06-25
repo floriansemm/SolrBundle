@@ -70,8 +70,8 @@
             <argument type="service" id="solr.console.result.factory" />
 
             <tag name="kernel.event_listener" event="error" method="onSolrError" />
-            <tag name="kernel.event_listener" event="post_insert" method="onSolrSuccess" />
-            <tag name="kernel.event_listener" event="post_update" method="onSolrSuccess" />
+            <tag name="kernel.event_listener" event="solr.post_insert" method="onSolrSuccess" />
+            <tag name="kernel.event_listener" event="solr.post_update" method="onSolrSuccess" />
         </service>
 
         <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">

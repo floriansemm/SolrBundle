@@ -10,15 +10,29 @@ use FS\SolrBundle\Event\Event;
 
 class SynchronizationSummaryListener
 {
-    private $commandResult = null;
-    private $resultFactory = null;
+    /**
+     * @var ConsoleCommandResults
+     */
+    private $commandResult;
 
+    /**
+     * @var ConsoleResultFactory
+     */
+    private $resultFactory;
+
+    /**
+     * @param ConsoleCommandResults $commandResult
+     * @param ConsoleResultFactory  $resultFactory
+     */
     public function __construct(ConsoleCommandResults $commandResult, ConsoleResultFactory $resultFactory)
     {
         $this->commandResult = $commandResult;
         $this->resultFactory = $resultFactory;
     }
 
+    /**
+     * @param Event $event
+     */
     public function onSolrError(Event $event)
     {
         if ($event instanceof ErrorEvent) {
@@ -28,6 +42,9 @@ class SynchronizationSummaryListener
         }
     }
 
+    /**
+     * @param Event $event
+     */
     public function onSolrSuccess(Event $event)
     {
         $this->commandResult->success(
