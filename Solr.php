@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class allows to index doctrine entities
  */
-class Solr
+class Solr implements SolrInterface
 {
 
 
@@ -129,11 +129,7 @@ class Solr
     }
 
     /**
-     * @param string $entityAlias
-     *
-     * @return Repository
-     *
-     * @throws \RuntimeException if repository does not extend FS\SolrBundle\Repository\Repository
+     * {@inheritdoc}
      */
     public function getRepository($entityAlias)
     {
@@ -160,7 +156,7 @@ class Solr
     }
 
     /**
-     * @param object $entity
+     * {@inheritdoc}
      */
     public function removeDocument($entity)
     {
@@ -192,7 +188,7 @@ class Solr
     }
 
     /**
-     * @param object $entity
+     * {@inheritdoc}
      */
     public function addDocument($entity)
     {
@@ -235,9 +231,7 @@ class Solr
     }
 
     /**
-     * @param AbstractQuery $query
-     *
-     * @return array of found documents
+     * {@inheritdoc}
      */
     public function query(AbstractQuery $query)
     {
