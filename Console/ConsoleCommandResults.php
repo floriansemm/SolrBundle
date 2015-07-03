@@ -2,7 +2,11 @@
 
 namespace FS\SolrBundle\Console;
 
-
+/**
+ * Class collects information about failed and succeed operations on entities
+ *
+ * Used to display summaries in the console
+ */
 class ConsoleCommandResults
 {
 

@@ -2,6 +2,9 @@
 
 namespace FS\SolrBundle\Event;
 
+/**
+ * List of event which can be fired
+ */
 final class Events
 {
     const PRE_INSERT = 'solr.pre_insert';

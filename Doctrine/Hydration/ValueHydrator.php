@@ -4,13 +4,13 @@ namespace FS\SolrBundle\Doctrine\Hydration;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
-class ValueHydrator implements Hydrator
+/**
+ * Maps all values of a given document on a target-entity
+ */
+class ValueHydrator implements HydratorInterface
 {
     /**
-     * @param $document
-     * @param MetaInformation $metaInformation
-     *
-     * @return object
+     * {@inheritdoc}
      */
     public function hydrate($document, MetaInformation $metaInformation)
     {

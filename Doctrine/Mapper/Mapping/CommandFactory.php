@@ -27,7 +27,7 @@ class CommandFactory
 
     /**
      * @param AbstractDocumentCommand $command
-     * @param string $commandName
+     * @param string                  $commandName
      */
     public function add(AbstractDocumentCommand $command, $commandName)
     {

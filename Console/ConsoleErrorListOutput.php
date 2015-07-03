@@ -6,6 +6,9 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Helper class which renders a table of errored entities
+ */
 class ConsoleErrorListOutput
 {
     /**
@@ -35,6 +38,9 @@ class ConsoleErrorListOutput
         $this->tableHelperSet = $tableHelperSet;
     }
 
+    /**
+     * Renders a table of all errored entities
+     */
     public function render()
     {
         $this->output->writeln('');

@@ -24,7 +24,7 @@ abstract class AbstractQuery extends Query
     private $entity = null;
 
     /**
-     * @return the $entity
+     * @return object
      */
     public function getEntity()
     {
@@ -56,7 +56,7 @@ abstract class AbstractQuery extends Query
     }
 
     /**
-     * @param \FS\SolrBundle\Solr $solr
+     * @param Solr $solr
      */
     public function setSolr($solr)
     {

@@ -1,6 +1,10 @@
 <?php
+
 namespace FS\SolrBundle\Event;
 
+/**
+ * Event is fired if an error has occurred
+ */
 class ErrorEvent extends Event
 {
 

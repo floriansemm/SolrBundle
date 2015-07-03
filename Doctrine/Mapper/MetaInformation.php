@@ -22,7 +22,7 @@ class MetaInformation
     private $documentName = '';
 
     /**
-     * @var array
+     * @var Field[]
      */
     private $fields = array();
 
@@ -94,7 +94,7 @@ class MetaInformation
     }
 
     /**
-     * @return array With instances of FS\SolrBundle\Doctrine\Annotation\Field
+     * @return Field[]
      */
     public function getFields()
     {
@@ -118,7 +118,7 @@ class MetaInformation
     }
 
     /**
-     * @param string $identifiert
+     * @param string $identifier
      */
     public function setIdentifier($identifier)
     {
@@ -142,7 +142,7 @@ class MetaInformation
     }
 
     /**
-     * @param multitype: $fields
+     * @param Field[] $fields
      */
     public function setFields($fields)
     {
@@ -151,6 +151,7 @@ class MetaInformation
 
     /**
      * @param string $field
+     *
      * @return boolean
      */
     public function hasField($field)
@@ -172,7 +173,8 @@ class MetaInformation
     }
 
     /**
-     * @param unknown_type $field
+     * @param string $field
+     *
      * @return Field|null
      */
     public function getField($field)

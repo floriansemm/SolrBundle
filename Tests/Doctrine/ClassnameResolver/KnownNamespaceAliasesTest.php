@@ -5,7 +5,8 @@ namespace FS\SolrBundle\Tests\Doctrine\ClassnameResolver;
 
 use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
 
-class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase {
+class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @test

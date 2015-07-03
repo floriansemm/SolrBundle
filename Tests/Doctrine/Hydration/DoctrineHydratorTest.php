@@ -4,6 +4,8 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
+use FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
@@ -37,7 +39,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $obj = new SolrDocumentStub(array());
         $obj->id = 1;
 
-        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
         $hydrator->expects($this->once())
             ->method('hydrate')
             ->with($obj, $metainformations)
@@ -72,7 +74,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $obj = new SolrDocumentStub(array());
         $obj->id = 1;
 
-        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
         $hydrator->expects($this->once())
             ->method('hydrate')
             ->with($obj, $metainformations)
@@ -87,9 +89,9 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $metainformations
-     * @param $fetchedFromDoctrine
-     * @param $hydratedDocument
+     * @param MetaInformation $metainformations
+     * @param object          $fetchedFromDoctrine
+     * @param object          $hydratedDocument
      */
     private function assertEntityFromDBReplcesTargetEntity($metainformations, $fetchedFromDoctrine, $hydratedDocument)
     {

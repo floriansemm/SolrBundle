@@ -2,15 +2,18 @@
 
 namespace FS\SolrBundle\Console;
 
-
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
 
+/**
+ * Factory class for CommandResult objects, see fromEvent method
+ */
 class ConsoleResultFactory
 {
 
     /**
      * @param Event $event
+     *
      * @return CommandResult
      */
     public function fromEvent(Event $event)
@@ -25,6 +28,7 @@ class ConsoleResultFactory
 
     /**
      * @param Event $event
+     *
      * @return null|number
      */
     private function getResultId(Event $event)
@@ -38,6 +42,7 @@ class ConsoleResultFactory
 
     /**
      * @param Event $event
+     *
      * @return string
      */
     private function getClassname(Event $event)
@@ -51,6 +56,7 @@ class ConsoleResultFactory
 
     /**
      * @param Event $event
+     *
      * @return string
      */
     private function getMessage(Event $event)

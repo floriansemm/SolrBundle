@@ -54,6 +54,9 @@ class Client
         $this->applyQuery($delete, $index);
     }
 
+    /**
+     * Runs a *:* delete query on all cores
+     */
     public function clearCores()
     {
         $delete = $this->solariumClient->createUpdate();

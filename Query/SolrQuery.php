@@ -1,4 +1,5 @@
 <?php
+
 namespace FS\SolrBundle\Query;
 
 class SolrQuery extends AbstractQuery
@@ -109,6 +110,7 @@ class SolrQuery extends AbstractQuery
      *
      * @param string $field
      * @param string $value
+     *
      * @return SolrQuery
      */
     public function addSearchTerm($field, $value)
@@ -126,6 +128,7 @@ class SolrQuery extends AbstractQuery
 
     /**
      * @param string $field
+     *
      * @return SolrQuery
      */
     public function addField($field)

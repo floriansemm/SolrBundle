@@ -27,7 +27,7 @@ class FeatureContext extends BehatContext
      */
     public function __construct(array $parameters)
     {
-        $autoload =  __DIR__ . '/../vendor/autoload.php';
+        $autoload = __DIR__ . '/../vendor/autoload.php';
         if (file_exists($autoload)) {
             require_once $autoload;
         } else {
@@ -84,12 +84,12 @@ class FeatureContext extends BehatContext
         $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
 
         $entityMapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper(
-            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator(
+            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface(
                 $registry,
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
             ),
-            new \FS\SolrBundle\Doctrine\Hydration\IndexHydrator(
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
+            new \FS\SolrBundle\Doctrine\Hydration\IndexHydratorInterface(
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
             )
         );
 
@@ -151,7 +151,8 @@ class FeatureContext extends BehatContext
     public function assertInsertSuccessful()
     {
         if (!$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::POST_INSERT) ||
-            !$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)) {
+            !$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)
+        ) {
             throw new RuntimeException('Insert was not successful');
         }
     }

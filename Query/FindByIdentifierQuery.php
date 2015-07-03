@@ -1,4 +1,5 @@
 <?php
+
 namespace FS\SolrBundle\Query;
 
 class FindByIdentifierQuery extends AbstractQuery
@@ -6,6 +7,7 @@ class FindByIdentifierQuery extends AbstractQuery
 
     /**
      * @return string
+     *
      * @throws \RuntimeException when id or document_name is null
      */
     public function getQuery()

@@ -2,7 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
-use FS\SolrBundle\Doctrine\Hydration\Hydrator;
+use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -15,12 +15,12 @@ class EntityMapper
     private $mappingCommand = null;
 
     /**
-     * @var Hydrator
+     * @var HydratorInterface
      */
     private $doctrineHydrator;
 
     /**
-     * @var Hydrator
+     * @var HydratorInterface
      */
     private $indexHydrator;
 
@@ -30,10 +30,10 @@ class EntityMapper
     private $hydrationMode = '';
 
     /**
-     * @param Hydrator $doctrineHydrator
-     * @param Hydrator $indexHydrator
+     * @param HydratorInterface $doctrineHydrator
+     * @param HydratorInterface $indexHydrator
      */
-    public function __construct(Hydrator $doctrineHydrator, Hydrator $indexHydrator)
+    public function __construct(HydratorInterface $doctrineHydrator, HydratorInterface $indexHydrator)
     {
         $this->doctrineHydrator = $doctrineHydrator;
         $this->indexHydrator = $indexHydrator;
@@ -65,7 +65,7 @@ class EntityMapper
 
     /**
      * @param \ArrayAccess $document
-     * @param object $sourceTargetEntity
+     * @param object       $sourceTargetEntity
      *
      * @return object
      *

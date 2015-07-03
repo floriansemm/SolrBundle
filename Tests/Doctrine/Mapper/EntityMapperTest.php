@@ -21,8 +21,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
-        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\Hydrator');
+        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
+        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
     }
 
     public function testToDocument_EntityMayNotIndexed()

@@ -14,7 +14,7 @@ class FSSolrExtension extends Extension
 {
 
     /**
-     * @param array $configs
+     * @param array            $configs
      * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -37,7 +37,7 @@ class FSSolrExtension extends Extension
     }
 
     /**
-     * @param array $config
+     * @param array            $config
      * @param ContainerBuilder $container
      */
     private function setupClients(array $config, ContainerBuilder $container)
@@ -50,7 +50,7 @@ class FSSolrExtension extends Extension
 
     /**
      *
-     * @param array $config
+     * @param array            $config
      * @param ContainerBuilder $container
      */
     private function setupDoctrineConfiguration(array $config, ContainerBuilder $container)
@@ -59,7 +59,7 @@ class FSSolrExtension extends Extension
             $entityManagers = $container->getParameter('doctrine.entity_managers');
 
             $entityManagersNames = array_keys($entityManagers);
-            foreach($entityManagersNames as $entityManager) {
+            foreach ($entityManagersNames as $entityManager) {
                 $container->getDefinition('solr.doctrine.classnameresolver.known_entity_namespaces')->addMethodCall(
                     'addEntityNamespaces',
                     array(new Reference(sprintf('doctrine.orm.%s_configuration', $entityManager)))
@@ -71,7 +71,7 @@ class FSSolrExtension extends Extension
             $documentManagers = $container->getParameter('doctrine_mongodb.odm.document_managers');
 
             $documentManagersNames = array_keys($documentManagers);
-            foreach($documentManagersNames as $documentManager) {
+            foreach ($documentManagersNames as $documentManager) {
                 $container->getDefinition('solr.doctrine.classnameresolver.known_entity_namespaces')->addMethodCall(
                     'addDocumentNamespaces',
                     array(new Reference(sprintf('doctrine_mongodb.odm.%s_configuration', $documentManager)))
@@ -90,7 +90,7 @@ class FSSolrExtension extends Extension
      *
      * listener-methods expecting different types of events
      *
-     * @param array $config
+     * @param array            $config
      * @param ContainerBuilder $container
      */
     private function setupDoctrineListener(array $config, ContainerBuilder $container)

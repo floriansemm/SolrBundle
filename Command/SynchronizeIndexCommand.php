@@ -8,8 +8,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Command synchronizes the DB with solr
+ */
 class SynchronizeIndexCommand extends ContainerAwareCommand
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('solr:synchronize')
@@ -24,6 +30,9 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             ->setDescription('Index all entities');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entity = $input->getArgument('entity');
@@ -52,7 +61,8 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         foreach ($entities as $entity) {
             try {
                 $solr->synchronizeIndex($entity);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
         }
 
         $results = $this->getContainer()->get('solr.console.command.results');
@@ -76,8 +86,10 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
     /**
      * @param string $source
+     *
      * @throws \InvalidArgumentException if $source is unknown
      * @throws \RuntimeException if no doctrine instance is configured
+     *
      * @return AbstractManagerRegistry
      */
     private function getObjectManager($source)

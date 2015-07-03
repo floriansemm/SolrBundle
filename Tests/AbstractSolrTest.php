@@ -46,7 +46,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('createUpdate')
-        ->will($this->returnValue($updateQuery));
+            ->will($this->returnValue($updateQuery));
     }
 
     protected function assertUpdateQueryWasNotExecuted()
@@ -68,7 +68,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $deleteQuery->expects($this->once())
             ->method('addDeleteQuery')
-        ->with($this->isType('string'));
+            ->with($this->isType('string'));
 
         $deleteQuery->expects($this->once())
             ->method('addCommit');
@@ -76,12 +76,12 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('createUpdate')
-        ->will($this->returnValue($deleteQuery));
+            ->will($this->returnValue($deleteQuery));
 
         $this->solrClientFake
             ->expects($this->once())
             ->method('update')
-        ->with($deleteQuery);
+            ->with($deleteQuery);
     }
 
     protected function setupMetaFactoryLoadOneCompleteInformation($metaInformation = null)
@@ -92,7 +92,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
 
         $this->metaFactory->expects($this->once())
             ->method('loadInformation')
-        ->will($this->returnValue($metaInformation));
+            ->will($this->returnValue($metaInformation));
     }
 
     protected function assertQueryWasExecuted($data = array())
@@ -106,19 +106,19 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('createSelect')
-        ->will($this->returnValue($selectQuery));
+            ->will($this->returnValue($selectQuery));
 
         $this->solrClientFake
             ->expects($this->once())
             ->method('select')
-        ->with($selectQuery)
-        ->will($this->returnValue($queryResult));
+            ->with($selectQuery)
+            ->will($this->returnValue($queryResult));
     }
 
     protected function mapOneDocument()
     {
         $this->mapper->expects($this->once())
             ->method('toDocument')
-        ->will($this->returnValue($this->getMock('Solarium\QueryType\Update\Query\Document\DocumentInterface')));
+            ->will($this->returnValue($this->getMock('Solarium\QueryType\Update\Query\Document\DocumentInterface')));
     }
 }

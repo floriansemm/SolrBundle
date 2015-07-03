@@ -2,7 +2,6 @@
 namespace FS\SolrBundle\Event\Listener;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
-use FS\SolrBundle\Event\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractLogListener
@@ -23,6 +22,7 @@ abstract class AbstractLogListener
 
     /**
      * @param MetaInformation $metaInformation
+     *
      * @return string
      */
     protected function createDocumentNameWithId(MetaInformation $metaInformation)
@@ -32,6 +32,7 @@ abstract class AbstractLogListener
 
     /**
      * @param MetaInformation $metaInformation
+     *
      * @return string
      */
     protected function createFieldList(MetaInformation $metaInformation)

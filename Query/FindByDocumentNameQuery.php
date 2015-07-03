@@ -1,7 +1,6 @@
 <?php
-namespace FS\SolrBundle\Query;
 
-use Solarium\QueryType\Update\Query\Document\Document;
+namespace FS\SolrBundle\Query;
 
 class FindByDocumentNameQuery extends AbstractQuery
 {

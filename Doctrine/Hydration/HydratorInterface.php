@@ -4,11 +4,11 @@ namespace FS\SolrBundle\Doctrine\Hydration;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
-interface Hydrator
+interface HydratorInterface
 {
     /**
-     * @param $document
-     * @param MetaInformation $metaInformation
+     * @param object          $document
+     * @param MetaInformation $metaInformation holds the target entity
      *
      * @return object
      */

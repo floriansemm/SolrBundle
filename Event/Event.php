@@ -30,7 +30,7 @@ class Event extends BaseEvent
     private $sourceEvent;
 
     /**
-     * @param object $client
+     * @param object          $client
      * @param MetaInformation $metainformation
      */
     public function __construct(
@@ -70,6 +70,9 @@ class Event extends BaseEvent
         return $this->sourceEvent;
     }
 
+    /**
+     * @return bool
+     */
     public function hasSourceEvent()
     {
         return $this->sourceEvent !== null;

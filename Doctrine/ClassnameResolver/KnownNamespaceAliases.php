@@ -5,6 +5,9 @@ namespace FS\SolrBundle\Doctrine\ClassnameResolver;
 use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
 use Doctrine\ORM\Configuration as OrmConfiguration;
 
+/**
+ * Class collects document and entity aliases from ORM and ODM configuration
+ */
 class KnownNamespaceAliases
 {
     /**

@@ -1,6 +1,8 @@
 <?php
+
 namespace FS\SolrBundle\Doctrine\Annotation;
 
+use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader as Reader;
 
 class AnnotationReader
@@ -28,7 +30,7 @@ class AnnotationReader
      * @param string $entity
      * @param string $type
      *
-     * @return array
+     * @return Annotation[]
      */
     private function getPropertiesByType($entity, $type)
     {
@@ -124,7 +126,7 @@ class AnnotationReader
     /**
      * @param object $entity
      *
-     * @return Type
+     * @return Id
      *
      * @throws \RuntimeException
      */
@@ -211,7 +213,7 @@ class AnnotationReader
      * @param string $entity
      * @param string $annotationName
      *
-     * @return string
+     * @return SynchronizationFilter
      */
     private function getClassAnnotation($entity, $annotationName)
     {

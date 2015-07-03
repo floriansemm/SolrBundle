@@ -8,8 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Command clears the whole index
+ */
 class ClearIndexCommand extends ContainerAwareCommand
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -17,6 +23,9 @@ class ClearIndexCommand extends ContainerAwareCommand
             ->setDescription('Clear the whole index');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $solr = $this->getContainer()->get('solr.client');

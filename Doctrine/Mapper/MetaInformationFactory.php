@@ -42,7 +42,7 @@ class MetaInformationFactory
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      *
      * @return MetaInformation
      *

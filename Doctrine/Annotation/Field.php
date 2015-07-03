@@ -4,6 +4,8 @@ namespace FS\SolrBundle\Doctrine\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
+ * Defines a field of a solr-document
+ *
  * @Annotation
  */
 class Field extends Annotation
@@ -20,7 +22,7 @@ class Field extends Annotation
     public $name;
 
     /**
-     * @var numeric
+     * @var float
      */
     public $boost = 0;
 
@@ -44,6 +46,7 @@ class Field extends Annotation
      * eg: title_s
      *
      * @throws \RuntimeException
+     *
      * @return string
      */
     public function getNameWithAlias()
@@ -53,6 +56,7 @@ class Field extends Annotation
 
     /**
      * @param string $type
+     *
      * @return string
      */
     private function getTypeSuffix($type)
@@ -86,6 +90,7 @@ class Field extends Annotation
 
     /**
      * @throws \InvalidArgumentException if boost is not a number
+     *
      * @return number
      */
     public function getBoost()

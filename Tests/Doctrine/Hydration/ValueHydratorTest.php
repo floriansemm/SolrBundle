@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
 use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
+use FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;

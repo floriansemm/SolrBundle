@@ -26,12 +26,12 @@ class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase
 
     private function enableOdmConfig()
     {
-        $this->container->setParameter('doctrine_mongodb.odm.document_managers', array('default'=>'odm.default.mananger'));
+        $this->container->setParameter('doctrine_mongodb.odm.document_managers', array('default' => 'odm.default.mananger'));
     }
 
     private function enableOrmConfig()
     {
-        $this->container->setParameter('doctrine.entity_managers', array('default'=>'orm.default.mananger'));
+        $this->container->setParameter('doctrine.entity_managers', array('default' => 'orm.default.mananger'));
     }
 
     private function commonConfig()

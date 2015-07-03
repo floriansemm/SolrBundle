@@ -6,6 +6,9 @@ use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Solr;
 
+/**
+ * Common repository class to find documents in the index
+ */
 class Repository implements RepositoryInterface
 {
 
@@ -25,7 +28,8 @@ class Repository implements RepositoryInterface
     protected $hydrationMode = '';
 
     /**
-     * @param Solr $solr
+     * @param Solr   $solr
+     *
      * @param object $entity
      */
     public function __construct(Solr $solr, $entity)
@@ -37,8 +41,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return object|null
+     * {@inheritdoc}
      */
     public function find($id)
     {
@@ -63,7 +66,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return array of found documents
+     * {@inheritdoc}
      */
     public function findAll()
     {
@@ -89,8 +92,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param array $args
-     * @return array of found documents
+     * {@inheritdoc}
      */
     public function findBy(array $args)
     {
@@ -104,8 +106,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param array $args
-     * @return array
+     * {@inheritdoc}
      */
     public function findOneBy(array $args)
     {

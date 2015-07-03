@@ -8,6 +8,8 @@ use FS\SolrBundle\Console\ConsoleResultFactory;
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
 
+/**
+ */
 class SynchronizationSummaryListener
 {
     /**

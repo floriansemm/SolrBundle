@@ -3,6 +3,9 @@ namespace FS\SolrBundle\Event\Listener;
 
 use FS\SolrBundle\Event\Event;
 
+/**
+ * Create a log-entry if a document was insert
+ */
 class InsertLogListener extends AbstractLogListener
 {
 

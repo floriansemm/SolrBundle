@@ -23,6 +23,8 @@ class SolrBuilder implements Builder
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @return Client
      */
     public function build()

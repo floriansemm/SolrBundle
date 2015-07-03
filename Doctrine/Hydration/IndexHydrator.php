@@ -7,23 +7,23 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 /**
  * hydrates Entity from Document
  */
-class IndexHydrator implements Hydrator
+class IndexHydrator implements HydratorInterface
 {
     /**
-     * @var Hydrator
+     * @var HydratorInterface
      */
     private $valueHydrator;
 
     /**
-     * @param Hydrator $valueHydrator
+     * @param HydratorInterface $valueHydrator
      */
-    public function __construct(Hydrator $valueHydrator)
+    public function __construct(HydratorInterface $valueHydrator)
     {
         $this->valueHydrator = $valueHydrator;
     }
 
     /**
-     * @param $document
+     * @param                 $document
      * @param MetaInformation $metaInformation
      *
      * @return object

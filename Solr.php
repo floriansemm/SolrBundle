@@ -1,7 +1,7 @@
 <?php
+
 namespace FS\SolrBundle;
 
-use FS\SolrBundle\Client\ClientPool;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -10,14 +10,15 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
 use FS\SolrBundle\Event\Events;
-use FS\SolrBundle\Event\EventManager;
 use FS\SolrBundle\Query\AbstractQuery;
-use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 use Solarium\Client;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Class allows to index doctrine entities
+ */
 class Solr
 {
 
@@ -38,7 +39,7 @@ class Solr
     protected $commandFactory = null;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $eventManager = null;
 
@@ -65,7 +66,8 @@ class Solr
         EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory,
         EntityMapper $entityMapper
-    ) {
+    )
+    {
         $this->solrClientCore = $client;
         $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
@@ -73,7 +75,7 @@ class Solr
 
         $this->entityMapper = $entityMapper;
     }
-    
+
     /**
      * @return Client
      */
@@ -212,7 +214,7 @@ class Solr
 
     /**
      * @param MetaInformation $metaInformation
-     * @param object $entity
+     * @param object          $entity
      *
      * @return boolean
      *

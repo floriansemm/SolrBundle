@@ -1,33 +1,38 @@
 {
-    "name": "floriansemm/solr-bundle",
-    "type": "symfony-bundle",
-    "description": "Symfony2 Solr integration bundle",
-    "keywords": ["search", "index", "symfony", "solr"],
-    "homepage": "https://github.com/floriansemm/SolrBundle",
-    "license": "MIT",
-    "require": {
-        "php": ">=5.4.5",
-        "solarium/solarium": "*"
-    },
-    "require-dev": {
-        "doctrine/doctrine-module": "*",
-        "doctrine/doctrine-orm-module": "*",
-        "doctrine/mongodb": "*",
-        "doctrine/mongodb-odm": "*",
-        "symfony/dependency-injection": "*",
-        "symfony/http-kernel": "*",
-        "symfony/config": "*",
-        "symfony/doctrine-bridge": "*"
-    },
-    "minimum-stability": "alpha",
-    "autoload": {
-        "psr-0": {
-            "FS\\SolrBundle": ""
-        }
-    },
-    "suggest": {
-        "doctrine/mongodb": "Required if you want to use the MongoDB ODM features",
-        "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM features"
-    },
-    "target-dir": "FS/SolrBundle"
+  "name": "floriansemm/solr-bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony2 Solr integration bundle",
+  "keywords": [
+    "search",
+    "index",
+    "symfony",
+    "solr"
+  ],
+  "homepage": "https://github.com/floriansemm/SolrBundle",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4.5",
+    "solarium/solarium": "*"
+  },
+  "require-dev": {
+    "doctrine/doctrine-module": "*",
+    "doctrine/doctrine-orm-module": "*",
+    "doctrine/mongodb": "*",
+    "doctrine/mongodb-odm": "*",
+    "symfony/dependency-injection": "*",
+    "symfony/http-kernel": "*",
+    "symfony/config": "*",
+    "symfony/doctrine-bridge": "*"
+  },
+  "minimum-stability": "alpha",
+  "autoload": {
+    "psr-0": {
+      "FS\\SolrBundle": ""
+    }
+  },
+  "suggest": {
+    "doctrine/mongodb": "Required if you want to use the MongoDB ODM features",
+    "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM features"
+  },
+  "target-dir": "FS/SolrBundle"
 }

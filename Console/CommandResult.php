@@ -2,10 +2,14 @@
 
 namespace FS\SolrBundle\Console;
 
-
+/**
+ * DTO class which is used to render command result reports
+ */
 class CommandResult
 {
     /**
+     * Entity Id
+     *
      * @var int
      */
     private $resultId;
@@ -13,23 +17,25 @@ class CommandResult
     /**
      * @var string
      */
-    private $message;
+    private $entityClassname;
 
     /**
+     * Holds the error-message in case of an error
+     *
      * @var string
      */
-    private $entity;
+    private $errorMessage = '';
 
     /**
-     * @param int $resultId
-     * @param string $entity
-     * @param string string $message
+     * @param int    $resultId
+     * @param string $entityClassname
+     * @param string $errorMessage
      */
-    public function __construct($resultId, $entity, $message = '')
+    public function __construct($resultId, $entityClassname, $errorMessage = '')
     {
         $this->resultId = $resultId;
-        $this->entity = $entity;
-        $this->message = $message;
+        $this->entityClassname = $entityClassname;
+        $this->errorMessage = $errorMessage;
     }
 
     /**
@@ -43,16 +49,16 @@ class CommandResult
     /**
      * @return string
      */
-    public function getEntity()
+    public function getEntityClassname()
     {
-        return $this->entity;
+        return $this->entityClassname;
     }
 
     /**
      * @return string
      */
-    public function getMessage()
+    public function getErrorMessage()
     {
-        return $this->message;
+        return $this->errorMessage;
     }
 }

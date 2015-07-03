@@ -23,7 +23,7 @@ class ConsoleResultFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ConsoleResultFactory();
         $result = $factory->fromEvent($error);
 
-        $this->assertEquals('message', $result->getMessage());
+        $this->assertEquals('message', $result->getErrorMessage());
     }
 
     /**
@@ -37,8 +37,8 @@ class ConsoleResultFactoryTest extends \PHPUnit_Framework_TestCase
         $result = $factory->fromEvent($event);
 
         $this->assertEquals(null, $result->getResultId());
-        $this->assertEquals('', $result->getEntity());
-        $this->assertEquals('', $result->getMessage());
+        $this->assertEquals('', $result->getEntityClassname());
+        $this->assertEquals('', $result->getErrorMessage());
     }
 
     /**
@@ -59,8 +59,8 @@ class ConsoleResultFactoryTest extends \PHPUnit_Framework_TestCase
         $result = $factory->fromEvent($event);
 
         $this->assertEquals(1, $result->getResultId());
-        $this->assertEquals('an entity', $result->getEntity());
-        $this->assertEquals('', $result->getMessage());
+        $this->assertEquals('an entity', $result->getEntityClassname());
+        $this->assertEquals('', $result->getErrorMessage());
     }
 }
  

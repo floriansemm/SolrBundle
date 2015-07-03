@@ -1,8 +1,12 @@
 <?php
+
 namespace FS\SolrBundle\Event\Listener;
 
 use FS\SolrBundle\Event\Event;
 
+/**
+ * Create a log-entry if a document was updated
+ */
 class UpdateLogListener extends AbstractLogListener
 {
 

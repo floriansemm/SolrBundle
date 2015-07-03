@@ -17,17 +17,17 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('fs_solr');
         $rootNode->children()
             ->arrayNode('endpoints')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('host')->end()
-                        ->scalarNode('port')->end()
-                        ->scalarNode('path')->end()
-                        ->scalarNode('core')->end()
-                        ->scalarNode('timeout')->end()
-                        ->booleanNode('active')->defaultValue(true)->end()
-                    ->end()
-                ->end()
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+            ->children()
+            ->scalarNode('host')->end()
+            ->scalarNode('port')->end()
+            ->scalarNode('path')->end()
+            ->scalarNode('core')->end()
+            ->scalarNode('timeout')->end()
+            ->booleanNode('active')->defaultValue(true)->end()
+            ->end()
+            ->end()
             ->end()
 //            ->arrayNode('clients')
 //                ->useAttributeAsKey('name')
@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
 //                ->end()
 //            ->end()
             ->booleanNode('auto_index')->defaultValue(true)->end()
-        ->end();
+            ->end();
 
         return $treeBuilder;
     }
