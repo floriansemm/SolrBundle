@@ -9,8 +9,7 @@
         <parameter key="solr.log_listener.update.class">FS\SolrBundle\Event\Listener\UpdateLogListener</parameter>
         <parameter key="solr.log_listener.delete.class">FS\SolrBundle\Event\Listener\DeleteLogListener</parameter>
         <parameter key="solr.log_listener.error.class">FS\SolrBundle\Event\Listener\ErrorLogListener</parameter>
-        <parameter key="solr.log_listener.clearindex.class">FS\SolrBundle\Event\Listener\ClearIndexLogListener
-        </parameter>
+        <parameter key="solr.log_listener.clearindex.class">FS\SolrBundle\Event\Listener\ClearIndexLogListener</parameter>
     </parameters>
 
     <services>
