@@ -3,7 +3,7 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 
-class MetaInformation
+class MetaInformation implements MetaInformationInterface
 {
 
     /**
@@ -57,8 +57,7 @@ class MetaInformation
     private $index = '';
 
     /**
-     *
-     * @return number
+     * {@inheritdoc}
      */
     public function getEntityId()
     {
@@ -70,7 +69,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
@@ -78,7 +77,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getClassName()
     {
@@ -86,7 +85,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getDocumentName()
     {
@@ -94,7 +93,7 @@ class MetaInformation
     }
 
     /**
-     * @return Field[]
+     * {@inheritdoc}
      */
     public function getFields()
     {
@@ -102,7 +101,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getRepository()
     {
@@ -110,7 +109,7 @@ class MetaInformation
     }
 
     /**
-     * @return object
+     * {@inheritdoc}
      */
     public function getEntity()
     {
@@ -173,9 +172,7 @@ class MetaInformation
     }
 
     /**
-     * @param string $field
-     *
-     * @return Field|null
+     * {@inheritdoc}
      */
     public function getField($field)
     {
@@ -203,7 +200,7 @@ class MetaInformation
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFieldMapping()
     {
@@ -219,7 +216,7 @@ class MetaInformation
     }
 
     /**
-     * @return number
+     * {@inheritdoc}
      */
     public function getBoost()
     {
@@ -247,7 +244,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getSynchronizationCallback()
     {
@@ -271,7 +268,7 @@ class MetaInformation
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getIndex()
     {
