@@ -11,24 +11,16 @@
         <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
 
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
-        <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory
-        </parameter>
+        <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
 
-        <parameter key="solr.doctrine.classnameresolver.class">
-            FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver
-        </parameter>
-        <parameter key="solr.doctrine.classnameresolver.known_entity_namespaces.class">
-            FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases
-        </parameter>
+        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver</parameter>
+        <parameter key="solr.doctrine.classnameresolver.known_entity_namespaces.class">FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases</parameter>
 
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
-        <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand
-        </parameter>
+        <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
 
         <parameter key="solr.console.command.result.class">FS\SolrBundle\Console\ConsoleCommandResults</parameter>
-        <parameter key="solr.synchronize.error.listener.class">
-            FS\SolrBundle\Event\Listener\SynchronizationSummaryListener
-        </parameter>
+        <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
         <parameter key="solr.console.result.factory.class">FS\SolrBundle\Console\ConsoleResultFactory</parameter>
     </parameters>
 
@@ -41,21 +33,17 @@
             <argument type="service" id="solr.doctrine.entity_mapper"/>
         </service>
 
-        <service id="solr.client.adapter" class="%solr.client.adapter.class%"
-                 factory-service="solr.client.adapter.builder" factory-method="build"/>
+        <service id="solr.client.adapter" class="%solr.client.adapter.class%" factory-service="solr.client.adapter.builder" factory-method="build"/>
 
         <service id="solr.client.adapter.builder" class="%solr.client.adapter.builder.class%">
             <argument type="collection"/>
         </service>
 
-        <service id="solr.client.pool" class="FS\SolrBundle\Client\ClientPool"/>
-
         <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false"/>
 
         <service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false"/>
 
-        <service id="solr.doctrine.classnameresolver.known_entity_namespaces"
-                 class="%solr.doctrine.classnameresolver.known_entity_namespaces.class%"/>
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="%solr.doctrine.classnameresolver.known_entity_namespaces.class%"/>
 
         <service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces"/>
@@ -89,8 +77,7 @@
             <argument id="solr.doctrine.hydration.index_hydrator" type="service"/>
         </service>
 
-        <service id="solr.doctrine.hydration.doctrine_hydrator"
-                 class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">
+        <service id="solr.doctrine.hydration.doctrine_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">
             <argument id="doctrine" type="service"/>
             <argument id="solr.doctrine.hydration.value_hydrator" type="service"/>
         </service>
