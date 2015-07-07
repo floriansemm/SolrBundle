@@ -19,6 +19,11 @@ abstract class AbstractQuery extends Query
     protected $solr = null;
 
     /**
+     * @var string
+     */
+    protected $index = null;
+
+    /**
      * @var object
      */
     private $entity = null;
@@ -79,5 +84,21 @@ abstract class AbstractQuery extends Query
     public function setHydrationMode($mode)
     {
         $this->getSolr()->getMapper()->setHydrationMode($mode);
+    }
+
+    /**
+     * @return string
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * @param string $index
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
     }
 }
