@@ -95,7 +95,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($metaInformation));
     }
 
-    protected function assertQueryWasExecuted($data = array())
+    protected function assertQueryWasExecuted($data = array(), $index)
     {
         $selectQuery = $this->getMock('Solarium\QueryType\Select\Query\Query', array(), array(), '', false);
         $selectQuery->expects($this->once())
@@ -111,7 +111,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('select')
-            ->with($selectQuery)
+            ->with($selectQuery, $index)
             ->will($this->returnValue($queryResult));
     }
 

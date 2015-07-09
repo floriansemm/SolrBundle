@@ -150,14 +150,16 @@ class SolrTest extends AbstractSolrTest
 
     public function testQuery_NoResponseKeyInResponseSet()
     {
-        $this->assertQueryWasExecuted();
-
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
         $document = new Document();
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
+        $query->setIndex('index0');
+
+        $this->assertQueryWasExecuted(array(), 'index0');
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+
 
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
@@ -167,15 +169,17 @@ class SolrTest extends AbstractSolrTest
     {
         $arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
 
-        $this->assertQueryWasExecuted(array($arrayObj));
-
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
         $document = new Document();
         $document->addField('document_name_s', 'name');
+
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
         $query->setEntity(new ValidTestEntity());
+        $query->setIndex('index0');
+
+        $this->assertQueryWasExecuted(array($arrayObj), 'index0');
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $entities = $solr->query($query);
         $this->assertEquals(1, count($entities));
