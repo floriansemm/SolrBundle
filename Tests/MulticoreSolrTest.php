@@ -10,8 +10,14 @@ use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 
 class MulticoreSolrTest extends AbstractSolrTest
 {
-
-    protected function assertUpdateQueryExecuted()
+    /**
+     * parent method assert that Client::update is called only once. We have to verify that all cores are called.
+     *
+     * @param string $index
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function assertUpdateQueryExecuted($index = null)
     {
         $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $updateQuery->expects($this->once())
@@ -24,6 +30,8 @@ class MulticoreSolrTest extends AbstractSolrTest
             ->expects($this->once())
             ->method('createUpdate')
             ->will($this->returnValue($updateQuery));
+
+        return $updateQuery;
     }
 
     /**
@@ -31,7 +39,7 @@ class MulticoreSolrTest extends AbstractSolrTest
      */
     public function addDocumentToAllCores()
     {
-        $this->assertUpdateQueryExecuted();
+        $updateQuery = $this->assertUpdateQueryExecuted();
 
         $this->eventDispatcher->expects($this->any())
             ->method('dispatch');
@@ -45,8 +53,13 @@ class MulticoreSolrTest extends AbstractSolrTest
                 'core1' => array()
             )));
 
-        $this->solrClientFake->expects($this->exactly(2))
-            ->method('update');
+        $this->solrClientFake->expects($this->at(2))
+            ->method('update')
+            ->with($updateQuery, 'core0');
+
+        $this->solrClientFake->expects($this->at(3))
+            ->method('update')
+            ->with($updateQuery, 'core1');
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
         $metaInformation->setIndex('*');
@@ -61,7 +74,7 @@ class MulticoreSolrTest extends AbstractSolrTest
      */
     public function updateDocumentInAllCores()
     {
-        $this->assertUpdateQueryExecuted();
+        $updateQuery = $this->assertUpdateQueryExecuted();
 
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
@@ -75,8 +88,13 @@ class MulticoreSolrTest extends AbstractSolrTest
                 'core1' => array()
             )));
 
-        $this->solrClientFake->expects($this->exactly(2))
-            ->method('update');
+        $this->solrClientFake->expects($this->at(2))
+            ->method('update')
+            ->with($updateQuery, 'core0');
+
+        $this->solrClientFake->expects($this->at(3))
+            ->method('update')
+            ->with($updateQuery, 'core1');
 
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation();

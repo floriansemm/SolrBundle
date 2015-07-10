@@ -53,6 +53,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             ->method('update')
             ->with($updateQuery, $index);
 
+        return $updateQuery;
     }
 
     protected function assertUpdateQueryWasNotExecuted()
