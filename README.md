@@ -17,17 +17,23 @@ Bundle
 
 1.  Register bundle in AppKernel.php
 
-        # app/AppKernel.php
+# app/AppKernel.php
 
-        $bundles = array(
-            // ...
-            new FS\SolrBundle\FSSolrBundle(),
-            // ...
-        );
+```php
+$bundles = array(
+    // ...
+    new FS\SolrBundle\FSSolrBundle(),
+    // ...
+);
+```
 
 2.  Add Bundle to autoload
 
 	A. Via composer, add in your composer.json
+
+	composer require floriansemm/solr-bundle
+
+	or
 
         "require": {
             // ...  
@@ -76,6 +82,7 @@ With this config you can setup two cores: `core1` and `core2`. See section `Spec
 
 To put an entity to the index, you must add some annotations to your entity:
 
+```php
 	// your Entity
 
 	// ....
@@ -119,6 +126,7 @@ To put an entity to the index, you must add some annotations to your entity:
 		*/
 		private $created_at = null;
 	}
+```
 
 ### Supported field types
 
@@ -139,7 +147,7 @@ It is possible to use custum field types (schema.xml).
 
 In some cases a entity should not be index. For this you have the `SynchronizationFilter` Annotation.
 
-
+```php
 	/**
 	* @Solr\Document
 	* @Solr\SynchronizationFilter(callback="shouldBeIndex")
@@ -154,6 +162,7 @@ In some cases a entity should not be index. For this you have the `Synchronizati
 			// put your logic here
 		}
 	}
+```
 
 The callback property specifies an callable function, which decides whether the should index or not. 	
 
@@ -161,6 +170,7 @@ The callback property specifies an callable function, which decides whether the 
 
 It is possible to specify a core dedicated to a document
 
+```php
        /**
     	* @Solr\Document(index="core0")
     	*/
@@ -168,10 +178,12 @@ It is possible to specify a core dedicated to a document
     	{
     	    // ...
     	}
+```
 
 All documents will be indexed in the core `core0`. If your entities/document have different languages then you can setup
 a callback method, which returns the preferred core for the entity.
 
+```php
        /**
     	* @Solr\Document(indexHandler="indexHandler")
     	*/
@@ -184,11 +196,14 @@ a callback method, which returns the preferred core for the entity.
     	        }
     	    }
     	}
+```
 
 Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
 then a default core will be used (first in the `endpoints` list). To index a document in all cores use `*` as index value:
 
-        @Solr\Document(index="*")
+```php
+@Solr\Document(index="*")
+```
 
 ## Solr field configuration
 
@@ -203,11 +218,13 @@ For details have a look into your schema.xml.
 
 So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:
 
-    /**
-    * @Solr\Field
-    * @ORM\Column(name="category", type="text")
-    */
-    private $category = '';
+```php
+/**
+ * @Solr\Field
+ * @ORM\Column(name="category", type="text")
+ */
+private $category = '';
+```
 
 The field has in this case automaticaly the type "general_text".
 
@@ -217,11 +234,13 @@ If you persist this entity, it will put automaticlly to the index. Update and de
 
 To query the index you have to call some services.
 
-    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-    $query->addSearchTerm('title', 'my title');
+```php
+$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query->addSearchTerm('title', 'my title');
 
-    $result = $result = $query->getResult();
-		
+$result = $result = $query->getResult();
+```
+
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
 to your entity for you.
 
@@ -229,22 +248,25 @@ to your entity for you.
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
-    $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
-    $query->queryAllFields('my title');
+```php
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
+$query->queryAllFields('my title');
 
-    $result = $query->getResult();
-
+$result = $query->getResult();
+```
 
 ## Define Result-Mapping
 
 To narrow the mapping, you can use the `addField()` method.
 
-    $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
-    $query->addSearchTerm('title', 'my title');
-    $query->addField('id');
-    $query->addField('text');
+```php
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
+$query->addSearchTerm('title', 'my title');
+$query->addField('id');
+$query->addField('text');
 
-    $result = $query->getResult();
+$result = $query->getResult();
+```
 
 In this case only the fields id and text will be mapped (addField()), so title and created_at will be
 empty. If nothing was found $result is empty.
@@ -258,25 +280,31 @@ HydrationMode tells the Bundle how to create an entity from a document.
 
 With a custom query:
 
-    $query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
-    $query->setHydrationMode($mode)
+```php
+$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query->setHydrationMode($mode)
+```
 
 With a custom document-repository you have to set the property `$hydrationMode` itself:
 
-    public function find($id)
-    {
-        $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
-
-        return parent::find($id);
-    }
+```php
+public function find($id)
+{
+    $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
+    
+    return parent::find($id);
+}
+```
 
 ## Index manually an entity
 
 To index your entities manually, you can do it the following way:
 
-    $this->get('solr')->addDocument($entity);
-    $this->get('solr')->updateDocument($entity);
-    $this->get('solr')->deleteDocument($entity);
+```php
+$this->get('solr')->addDocument($entity);
+$this->get('solr')->updateDocument($entity);
+$this->get('solr')->deleteDocument($entity);
+```
 
 `deleteDocument()` requires that the entity-id is set.
 
@@ -285,9 +313,11 @@ To index your entities manually, you can do it the following way:
 If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The useage is the same
 like Doctrine-Repositories:
 
-	$myRepository = $this->get('solr')->getRepository('AcmeDemoBundle:Post');
-	$result = $myRepository->mySpecialFindMethod();
-	
+```php
+$myRepository = $this->get('solr')->getRepository('AcmeDemoBundle:Post');
+$result = $myRepository->mySpecialFindMethod();
+```	
+
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
