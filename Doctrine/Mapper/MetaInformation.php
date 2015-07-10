@@ -3,6 +3,9 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 
+/**
+ * Holds meta-information about an entity
+ */
 class MetaInformation implements MetaInformationInterface
 {
 

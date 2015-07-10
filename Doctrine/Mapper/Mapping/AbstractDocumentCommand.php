@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
@@ -11,11 +11,11 @@ abstract class AbstractDocumentCommand
 {
 
     /**
-     * @param MetaInformation $meta
+     * @param MetaInformationInterface $meta
      *
      * @return Document
      */
-    public function createDocument(MetaInformation $meta)
+    public function createDocument(MetaInformationInterface $meta)
     {
         $document = new Document();
 

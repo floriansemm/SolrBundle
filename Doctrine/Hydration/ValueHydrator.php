@@ -2,7 +2,7 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
  * Maps all values of a given document on a target-entity
@@ -12,7 +12,7 @@ class ValueHydrator implements HydratorInterface
     /**
      * {@inheritdoc}
      */
-    public function hydrate($document, MetaInformation $metaInformation)
+    public function hydrate($document, MetaInformationInterface $metaInformation)
     {
         $targetEntity = $metaInformation->getEntity();
 

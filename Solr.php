@@ -2,10 +2,10 @@
 
 namespace FS\SolrBundle;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
@@ -210,14 +210,14 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param MetaInformation $metaInformation
-     * @param object          $entity
+     * @param MetaInformationInterface $metaInformation
+     * @param object                   $entity
      *
      * @return boolean
      *
      * @throws \BadMethodCallException if callback method not exists
      */
-    private function addToIndex(MetaInformation $metaInformation, $entity)
+    private function addToIndex(MetaInformationInterface $metaInformation, $entity)
     {
         if (!$metaInformation->hasSynchronizationFilter()) {
             return true;
@@ -332,11 +332,11 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param MetaInformation $metaInformation
+     * @param MetaInformationInterface $metaInformation
      *
      * @return Document
      */
-    private function toDocument(MetaInformation $metaInformation)
+    private function toDocument(MetaInformationInterface $metaInformation)
     {
         $command = $this->commandFactory->get('all');
 
@@ -347,11 +347,11 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param object          $doc
-     * @param MetaInformation $metaInformation
-     * @param Event           $event
+     * @param object                   $doc
+     * @param MetaInformationInterface $metaInformation
+     * @param Event                    $event
      */
-    private function addDocumentToIndex($doc, MetaInformation $metaInformation, Event $event)
+    private function addDocumentToIndex($doc, MetaInformationInterface $metaInformation, Event $event)
     {
         try {
             $indexName = $metaInformation->getIndex();

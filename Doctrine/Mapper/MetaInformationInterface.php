@@ -68,7 +68,13 @@ interface MetaInformationInterface
     public function getSynchronizationCallback();
 
     /**
+     * @return boolean
+     */
+    public function hasSynchronizationFilter();
+
+    /**
      * @return string
      */
     public function getIndex();
+
 }

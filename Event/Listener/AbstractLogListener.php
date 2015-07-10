@@ -1,7 +1,7 @@
 <?php
 namespace FS\SolrBundle\Event\Listener;
 
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractLogListener
@@ -21,21 +21,21 @@ abstract class AbstractLogListener
     }
 
     /**
-     * @param MetaInformation $metaInformation
+     * @param MetaInformationInterface $metaInformation
      *
      * @return string
      */
-    protected function createDocumentNameWithId(MetaInformation $metaInformation)
+    protected function createDocumentNameWithId(MetaInformationInterface $metaInformation)
     {
         return $metaInformation->getDocumentName() . ':' . $metaInformation->getEntityId();
     }
 
     /**
-     * @param MetaInformation $metaInformation
+     * @param MetaInformationInterface $metaInformation
      *
      * @return string
      */
-    protected function createFieldList(MetaInformation $metaInformation)
+    protected function createFieldList(MetaInformationInterface $metaInformation)
     {
         return implode(', ', $metaInformation->getFields());
     }

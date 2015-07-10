@@ -1,19 +1,19 @@
 <?php
 namespace FS\SolrBundle\Event;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use Solarium\Client;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 class Event extends BaseEvent
 {
-
     /**
-     * @var object
+     * @var Client
      */
     private $client = null;
 
     /**
-     * @var MetaInformation
+     * @var MetaInformationInterface
      */
     private $metainformation = null;
 
@@ -30,12 +30,14 @@ class Event extends BaseEvent
     private $sourceEvent;
 
     /**
-     * @param object          $client
-     * @param MetaInformation $metainformation
+     * @param Client                   $client
+     * @param MetaInformationInterface $metainformation
+     * @param string                   $solrAction
+     * @param Event                    $sourceEvent
      */
     public function __construct(
-        $client = null,
-        MetaInformation $metainformation = null,
+        Client $client = null,
+        MetaInformationInterface $metainformation = null,
         $solrAction = '',
         Event $sourceEvent = null
     )
@@ -47,7 +49,7 @@ class Event extends BaseEvent
     }
 
     /**
-     * @return MetaInformation
+     * @return MetaInformationInterface
      */
     public function getMetaInformation()
     {

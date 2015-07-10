@@ -2,11 +2,11 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * A hydrator finds the entity for a given solr-document. This entity is updated with the solr-document values.
+ * A doctrine-hydrator finds the entity for a given solr-document. This entity is updated with the solr-document values.
  *
  * The hydration is necessary because fields, which are not declared as solr-field, will not populate in the result.
  */
@@ -36,7 +36,7 @@ class DoctrineHydrator implements HydratorInterface
     /**
      * {@inheritdoc}
      */
-    public function hydrate($document, MetaInformation $metaInformation)
+    public function hydrate($document, MetaInformationInterface $metaInformation)
     {
         $entityId = $document->id;
         $doctrineEntity = $this->doctrine

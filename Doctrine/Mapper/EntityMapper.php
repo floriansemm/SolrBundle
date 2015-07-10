@@ -50,11 +50,11 @@ class EntityMapper
     }
 
     /**
-     * @param MetaInformation $meta
+     * @param MetaInformationInterface $meta
      *
      * @return Document
      */
-    public function toDocument(MetaInformation $meta)
+    public function toDocument(MetaInformationInterface $meta)
     {
         if ($this->mappingCommand instanceof AbstractDocumentCommand) {
             return $this->mappingCommand->createDocument($meta);

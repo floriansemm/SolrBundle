@@ -37,7 +37,7 @@ interface SolrInterface
      *
      * @return Repository
      *
-     * @throws \RuntimeException if repository does not extend FS\SolrBundle\Repository\Repository
+     * @throws \RuntimeException if repository of the given $entityAlias does not extend FS\SolrBundle\Repository\Repository
      */
     public function getRepository($entityAlias);
 }

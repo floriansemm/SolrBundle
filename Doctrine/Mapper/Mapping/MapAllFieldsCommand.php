@@ -2,7 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
  * command maps all fields of the entity
@@ -13,11 +13,11 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
 {
 
     /**
-     * @param MetaInformation $meta
+     * @param MetaInformationInterface $meta
      *
      * @return null|\Solarium\QueryType\Update\Query\Document\Document
      */
-    public function createDocument(MetaInformation $meta)
+    public function createDocument(MetaInformationInterface $meta)
     {
         $fields = $meta->getFields();
         if (count($fields) == 0) {
