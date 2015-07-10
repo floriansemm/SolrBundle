@@ -1,12 +1,13 @@
 <?php
 
-use Behat\Behat\Context\BehatContext;
+namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
+use Behat\Behat\Context\Context;
 
 /**
  * Features context.
  */
-class FeatureContext extends BehatContext
+class FeatureContext implements Context
 {
 
     /**
@@ -19,13 +20,7 @@ class FeatureContext extends BehatContext
      */
     private $solrClient;
 
-    /**
-     * Initializes context.
-     * Every scenario gets it's own context object.
-     *
-     * @param array $parameters context parameters (set them up through behat.yml)
-     */
-    public function __construct(array $parameters)
+    public function __construct()
     {
         $autoload = __DIR__ . '/../vendor/autoload.php';
         if (file_exists($autoload)) {
@@ -33,8 +28,6 @@ class FeatureContext extends BehatContext
         } else {
             require_once 'vendor/autoload.php';
         }
-
-        $this->useContext('crud', new CrudFeatureContext());
 
         $this->eventDispatcher = new \FS\SolrBundle\Tests\Integration\EventDispatcherFake();
     }
@@ -84,12 +77,12 @@ class FeatureContext extends BehatContext
         $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
 
         $entityMapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper(
-            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface(
+            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator(
                 $registry,
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
             ),
-            new \FS\SolrBundle\Doctrine\Hydration\IndexHydratorInterface(
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
+            new \FS\SolrBundle\Doctrine\Hydration\IndexHydrator(
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
             )
         );
 
@@ -113,7 +106,7 @@ class FeatureContext extends BehatContext
      */
     private function setupMetaInformationFactory()
     {
-        $ormConfiguration = new Doctrine\ORM\Configuration();
+        $ormConfiguration = new \Doctrine\ORM\Configuration();
         $ormConfiguration->addEntityNamespace('FSTest:ValidTestEntity', 'FS\SolrBundle\Tests\Doctrine\Mapper');
 
         $knowNamespaces = new \FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases();
@@ -138,11 +131,11 @@ class FeatureContext extends BehatContext
             'default' => array(
                 'host' => 'localhost',
                 'port' => 8983,
-                'path' => '/solr/',
+                'path' => '/solr/core0',
             )
         );
 
-        $builder = new \FS\SolrBundle\Builder\SolrBuilder($config);
+        $builder = new \FS\SolrBundle\Client\SolrBuilder($config);
         $solrClient = $builder->build();
 
         return $solrClient;
@@ -153,7 +146,7 @@ class FeatureContext extends BehatContext
         if (!$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::POST_INSERT) ||
             !$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)
         ) {
-            throw new RuntimeException('Insert was not successful');
+            throw new \RuntimeException('Insert was not successful');
         }
     }
 }
