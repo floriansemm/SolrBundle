@@ -122,6 +122,7 @@ class Solr implements SolrInterface
         $query = new SolrQuery();
         $query->setSolr($this);
         $query->setEntity($entity);
+        $query->setIndex($metaInformation->getIndex());
 
         $query->setMappedFields($metaInformation->getFieldMapping());
 
@@ -238,11 +239,12 @@ class Solr implements SolrInterface
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
+        $runQueryInIndex = $query->getIndex();
         $query = $this->solrClientCore->createSelect($query->getOptions());
         $query->setQuery($queryString);
 
         try {
-            $response = $this->solrClientCore->select($query);
+            $response = $this->solrClientCore->select($query, $runQueryInIndex);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);

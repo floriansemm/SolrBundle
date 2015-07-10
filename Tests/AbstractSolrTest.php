@@ -34,7 +34,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
 
-    protected function assertUpdateQueryExecuted()
+    protected function assertUpdateQueryExecuted($index = null)
     {
         $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
         $updateQuery->expects($this->once())
@@ -47,6 +47,12 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('createUpdate')
             ->will($this->returnValue($updateQuery));
+
+        $this->solrClientFake
+            ->expects($this->once())
+            ->method('update')
+            ->with($updateQuery, $index);
+
     }
 
     protected function assertUpdateQueryWasNotExecuted()
@@ -95,7 +101,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($metaInformation));
     }
 
-    protected function assertQueryWasExecuted($data = array())
+    protected function assertQueryWasExecuted($data = array(), $index)
     {
         $selectQuery = $this->getMock('Solarium\QueryType\Select\Query\Query', array(), array(), '', false);
         $selectQuery->expects($this->once())
@@ -111,7 +117,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('select')
-            ->with($selectQuery)
+            ->with($selectQuery, $index)
             ->will($this->returnValue($queryResult));
     }
 

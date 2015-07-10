@@ -150,14 +150,16 @@ class SolrTest extends AbstractSolrTest
 
     public function testQuery_NoResponseKeyInResponseSet()
     {
-        $this->assertQueryWasExecuted();
-
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
         $document = new Document();
         $document->addField('document_name_s', 'name');
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
+        $query->setIndex('index0');
+
+        $this->assertQueryWasExecuted(array(), 'index0');
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+
 
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
@@ -167,15 +169,17 @@ class SolrTest extends AbstractSolrTest
     {
         $arrayObj = new SolrDocumentStub(array('title_s' => 'title'));
 
-        $this->assertQueryWasExecuted(array($arrayObj));
-
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
         $document = new Document();
         $document->addField('document_name_s', 'name');
+
         $query = new FindByDocumentNameQuery();
         $query->setDocument($document);
         $query->setEntity(new ValidTestEntity());
+        $query->setIndex('index0');
+
+        $this->assertQueryWasExecuted(array($arrayObj), 'index0');
+
+        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $entities = $solr->query($query);
         $this->assertEquals(1, count($entities));
@@ -202,7 +206,7 @@ class SolrTest extends AbstractSolrTest
 
     public function testAddEntity_ShouldIndexEntity()
     {
-        $this->assertUpdateQueryExecuted();
+        $this->assertUpdateQueryExecuted('index0');
 
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
@@ -212,6 +216,7 @@ class SolrTest extends AbstractSolrTest
 
         $information = MetaTestInformationFactory::getMetaInformation();
         $information->setSynchronizationCallback('shouldBeIndex');
+        $information->setIndex('index0');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
         $this->mapOneDocument();
@@ -222,6 +227,9 @@ class SolrTest extends AbstractSolrTest
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
 
+    /**
+     * @expectedException \BadMethodCallException
+     */
     public function testAddEntity_FilteredEntityWithUnknownCallback()
     {
         $this->assertUpdateQueryWasNotExecuted();
@@ -234,13 +242,7 @@ class SolrTest extends AbstractSolrTest
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
         $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        try {
-            $solr->addDocument(new InvalidTestEntityFiltered());
-
-            $this->fail('BadMethodCallException expected');
-        } catch (\BadMethodCallException $e) {
-            $this->assertTrue(true);
-        }
+        $solr->addDocument(new InvalidTestEntityFiltered());
     }
 
 }
