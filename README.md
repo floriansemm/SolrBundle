@@ -31,8 +31,9 @@ $bundles = array(
 
 	A. Via composer, add in your composer.json
 
-	composer require floriansemm/solr-bundle
-
+```sh
+composer require floriansemm/solr-bundle
+```
 	or
 
         "require": {
@@ -44,20 +45,24 @@ $bundles = array(
 	
 	i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)
 
-        $loader->add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));		
-
+```php
+$loader->add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));		
+```
 	ii. in older version it could be
 
-        $loader->registerNamespaces(array(
-            // ...
-            'FS' => __DIR__.'/../vendor/bundles',
-            // ...
-        ));
+```php
+$loader->registerNamespaces(array(
+    // ...
+    'FS' => __DIR__.'/../vendor/bundles',
+    // ...
+));
+```
 
 ## Multiple Indexes
 
 You have to setup the connection options
 
+```config
     # app/config/config.yml
     fs_solr:
       endpoints:
@@ -73,6 +78,7 @@ You have to setup the connection options
           path: /solr/core2
           core: corename
           timeout: 5
+```
 
 With this config you can setup two cores: `core1` and `core2`. See section `Specify cores` for more information.
 
@@ -83,49 +89,49 @@ With this config you can setup two cores: `core1` and `core2`. See section `Spec
 To put an entity to the index, you must add some annotations to your entity:
 
 ```php
-	// your Entity
+// your Entity
 
-	// ....
-	use FS\SolrBundle\Doctrine\Annotation as Solr;
+// ....
+use FS\SolrBundle\Doctrine\Annotation as Solr;
 	
-	/**
-	 * @Solr\Document(repository="Full\Qualified\Class\Name")
-	 * @ORM\Table()
-	 */
-	class Post
-	{
-		/**
-		 * @Solr\Id
-		 *
-		 * @ORM\Column(name="id", type="integer")
-		 * @ORM\Id
-		 * @ORM\GeneratedValue(strategy="AUTO")
-		 */
+/**
+* @Solr\Document(repository="Full\Qualified\Class\Name")
+* @ORM\Table()
+*/
+class Post
+{
+    /**
+     * @Solr\Id
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
 
-		private $id;
-		/**
-		 *
-		 * @Solr\Field(type="string")
-		 *
-		 * @ORM\Column(name="title", type="string", length=255)
-		 */
-		private $title = '';
+    private $id;
+    /**
+     *
+     * @Solr\Field(type="string")
+     *
+     * @ORM\Column(name="title", type="string", length=255)
+     */
+    private $title = '';
 
-		/**
-		* 
-		* @Solr\Field(type="string")
-		*
-		* @ORM\Column(name="text", type="text")
-		*/
-		private $text = '';
+    /**
+     * 
+     * @Solr\Field(type="string")
+     *
+     * @ORM\Column(name="text", type="text")
+     */
+    private $text = '';
 
-		/**
-		* @Solr\Field(type="date")
-		*
-		* @ORM\Column(name="created_at", type="datetime")
-		*/
-		private $created_at = null;
-	}
+   /**
+    * @Solr\Field(type="date")
+    *
+    * @ORM\Column(name="created_at", type="datetime")
+    */
+    private $created_at = null;
+}
 ```
 
 ### Supported field types
@@ -148,20 +154,20 @@ It is possible to use custum field types (schema.xml).
 In some cases a entity should not be index. For this you have the `SynchronizationFilter` Annotation.
 
 ```php
-	/**
-	* @Solr\Document
-	* @Solr\SynchronizationFilter(callback="shouldBeIndex")
-	*/
-	class SomeEntity
-	{
-		/**
-		* @return boolean
-		*/
-		public function shouldBeIndex()
-		{
-			// put your logic here
-		}
-	}
+/**
+ * @Solr\Document
+ * @Solr\SynchronizationFilter(callback="shouldBeIndex")
+ */
+class SomeEntity
+{
+    /**
+     * @return boolean
+    */
+    public function shouldBeIndex()
+    {
+        // put your logic here
+    }
+}
 ```
 
 The callback property specifies an callable function, which decides whether the should index or not. 	
@@ -171,31 +177,31 @@ The callback property specifies an callable function, which decides whether the 
 It is possible to specify a core dedicated to a document
 
 ```php
-       /**
-    	* @Solr\Document(index="core0")
-    	*/
-    	class SomeEntity
-    	{
-    	    // ...
-    	}
+/**
+ * @Solr\Document(index="core0")
+ */
+class SomeEntity
+{
+    // ...
+}
 ```
 
 All documents will be indexed in the core `core0`. If your entities/document have different languages then you can setup
 a callback method, which returns the preferred core for the entity.
 
 ```php
-       /**
-    	* @Solr\Document(indexHandler="indexHandler")
-    	*/
-    	class SomeEntity
-    	{
-    	    public function indexHandler()
-    	    {
-    	        if ($this->language == 'en') {
-    	            return 'core0';
-    	        }
-    	    }
-    	}
+/**
+ * @Solr\Document(indexHandler="indexHandler")
+ */
+class SomeEntity
+{
+    public function indexHandler()
+    {
+        if ($this->language == 'en') {
+            return 'core0';
+        }
+    }
+}
 ```
 
 Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
