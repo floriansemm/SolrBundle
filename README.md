@@ -24,7 +24,7 @@ Installation is a quick (I promise!) 3 step process:
 This bundle is available on Packagist. You can install it using Composer:
 
 ```bash
-    $ composer require floriansemm/solr-bundle
+$ composer require floriansemm/solr-bundle
 ```
 
 or manually, in app/autoload.php
