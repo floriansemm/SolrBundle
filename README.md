@@ -1,54 +1,40 @@
-
+SolrBundle
+==========
 [![Build Status](https://secure.travis-ci.org/floriansemm/SolrBundle.png?branch=master)](http://travis-ci.org/floriansemm/SolrBundle) 
 [![Latest Stable Version](https://poser.pugx.org/floriansemm/solr-bundle/v/stable.svg)](https://packagist.org/packages/floriansemm/solr-bundle)
 [![Total Downloads](https://poser.pugx.org/floriansemm/solr-bundle/downloads.svg)](https://packagist.org/packages/floriansemm/solr-bundle)
+
+Introduction
+------------
 
 This Bundle provides a simple API to index and query a Solr Index. 
 
 And do not forget to join the Gitter chat [![join the chat at https://gitter.im/floriansemm/SolrBundle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/floriansemm/SolrBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-# Configuration
+## Installation
 
-The bundle requires a working doctrine-orm or doctrine-mongodb configuration. There are no differences in the use.
+Installation is a quick (I promise!) 3 step process:
 
-## Install the Bundle
+1. Download SolrBundle
+2. Enable the Bundle
+3. Configure the SolrBundle
 
-Bundle
+### Step 1: Download SolrBundle
 
-1.  Register bundle in AppKernel.php
+This bundle is available on Packagist. You can install it using Composer:
 
-# app/AppKernel.php
+.. code-block:: bash
 
-```php
-$bundles = array(
-    // ...
-    new FS\SolrBundle\FSSolrBundle(),
-    // ...
-);
-```
+    $ composer require floriansemm/solr-bundle
 
-2.  Add Bundle to autoload
+or manually, in app/autoload.php
 
-	A. Via composer, add in your composer.json
-
-```sh
-composer require floriansemm/solr-bundle
-```
-	or
-
-        "require": {
-            // ...  
-            "floriansemm/solr-bundle": "dev-master"
-        }
-        
-	B.  or manually, in app/autoload.php
-	
-	i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)
+i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)
 
 ```php
 $loader->add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));		
 ```
-	ii. in older version it could be
+ii. in older version it could be
 
 ```php
 $loader->registerNamespaces(array(
@@ -58,33 +44,48 @@ $loader->registerNamespaces(array(
 ));
 ```
 
-## Multiple Indexes
+### Step 2: Enable the bundle
 
-You have to setup the connection options
+Finally, enable the bundle in the kernel
 
-```config
-    # app/config/config.yml
-    fs_solr:
-      endpoints:
+``` php
+<?php
+// app/AppKernel.php
+
+public function registerBundles()
+{
+    $bundles = array(
+        // ...
+        new FS\SolrBundle\FSSolrBundle(),
+    );
+}
+```
+
+### Step 3: Configure the SolrBundle
+
+``` yaml
+# app/config/config.yml
+fs_solr:
+    endpoints:
         core1:
-          host: host
-          port: 8983
-          path: /solr/core1
-          core: corename
-          timeout: 5
+            host: host
+            port: 8983
+            path: /solr/core1
+            core: corename
+            timeout: 5
         core2:
-          host: host
-          port: 8983
-          path: /solr/core2
-          core: corename
-          timeout: 5
+            host: host
+            port: 8983
+            path: /solr/core2
+            core: corename
+            timeout: 5
 ```
 
 With this config you can setup two cores: `core1` and `core2`. See section `Specify cores` for more information.
 
-# Usage #
+## Usage
 
-## Annotations
+### Annotations
 
 To put an entity to the index, you must add some annotations to your entity:
 
@@ -211,7 +212,7 @@ then a default core will be used (first in the `endpoints` list). To index a doc
 @Solr\Document(index="*")
 ```
 
-## Solr field configuration
+### Solr field configuration
 
 Solr comes with a set of predefined field-name/field-types mapping:
 
@@ -236,7 +237,7 @@ The field has in this case automaticaly the type "general_text".
 
 If you persist this entity, it will put automaticlly to the index. Update and delete happens automatically too.
 
-## Query a field of a document
+### Query a field of a document
 
 To query the index you have to call some services.
 
@@ -250,7 +251,7 @@ $result = $result = $query->getResult();
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
 to your entity for you.
 
-## Query all fields of a document
+### Query all fields of a document
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
 
@@ -261,7 +262,7 @@ $query->queryAllFields('my title');
 $result = $query->getResult();
 ```
 
-## Define Result-Mapping
+### Define Result-Mapping
 
 To narrow the mapping, you can use the `addField()` method.
 
@@ -277,7 +278,7 @@ $result = $query->getResult();
 In this case only the fields id and text will be mapped (addField()), so title and created_at will be
 empty. If nothing was found $result is empty.
 
-## Configure HydrationModes
+### Configure HydrationModes
 
 HydrationMode tells the Bundle how to create an entity from a document.
 
@@ -302,7 +303,7 @@ public function find($id)
 }
 ```
 
-## Index manually an entity
+### Index manually an entity
 
 To index your entities manually, you can do it the following way:
 
@@ -314,7 +315,7 @@ $this->get('solr')->deleteDocument($entity);
 
 `deleteDocument()` requires that the entity-id is set.
 
-## Use document repositories
+### Use document repositories
 
 If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The useage is the same
 like Doctrine-Repositories:
@@ -327,7 +328,7 @@ $result = $myRepository->mySpecialFindMethod();
 If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
-## Commands
+### Commands
 
 There are comming two commands with this bundle:
 
