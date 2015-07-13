@@ -225,10 +225,10 @@ If you persist this entity, it will put automaticlly to the index. Update and de
 To query the index you have to call some services.
 
 ```php
-$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->addSearchTerm('title', 'my title');
 
-$result = $result = $query->getResult();
+$result = $query->getResult();
 ```
 
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
@@ -271,7 +271,7 @@ HydrationMode tells the Bundle how to create an entity from a document.
 With a custom query:
 
 ```php
-$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->setHydrationMode($mode)
 ```
 
