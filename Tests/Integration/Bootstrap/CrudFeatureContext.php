@@ -69,7 +69,7 @@ class CrudFeatureContext extends FeatureContext
 
         $fields = $document->getFields();
 
-        $changedFieldValue = $fields['text_t'][0];
+        $changedFieldValue = $fields['text_t'];
 
         if ($changedFieldValue != $this->entity->getText()) {
             throw new \RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
