@@ -27,23 +27,6 @@ This bundle is available on Packagist. You can install it using Composer:
 $ composer require floriansemm/solr-bundle
 ```
 
-or manually, in app/autoload.php
-
-i. In symfony 2.1.4 (supposing you clone the bundle in vendor/floriansemm/solr-bundle/FS/, making available vendor/floriansemm/solr-bundle/FS/SolrBundle/FSSolrBundle.php)
-
-```php
-$loader->add('FS\\SolrBundle', array(__DIR__.'/../vendor/floriansemm/solr-bundle'));		
-```
-ii. in older version it could be
-
-```php
-$loader->registerNamespaces(array(
-    // ...
-    'FS' => __DIR__.'/../vendor/bundles',
-    // ...
-));
-```
-
 ### Step 2: Enable the bundle
 
 Finally, enable the bundle in the kernel
