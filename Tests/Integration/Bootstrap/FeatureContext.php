@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
  * Features context.
@@ -72,6 +73,9 @@ class FeatureContext implements Context
         return $solr;
     }
 
+    /**
+     * @return \FS\SolrBundle\Doctrine\Mapper\EntityMapper
+     */
     private function setupEntityMapper()
     {
         $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
@@ -123,6 +127,8 @@ class FeatureContext implements Context
     }
 
     /**
+     * Solarium Client with one core (core0)
+     *
      * @return \Solarium\Client
      */
     private function setupSolrClient()
@@ -141,12 +147,57 @@ class FeatureContext implements Context
         return $solrClient;
     }
 
-    public function assertInsertSuccessful()
+    /**
+     * @param int $entityId
+     *
+     * @throws \RuntimeException if Events::POST_INSERT or Events::PRE_INSERT was fired or $entityId not equal to found document id
+     */
+    public function assertInsertSuccessful($entityId)
     {
         if (!$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::POST_INSERT) ||
             !$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)
         ) {
             throw new \RuntimeException('Insert was not successful');
         }
+
+        $document = $this->findDocumentById($entityId);
+        $idFieldValue = $document->getFields()['id'];
+
+        if (intval($idFieldValue) !== intval($entityId)) {
+            throw new \RuntimeException(sprintf('found document has ID %s, expected %s', $idFieldValue, $entityId));
+        }
+    }
+
+    /**
+     * uses Solarium query to find a document by ID
+     *
+     * @return Document
+     *
+     * @throws \RuntimeException if resultset is empty, no document with given ID was found
+     */
+    protected function findDocumentById($entityId)
+    {
+        $client = $this->getSolrClient();
+
+        $query = $client->createSelect();
+        $query->setQuery(sprintf('id:%s', $entityId));
+        $resultset = $client->select($query);
+
+        if ($resultset->getNumFound() == 0) {
+            throw new \RuntimeException(sprintf('could not find document with id %s after update', $entityId));
+        }
+
+        $documents = $resultset->getDocuments();
+
+        /* @var Document $document */
+        foreach ($documents as $document) {
+            $idFieldValue = $document->getFields()['id'];
+
+            if (intval($idFieldValue) == intval($entityId)) {
+                return $document;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('no document with Id %s was found', $entityId));
     }
 }

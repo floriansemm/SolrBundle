@@ -48,7 +48,7 @@ class CrudFeatureContext extends FeatureContext
             throw new \RuntimeException(sprintf('error occurred while indexing: %s', $eventDispatcher->getOccurredErrors()));
         }
 
-        $this->assertInsertSuccessful();
+        $this->assertInsertSuccessful($this->entity->getId());
     }
 
     /**
@@ -64,26 +64,15 @@ class CrudFeatureContext extends FeatureContext
      */
     public function theIndexShouldBeUpdated()
     {
-        $client = $this->getSolrClient();
         $entityId = $this->entity->getId();
+        $document = $this->findDocumentById($entityId);
 
-        $query = $client->createSelect();
-        $query->setQuery(sprintf('id:%s', $entityId));
-        $resultset = $client->select($query);
+        $fields = $document->getFields();
 
-        if ($resultset->getNumFound() == 0) {
-            throw new \RuntimeException(sprintf('could not find document with id %s after update', $entityId));
-        }
+        $changedFieldValue = $fields['text_t'][0];
 
-        /* @var Document $document */
-        foreach ($resultset as $document) {
-            $fields = $document->getFields();
-
-            $changedFieldValue = $fields['text_t'][0];
-
-            if ($changedFieldValue != $this->entity->getText()) {
-                throw new \RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
-            }
+        if ($changedFieldValue != $this->entity->getText()) {
+            throw new \RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
         }
     }
 
