@@ -137,7 +137,7 @@ class FeatureContext implements Context
             'default' => array(
                 'host' => 'localhost',
                 'port' => 8983,
-                'path' => '/solr/multicore/core0',
+                'path' => '/solr/core0',
             )
         );
 
