@@ -1,4 +1,7 @@
 default:
-    paths:
-        features: Tests/Integration/Features
-        bootstrap: Tests/Integration/Bootstrap
+  suites:
+    crud:
+      paths: [ Tests/Integration/Features ]
+      contexts:
+        - FS\SolrBundle\Tests\Integration\Bootstrap\FeatureContext
+        - FS\SolrBundle\Tests\Integration\Bootstrap\CrudFeatureContext

@@ -1,12 +1,14 @@
 <?php
 
-use Behat\Behat\Context\BehatContext;
+namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
+use Behat\Behat\Context\Context;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
  * Features context.
  */
-class FeatureContext extends BehatContext
+class FeatureContext implements Context
 {
 
     /**
@@ -19,13 +21,7 @@ class FeatureContext extends BehatContext
      */
     private $solrClient;
 
-    /**
-     * Initializes context.
-     * Every scenario gets it's own context object.
-     *
-     * @param array $parameters context parameters (set them up through behat.yml)
-     */
-    public function __construct(array $parameters)
+    public function __construct()
     {
         $autoload = __DIR__ . '/../vendor/autoload.php';
         if (file_exists($autoload)) {
@@ -33,8 +29,6 @@ class FeatureContext extends BehatContext
         } else {
             require_once 'vendor/autoload.php';
         }
-
-        $this->useContext('crud', new CrudFeatureContext());
 
         $this->eventDispatcher = new \FS\SolrBundle\Tests\Integration\EventDispatcherFake();
     }
@@ -79,17 +73,20 @@ class FeatureContext extends BehatContext
         return $solr;
     }
 
+    /**
+     * @return \FS\SolrBundle\Doctrine\Mapper\EntityMapper
+     */
     private function setupEntityMapper()
     {
         $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
 
         $entityMapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper(
-            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface(
+            new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator(
                 $registry,
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
             ),
-            new \FS\SolrBundle\Doctrine\Hydration\IndexHydratorInterface(
-                new \FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface()
+            new \FS\SolrBundle\Doctrine\Hydration\IndexHydrator(
+                new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
             )
         );
 
@@ -113,7 +110,7 @@ class FeatureContext extends BehatContext
      */
     private function setupMetaInformationFactory()
     {
-        $ormConfiguration = new Doctrine\ORM\Configuration();
+        $ormConfiguration = new \Doctrine\ORM\Configuration();
         $ormConfiguration->addEntityNamespace('FSTest:ValidTestEntity', 'FS\SolrBundle\Tests\Doctrine\Mapper');
 
         $knowNamespaces = new \FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases();
@@ -130,6 +127,8 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * Solarium Client with one core (core0)
+     *
      * @return \Solarium\Client
      */
     private function setupSolrClient()
@@ -138,22 +137,67 @@ class FeatureContext extends BehatContext
             'default' => array(
                 'host' => 'localhost',
                 'port' => 8983,
-                'path' => '/solr/',
+                'path' => '/solr/core0',
             )
         );
 
-        $builder = new \FS\SolrBundle\Builder\SolrBuilder($config);
+        $builder = new \FS\SolrBundle\Client\SolrBuilder($config);
         $solrClient = $builder->build();
 
         return $solrClient;
     }
 
-    public function assertInsertSuccessful()
+    /**
+     * @param int $entityId
+     *
+     * @throws \RuntimeException if Events::POST_INSERT or Events::PRE_INSERT was fired or $entityId not equal to found document id
+     */
+    public function assertInsertSuccessful($entityId)
     {
         if (!$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::POST_INSERT) ||
             !$this->eventDispatcher->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)
         ) {
-            throw new RuntimeException('Insert was not successful');
+            throw new \RuntimeException('Insert was not successful');
         }
+
+        $document = $this->findDocumentById($entityId);
+        $idFieldValue = $document->getFields()['id'];
+
+        if (intval($idFieldValue) !== intval($entityId)) {
+            throw new \RuntimeException(sprintf('found document has ID %s, expected %s', $idFieldValue, $entityId));
+        }
+    }
+
+    /**
+     * uses Solarium query to find a document by ID
+     *
+     * @return Document
+     *
+     * @throws \RuntimeException if resultset is empty, no document with given ID was found
+     */
+    protected function findDocumentById($entityId)
+    {
+        $client = $this->getSolrClient();
+
+        $query = $client->createSelect();
+        $query->setQuery(sprintf('id:%s', $entityId));
+        $resultset = $client->select($query);
+
+        if ($resultset->getNumFound() == 0) {
+            throw new \RuntimeException(sprintf('could not find document with id %s after update', $entityId));
+        }
+
+        $documents = $resultset->getDocuments();
+
+        /* @var Document $document */
+        foreach ($documents as $document) {
+            $idFieldValue = $document->getFields()['id'];
+
+            if (intval($idFieldValue) == intval($entityId)) {
+                return $document;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('no document with Id %s was found', $entityId));
     }
 }

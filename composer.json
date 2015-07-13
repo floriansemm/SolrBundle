@@ -22,13 +22,17 @@
     "symfony/dependency-injection": "*",
     "symfony/http-kernel": "*",
     "symfony/config": "*",
-    "symfony/doctrine-bridge": "*"
+    "symfony/doctrine-bridge": "*",
+    "behat/behat": "3.*"
   },
   "minimum-stability": "alpha",
   "autoload": {
     "psr-0": {
       "FS\\SolrBundle": ""
     }
+  },
+  "config": {
+    "bin-dir": "bin"
   },
   "suggest": {
     "doctrine/mongodb": "Required if you want to use the MongoDB ODM features",

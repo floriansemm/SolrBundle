@@ -1,9 +1,11 @@
 <?php
 
-use Behat\Behat\Context\BehatContext;
-use Behat\Behat\Exception\PendingException;
+namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
-class CrudFeatureContext extends BehatContext
+use Behat\Behat\Context\Context;
+use Solarium\QueryType\Update\Query\Document\Document;
+
+class CrudFeatureContext extends FeatureContext
 {
     /**
      * @var \FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity()
@@ -20,7 +22,7 @@ class CrudFeatureContext extends BehatContext
      */
     public function iHaveADoctrineEntity()
     {
-        $this->solr = $this->getMainContext()->getSolrInstance();
+        $this->solr = $this->getSolrInstance();
 
         $this->entity = new \FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity();
         $this->entity->setId(\FS\SolrBundle\Tests\Util\EntityIdentifier::generate());
@@ -40,13 +42,13 @@ class CrudFeatureContext extends BehatContext
      */
     public function shouldNoErrorOccurre()
     {
-        $eventDispatcher = $this->getMainContext()->getEventDispatcher();
+        $eventDispatcher = $this->getEventDispatcher();
 
         if ($eventDispatcher->errorsOccurred()) {
-            throw new RuntimeException(sprintf('error occurred while indexing: %s', $eventDispatcher->getOccurredErrors()));
+            throw new \RuntimeException(sprintf('error occurred while indexing: %s', $eventDispatcher->getOccurredErrors()));
         }
 
-        $this->getMainContext()->assertInsertSuccessful();
+        $this->assertInsertSuccessful($this->entity->getId());
     }
 
     /**
@@ -62,23 +64,15 @@ class CrudFeatureContext extends BehatContext
      */
     public function theIndexShouldBeUpdated()
     {
-        $client = $this->getMainContext()->getSolrClient();
         $entityId = $this->entity->getId();
+        $document = $this->findDocumentById($entityId);
 
-        $query = $client->createSelect();
-        $query->setQuery(sprintf('id:%s', $entityId));
-        $resultset = $client->select($query);
+        $fields = $document->getFields();
 
-        if ($resultset->getNumFound() == 0) {
-            throw new RuntimeException(sprintf('could not find document with id %s after update', $entityId));
-        }
+        $changedFieldValue = $fields['text_t'];
 
-        foreach ($resultset as $document) {
-            $changedFieldValue = $document['text_t'];
-
-            if ($changedFieldValue != $this->entity->getText()) {
-                throw new RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
-            }
+        if ($changedFieldValue != $this->entity->getText()) {
+            throw new \RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
         }
     }
 
@@ -95,7 +89,7 @@ class CrudFeatureContext extends BehatContext
      */
     public function iShouldNotFindTheEntityInSolr()
     {
-        $client = $this->getMainContext()->getSolrClient();
+        $client = $this->getSolrClient();
         $entityId = $this->entity->getId();
 
         $query = $client->createSelect();
