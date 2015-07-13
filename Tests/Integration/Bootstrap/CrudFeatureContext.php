@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use Solarium\QueryType\Update\Query\Document\Document;
 
 class CrudFeatureContext extends FeatureContext
 {
@@ -74,8 +75,11 @@ class CrudFeatureContext extends FeatureContext
             throw new \RuntimeException(sprintf('could not find document with id %s after update', $entityId));
         }
 
+        /* @var Document $document */
         foreach ($resultset as $document) {
-            $changedFieldValue = $document['text_t'];
+            $fields = $document->getFields();
+
+            $changedFieldValue = $fields['text_t'][0];
 
             if ($changedFieldValue != $this->entity->getText()) {
                 throw new \RuntimeException(sprintf('updated entity with id %s was not updated in solr', $entityId));
