@@ -14,7 +14,7 @@ And do not forget to join the Gitter chat [![join the chat at https://gitter.im/
 ## Installation
 
 Installation is a quick (I promise!) 3 step process:
-
+up
 1. Download SolrBundle
 2. Enable the Bundle
 3. Configure the SolrBundle
@@ -77,7 +77,7 @@ To put an entity to the index, you must add some annotations to your entity:
 
 // ....
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-	
+    
 /**
 * @Solr\Document(repository="Full\Qualified\Class\Name")
 * @ORM\Table()
@@ -154,7 +154,7 @@ class SomeEntity
 }
 ```
 
-The callback property specifies an callable function, which decides whether the should index or not. 	
+The callback property specifies an callable function, which decides whether the should index or not.    
 
 ### Specify cores
 
@@ -225,10 +225,10 @@ If you persist this entity, it will put automaticlly to the index. Update and de
 To query the index you have to call some services.
 
 ```php
-$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->addSearchTerm('title', 'my title');
 
-$result = $result = $query->getResult();
+$result = $query->getResult();
 ```
 
 The $result array contains all found entities. The solr-service does all mappings from SolrDocument
@@ -271,7 +271,7 @@ HydrationMode tells the Bundle how to create an entity from a document.
 With a custom query:
 
 ```php
-$query = $this->get('solr')->createQuery('AcmeDemoBundle:Post');
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->setHydrationMode($mode)
 ```
 
@@ -291,9 +291,9 @@ public function find($id)
 To index your entities manually, you can do it the following way:
 
 ```php
-$this->get('solr')->addDocument($entity);
-$this->get('solr')->updateDocument($entity);
-$this->get('solr')->deleteDocument($entity);
+$this->get('solr.client')->addDocument($entity);
+$this->get('solr.client')->updateDocument($entity);
+$this->get('solr.client')->deleteDocument($entity);
 ```
 
 `deleteDocument()` requires that the entity-id is set.
@@ -304,11 +304,11 @@ If you specify your own repository you must extend the `FS\SolrBundle\Repository
 like Doctrine-Repositories:
 
 ```php
-$myRepository = $this->get('solr')->getRepository('AcmeDemoBundle:Post');
+$myRepository = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post');
 $result = $myRepository->mySpecialFindMethod();
-```	
+``` 
 
-If you haven't declared a concrete repository in your entity and you calling `$this->get('solr')->getRepository('AcmeDemoBundle:Post')`, you will
+If you haven't declared a concrete repository in your entity and you calling `$this->get('solr.client')->getRepository('AcmeDemoBundle:Post')`, you will
 get an instance of `FS\SolrBundle\Repository\Repository`.
 
 ### Commands
