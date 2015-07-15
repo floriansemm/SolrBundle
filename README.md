@@ -14,7 +14,7 @@ And do not forget to join the Gitter chat [![join the chat at https://gitter.im/
 ## Installation
 
 Installation is a quick (I promise!) 3 step process:
-up
+
 1. Download SolrBundle
 2. Enable the Bundle
 3. Configure the SolrBundle
