@@ -131,7 +131,7 @@ Currently is a basic set of types implemented.
 - long
 - boolean
 
-It is possible to use custum field types (schema.xml).
+It is possible to use custom field types (schema.xml).
 
 ### Filter annotation
 
@@ -218,7 +218,7 @@ private $category = '';
 
 The field has in this case automaticaly the type "general_text".
 
-If you persist this entity, it will put automaticlly to the index. Update and delete happens automatically too.
+If you persist this entity, it will put automatically to the index. Update and delete happens automatically too.
 
 ### Query a field of a document
 
@@ -293,14 +293,14 @@ To index your entities manually, you can do it the following way:
 ```php
 $this->get('solr.client')->addDocument($entity);
 $this->get('solr.client')->updateDocument($entity);
-$this->get('solr.client')->deleteDocument($entity);
+$this->get('solr.client')->removeDocument($entity);
 ```
 
-`deleteDocument()` requires that the entity-id is set.
+`removeDocument()` requires that the entity-id is set.
 
 ### Use document repositories
 
-If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The useage is the same
+If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The usage is the same
 like Doctrine-Repositories:
 
 ```php
@@ -313,7 +313,7 @@ get an instance of `FS\SolrBundle\Repository\Repository`.
 
 ### Commands
 
-There are comming two commands with this bundle:
+There are two commands with this bundle:
 
 * `solr:index:clear` - delete all documents in the index
 * `solr:synchronize` - synchronize the db with the index
