@@ -236,7 +236,7 @@ class AnnotationReader
     private function readClassProperties($entity)
     {
         $reflectionClass = new \ReflectionClass($entity);
-        $inheritedProperties = array_merge($reflectionClass->getProperties(), $this->getParentProperties($reflectionClass));
+        $inheritedProperties = array_merge($this->getParentProperties($reflectionClass), $reflectionClass->getProperties());
 
         $properties = array();
         foreach ($inheritedProperties as $property) {
