@@ -20,8 +20,8 @@ class MapIdentifierCommandTest extends SolrDocumentTest
 
         $document = $command->createDocument(MetaTestInformationFactory::getMetaInformation());
 
-        $this->assertEquals(2, $document->count(), 'fieldcount is two');
-        $this->assertEquals(2, $document->id, 'id is 2');
+        $this->assertEquals(1, $document->count(), 'fieldcount is two');
+        $this->assertEquals('validtestentity_2', $document->id, 'id is 2');
 
     }
 

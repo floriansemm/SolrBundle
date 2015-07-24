@@ -5,7 +5,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
 
 abstract class SolrDocumentTest extends \PHPUnit_Framework_TestCase
 {
-    const FIELDS_ALWAYS_MAPPED = 2;
+    const FIELDS_ALWAYS_MAPPED = 1;
 
     protected function assertHasDocumentFields(Document $document, $expectedFields)
     {
