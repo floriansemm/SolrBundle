@@ -59,7 +59,10 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
         $solr = $this->getContainer()->get('solr.client');
 
+        $metaInformation = $solr->getMetaFactory()->loadInformation($entity);
+
         $output->writeln(sprintf('Synchronize <info>%s</info> entities', count($entities)));
+        $output->writeln(sprintf('Use index <info>%s</info>', $metaInformation->getIndex()));
         $output->writeln('');
 
         $progress = new ProgressBar($output, count($entities));
