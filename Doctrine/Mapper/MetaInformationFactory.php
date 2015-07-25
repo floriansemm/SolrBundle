@@ -6,18 +6,10 @@ use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
 use FS\SolrBundle\Doctrine\Configuration;
 
 /**
- *
- * @author fs
- *
+ * instantiates a new MetaInformation object by a given entity
  */
 class MetaInformationFactory
 {
-
-    /**
-     * @var MetaInformation
-     */
-    private $metaInformations = null;
-
     /**
      * @var AnnotationReader
      */
