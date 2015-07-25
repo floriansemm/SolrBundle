@@ -16,28 +16,26 @@ class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase
     public function testGetQuery_SearchInAllFields()
     {
         $document = new Document();
-        $document->addField('document_name_s', 'validtestentity');
+        $document->addField('id', 'validtestentity_1');
 
         $query = new FindByDocumentNameQuery();
+        $query->setDocumentName('validtestentity');
         $query->setDocument($document);
 
         $queryString = $query->getQuery();
 
-        $this->assertEquals('document_name_s:validtestentity', $queryString, 'filter query');
+        $this->assertEquals('id:validtestentity_*', $queryString, 'filter query');
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
     public function testGetQuery_DocumentnameMissing()
     {
         $query = new FindByDocumentNameQuery();
         $query->setDocument(new Document());
 
-        try {
-            $query->getQuery();
-
-            $this->fail('an exception should be thrown');
-        } catch (\RuntimeException $e) {
-            $this->assertTrue(true);
-        }
+        $query->getQuery();
     }
 
 }

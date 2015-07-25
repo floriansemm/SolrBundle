@@ -2,8 +2,26 @@
 
 namespace FS\SolrBundle\Query;
 
+/**
+ * Builds a wildcard query to find all documents
+ *
+ * Query: id:documentname_*
+ */
 class FindByDocumentNameQuery extends AbstractQuery
 {
+    /**
+     * @var string
+     */
+    private $documentName;
+
+    /**
+     * @param string $documentName
+     */
+    public function setDocumentName($documentName)
+    {
+        $this->documentName = $documentName;
+    }
+
     /**
      * @return string
      *
@@ -11,13 +29,13 @@ class FindByDocumentNameQuery extends AbstractQuery
      */
     public function getQuery()
     {
-        $documentNameField = $this->document->document_name_s;
+        $documentName = $this->documentName;
 
-        if ($documentNameField == null) {
+        if ($documentName == null) {
             throw new \RuntimeException('documentName should not be null');
         }
 
-        $query = sprintf('document_name_s:%s', $documentNameField);
+        $query = sprintf('id:%s_*', $documentName);
 
         $this->setQuery($query);
 

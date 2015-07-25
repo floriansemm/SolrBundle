@@ -152,7 +152,9 @@ class SolrTest extends AbstractSolrTest
     {
         $document = new Document();
         $document->addField('document_name_s', 'name');
+
         $query = new FindByDocumentNameQuery();
+        $query->setDocumentName('name');
         $query->setDocument($document);
         $query->setIndex('index0');
 
@@ -173,6 +175,7 @@ class SolrTest extends AbstractSolrTest
         $document->addField('document_name_s', 'name');
 
         $query = new FindByDocumentNameQuery();
+        $query->setDocumentName('name');
         $query->setDocument($document);
         $query->setEntity(new ValidTestEntity());
         $query->setIndex('index0');

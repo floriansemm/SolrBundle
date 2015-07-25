@@ -85,7 +85,9 @@ class Repository implements RepositoryInterface
 
         $document->removeField('id');
 
-        $query = new FindByDocumentNameQuery($metaInformation);
+        $query = new FindByDocumentNameQuery();
+        $query->setDocumentName($metaInformation->getDocumentName());
+        $query->setIndex($metaInformation->getIndex());
         $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
