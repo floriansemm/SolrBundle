@@ -48,10 +48,13 @@ class Repository implements RepositoryInterface
         $mapper = $this->solr->getMapper();
         $mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
         $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
+        $metaInformation->setEntityId($id);
 
         $document = $mapper->toDocument($metaInformation);
 
         $query = new FindByIdentifierQuery();
+        $query->setIndex($metaInformation->getIndex());
+        $query->setDocumentKey($metaInformation->getDocumentKey());
         $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
@@ -82,7 +85,7 @@ class Repository implements RepositoryInterface
 
         $document->removeField('id');
 
-        $query = new FindByDocumentNameQuery();
+        $query = new FindByDocumentNameQuery($metaInformation);
         $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);

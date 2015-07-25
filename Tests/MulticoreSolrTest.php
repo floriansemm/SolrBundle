@@ -112,6 +112,7 @@ class MulticoreSolrTest extends AbstractSolrTest
     {
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
         $metaInformation->setIndex('*');
+        $metaInformation->setEntityId(1);
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
         $this->mapper->expects($this->once())

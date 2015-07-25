@@ -10,6 +10,8 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
 interface MetaInformationInterface
 {
 
+    const DOCUMENT_KEY_FIELD_NAME = 'id';
+
     /**
      * @return int
      */
@@ -77,4 +79,8 @@ interface MetaInformationInterface
      */
     public function getIndex();
 
+    /**
+     * @return string
+     */
+    public function getDocumentKey();
 }

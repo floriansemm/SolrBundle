@@ -4,6 +4,18 @@ namespace FS\SolrBundle\Query;
 
 class FindByIdentifierQuery extends AbstractQuery
 {
+    /**
+     * @var string
+     */
+    private $documentKey;
+
+    /**
+     * @param string $documentKey
+     */
+    public function setDocumentKey($documentKey)
+    {
+        $this->documentKey = $documentKey;
+    }
 
     /**
      * @return string
@@ -12,18 +24,13 @@ class FindByIdentifierQuery extends AbstractQuery
      */
     public function getQuery()
     {
-        $idField = $this->document->id;
-        $documentNameField = $this->document->document_name_s;
+        $idField = $this->documentKey;
 
         if ($idField == null) {
             throw new \RuntimeException('id should not be null');
         }
 
-        if ($documentNameField == null) {
-            throw new \RuntimeException('documentName should not be null');
-        }
-
-        $query = sprintf('id:%s AND document_name_s:%s', $idField, $documentNameField);
+        $query = sprintf('id:%s', $idField);
         $this->setQuery($query);
 
         return parent::getQuery();

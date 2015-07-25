@@ -30,6 +30,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($fetchedFromDoctrine));
 
         $entity = new ValidTestEntity();
+        $entity->setId(1);
 
         $metainformations = new MetaInformationFactory();
         $metainformations = $metainformations->loadInformation($entity);
@@ -37,7 +38,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
 
         $obj = new SolrDocumentStub(array());
-        $obj->id = 1;
+        $obj->id = 'document_1';
 
         $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
         $hydrator->expects($this->once())
@@ -56,8 +57,6 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
      */
     public function entityFromDbNotFoundShouldNotModifyMetainformations()
     {
-        $fetchedFromDoctrine = new ValidTestEntity();
-
         $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('find')
@@ -65,6 +64,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null));
 
         $entity = new ValidTestEntity();
+        $entity->setId(1);
 
         $metainformations = new MetaInformationFactory();
         $metainformations = $metainformations->loadInformation($entity);
@@ -72,13 +72,13 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
 
         $obj = new SolrDocumentStub(array());
-        $obj->id = 1;
+        $obj->id = 'document_1';
 
         $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
         $hydrator->expects($this->once())
             ->method('hydrate')
             ->with($obj, $metainformations)
-            ->will($this->returnValue($fetchedFromDoctrine));
+            ->will($this->returnValue($entity));
 
         $doctrine = new DoctrineHydrator($doctrineRegistry, $hydrator);
         $hydratedDocument = $doctrine->hydrate($obj, $metainformations);

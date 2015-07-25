@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Solr;
 use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -27,6 +28,30 @@ abstract class AbstractQuery extends Query
      * @var object
      */
     private $entity = null;
+
+    /**
+     * @var MetaInformationInterface
+     */
+    private $metaInformation;
+
+    /**
+     * @return MetaInformationInterface
+     */
+    public function getMetaInformation()
+    {
+        return $this->metaInformation;
+    }
+
+    /**
+     * @param MetaInformationInterface $metaInformation
+     */
+    public function setMetaInformation($metaInformation)
+    {
+        $this->metaInformation = $metaInformation;
+
+        $this->entity = $metaInformation->getEntity();
+        $this->index = $metaInformation->getIndex();
+    }
 
     /**
      * @return object

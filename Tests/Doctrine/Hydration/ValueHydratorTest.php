@@ -20,7 +20,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
     public function documentShouldMapToEntity()
     {
         $obj = new SolrDocumentStub(array(
-            'id' => 1,
+            'id' => 'document_1',
             'title_t' => 'foo'
         ));
 
@@ -43,7 +43,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
     public function underscoreFieldBecomeCamelCase()
     {
         $obj = new SolrDocumentStub(array(
-            'id' => 1,
+            'id' => 'document_1',
             'created_at_d' => 12345
         ));
 

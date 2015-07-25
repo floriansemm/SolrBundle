@@ -60,15 +60,28 @@ class MetaInformation implements MetaInformationInterface
     private $index = '';
 
     /**
+     * @var int
+     */
+    private $entityId;
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityId()
     {
-        if ($this->entity !== null) {
+        if ($this->entity !== null && $this->entity->getId()) {
             return $this->entity->getId();
         }
 
-        return 0;
+        return $this->entityId;
+    }
+
+    /**
+     * @param int $entityId
+     */
+    public function setEntityId($entityId)
+    {
+        $this->entityId = $entityId;
     }
 
     /**
@@ -276,5 +289,13 @@ class MetaInformation implements MetaInformationInterface
     public function getIndex()
     {
         return $this->index;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDocumentKey()
+    {
+        return $this->documentName . '_' . $this->getEntityId();
     }
 }
