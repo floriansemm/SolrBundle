@@ -261,6 +261,12 @@ $result = $query->getResult();
 In this case only the fields id and text will be mapped (addField()), so title and created_at will be
 empty. If nothing was found $result is empty.
 
+The result contains by default 10 rows. You can increase this value:
+
+```php
+$query->setRows(1000000);
+```
+
 ### Configure HydrationModes
 
 HydrationMode tells the Bundle how to create an entity from a document.
