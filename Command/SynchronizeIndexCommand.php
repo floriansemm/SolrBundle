@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Command;
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use FS\SolrBundle\Console\ConsoleErrorListOutput;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -58,12 +59,24 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
         $solr = $this->getContainer()->get('solr.client');
 
+        $output->writeln(sprintf('Synchronize <info>%s</info> entities', count($entities)));
+        $output->writeln('');
+
+        $progress = new ProgressBar($output, count($entities));
+        $progress->start();
+
         foreach ($entities as $entity) {
             try {
                 $solr->synchronizeIndex($entity);
+
+                $progress->advance();
             } catch (\Exception $e) {
             }
         }
+
+        $progress->finish();
+        $output->writeln('');
+        $output->writeln('');
 
         $results = $this->getContainer()->get('solr.console.command.results');
         if ($results->hasErrors()) {
@@ -73,11 +86,10 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         }
 
         $output->writeln('');
-        $output->writeln(sprintf('<comment>Synchronized Documents: %s</comment>', $results->getSucceed()));
-        $output->writeln(sprintf('<comment>Not Synchronized Documents: %s</comment>', $results->getErrored()));
+        $output->writeln(sprintf('Synchronized Documents: <info>%s</info>', $results->getSucceed()));
+        $output->writeln(sprintf('Not Synchronized Documents: <info>%s</info>', $results->getErrored()));
         $output->writeln('');
 
-        $output->writeln(sprintf('<comment>Overall: %s</comment>', $results->getOverall()));
         if ($results->hasErrors()) {
             $errorList = new ConsoleErrorListOutput($output, $this->getHelper('table'), $results->getErrors());
             $errorList->render();
