@@ -17,6 +17,8 @@ class CrudFeatureContext extends FeatureContext
      */
     private $solr;
 
+    const DOCUMENT_NAME = 'validtestentity';
+
     /**
      * @Given /^I have a Doctrine entity$/
      */
@@ -48,7 +50,7 @@ class CrudFeatureContext extends FeatureContext
             throw new \RuntimeException(sprintf('error occurred while indexing: %s', $eventDispatcher->getOccurredErrors()));
         }
 
-        $this->assertInsertSuccessful($this->entity->getId());
+        $this->assertInsertSuccessful($this->entity->getId(), self::DOCUMENT_NAME);
     }
 
     /**
@@ -65,7 +67,7 @@ class CrudFeatureContext extends FeatureContext
     public function theIndexShouldBeUpdated()
     {
         $entityId = $this->entity->getId();
-        $document = $this->findDocumentById($entityId);
+        $document = $this->findDocumentById($entityId, self::DOCUMENT_NAME);
 
         $fields = $document->getFields();
 

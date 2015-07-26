@@ -45,7 +45,8 @@ class Client
      */
     public function delete(DocumentInterface $document, $index)
     {
-        $documentKey = $document->getField(MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME);
+        $documentFields = $document->getFields();
+        $documentKey = $documentFields[MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME];
 
         $deleteQuery = new FindByIdentifierQuery();
         $deleteQuery->setDocument($document);

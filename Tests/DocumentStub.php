@@ -31,4 +31,12 @@ class DocumentStub implements \Solarium\QueryType\Update\Query\Document\Document
 
         return $fields[$fieldName];
     }
+
+    /**
+     * @return array
+     */
+    public function getFields()
+    {
+        return array('id' => $this->id, 'document_name' => $this->document_name_s);
+    }
 }
