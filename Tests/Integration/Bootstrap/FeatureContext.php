@@ -51,7 +51,7 @@ class FeatureContext extends SolrSetupFeatureContext
      *
      * @throws \RuntimeException if resultset is empty, no document with given ID was found
      */
-    protected function findDocumentById($entityId, $documentName)
+    protected function findDocumentById($entityId, $documentName, $index = null)
     {
         $client = $this->getSolrClient();
 
@@ -59,11 +59,7 @@ class FeatureContext extends SolrSetupFeatureContext
 
         $query = $client->createSelect();
         $query->setQuery(sprintf('id:%s', $identifier));
-        $resultset = $client->select($query);
-
-        if ($resultset->getNumFound() == 0) {
-            throw new \RuntimeException(sprintf('could not find document with id %s after update', $entityId));
-        }
+        $resultset = $client->select($query, $index);
 
         $documents = $resultset->getDocuments();
 
@@ -76,6 +72,6 @@ class FeatureContext extends SolrSetupFeatureContext
             }
         }
 
-        throw new \RuntimeException(sprintf('no document with Id %s was found', $entityId));
+        return null;
     }
 }

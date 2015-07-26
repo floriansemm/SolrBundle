@@ -108,6 +108,8 @@ class SolrSetupFeatureContext implements Context
     {
         $ormConfiguration = new \Doctrine\ORM\Configuration();
         $ormConfiguration->addEntityNamespace('FSTest:ValidTestEntity', 'FS\SolrBundle\Tests\Doctrine\Mapper');
+        $ormConfiguration->addEntityNamespace('FSTest:EntityCore0', 'FS\SolrBundle\Tests\Doctrine\Mapper');
+        $ormConfiguration->addEntityNamespace('FSTest:EntityCore1', 'FS\SolrBundle\Tests\Doctrine\Mapper');
 
         $knowNamespaces = new \FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases();
         $knowNamespaces->addEntityNamespaces($ormConfiguration);

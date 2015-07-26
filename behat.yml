@@ -3,5 +3,7 @@ default:
     crud:
       paths: [ Tests/Integration/Features ]
       contexts:
+        - FS\SolrBundle\Tests\Integration\Bootstrap\SolrSetupFeatureContext
         - FS\SolrBundle\Tests\Integration\Bootstrap\FeatureContext
         - FS\SolrBundle\Tests\Integration\Bootstrap\CrudFeatureContext
+        - FS\SolrBundle\Tests\Integration\Bootstrap\MulticoreFeatureContext
