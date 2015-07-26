@@ -10,11 +10,10 @@ before_script:
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
-    - curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.8.0 SOLR_CONFS="Tests/Resources/config/schema.xml" bash
+    - curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_CORE=core0 SOLR_VERSION=4.8.0 SOLR_CONFS="Tests/Resources/config/schema.xml" bash
+    - curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_CORE=core1 SOLR_VERSION=4.8.0 SOLR_CONFS="Tests/Resources/config/schema.xml" bash
 
 script:
     - phpunit
     - ./bin/behat
-notifications:
-  email:
-    - fsemm.travis-ci@gmx.de    
+init
