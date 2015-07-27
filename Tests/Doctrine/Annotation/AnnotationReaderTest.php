@@ -234,10 +234,9 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 abstract class BaseEntity
 {
     /**
-     *
-     * @Solr\Field(type="integer")
+     * @var mixed
      */
-    private $baseField1;
+    protected $baseField1;
 
     /**
      *
@@ -251,6 +250,11 @@ class ChildEntity extends BaseEntity
     /**
      * @Solr\Field(type="integer")
      */
+    protected $baseField1;
+
+    /**
+     * @Solr\Field(type="integer")
+     */
     protected $childField1;
 }
 
@@ -259,5 +263,5 @@ class ChildEntity2 extends ChildEntity
     /**
      * @Solr\Field(type="integer")
      */
-    protected $childField2;
+    private $childField2;
 }
