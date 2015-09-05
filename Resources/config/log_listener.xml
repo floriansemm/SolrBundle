@@ -17,29 +17,34 @@
             <argument type="service" id="logger"/>
             <tag name="kernel.event_listener" event="solr.pre_insert" method="onSolrInsert"/>
             <tag name="kernel.event_listener" event="solr.post_insert" method="onSolrInsert"/>
+            <tag name="monolog.logger" channel="solr" />
         </service>
 
         <service id="solr.log_listener.update" class="%solr.log_listener.update.class%">
             <argument type="service" id="logger"/>
             <tag name="kernel.event_listener" event="solr.pre_update" method="onSolrUpdate"/>
             <tag name="kernel.event_listener" event="solr.post_update" method="onSolrUpdate"/>
+            <tag name="monolog.logger" channel="solr" />
         </service>
 
         <service id="solr.log_listener.delete" class="%solr.log_listener.delete.class%">
             <argument type="service" id="logger"/>
             <tag name="kernel.event_listener" event="solr.pre_delete" method="onSolrDelete"/>
             <tag name="kernel.event_listener" event="solr.post_delete" method="onSolrDelete"/>
+            <tag name="monolog.logger" channel="solr" />
         </service>
 
         <service id="solr.log_listener.clearindex" class="%solr.log_listener.clearindex.class%">
             <argument type="service" id="logger"/>
             <tag name="kernel.event_listener" event="solr.pre_clear_index" method="onClearIndex"/>
             <tag name="kernel.event_listener" event="solr.post_clear_index" method="onClearIndex"/>
+            <tag name="monolog.logger" channel="solr" />
         </service>
 
         <service id="solr.log_listener.error" class="%solr.log_listener.error.class%">
             <argument type="service" id="logger"/>
             <tag name="kernel.event_listener" event="solr.error" method="onSolrError"/>
+            <tag name="monolog.logger" channel="solr" />
         </service>
 
     </services>
