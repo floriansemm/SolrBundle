@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Client;
 
 use Solarium\Client;
+use Solarium\Core\Plugin\Plugin;
 
 /**
  * Creates an instance of the Solarium Client
@@ -15,11 +16,25 @@ class SolrBuilder implements Builder
     private $settings = array();
 
     /**
+     * @var Plugin
+     */
+    private $plugins;
+
+    /**
      * @param array $settings
      */
     public function __construct(array $settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * @param string $pluginName
+     * @param Plugin $plugin
+     */
+    public function addPlugin($pluginName, Plugin $plugin)
+    {
+        $this->plugins[$pluginName] = $plugin;
     }
 
     /**
@@ -29,6 +44,11 @@ class SolrBuilder implements Builder
      */
     public function build()
     {
-        return new Client(array('endpoint' => $this->settings));
+        $solariumClient = new Client(array('endpoint' => $this->settings));
+        foreach ($this->plugins as $pluginName => $plugin) {
+            $solariumClient->registerPlugin($pluginName, $plugin);
+        }
+
+        return $solariumClient;
     }
 } 

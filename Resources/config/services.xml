@@ -39,6 +39,12 @@
             <argument type="collection"/>
         </service>
 
+        <service class="FS\SolrBundle\Debug\RequestDebugger" id="solr.debug.client_debugger">
+            <argument type="service" id="logger"/>
+
+            <tag name="monolog.logger" channel="solr" />
+        </service>
+
         <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false"/>
 
         <service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false"/>

@@ -46,6 +46,7 @@ class FSSolrExtension extends Extension
 
         $builderDefinition = $container->getDefinition('solr.client.adapter.builder');
         $builderDefinition->replaceArgument(0, $endpoints);
+        $builderDefinition->addMethodCall('addPlugin', array('request_debugger', new Reference('solr.debug.client_debugger')));
     }
 
     /**
