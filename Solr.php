@@ -240,8 +240,9 @@ class Solr implements SolrInterface
 
         $queryString = $query->getQuery();
         $runQueryInIndex = $query->getIndex();
-        $query = $this->solrClientCore->createSelect($query->getOptions());
-        $query->setQuery($queryString);
+        $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
+        $selectQuery->setQuery($queryString);
+        $selectQuery->setFilterQueries($query->getFilterQueries());
 
         try {
             $response = $this->solrClientCore->select($query, $runQueryInIndex);
