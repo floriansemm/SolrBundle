@@ -26,6 +26,7 @@ class SolrBuilder implements Builder
     public function __construct(array $settings)
     {
         $this->settings = $settings;
+        $this->plugins = array();
     }
 
     /**
