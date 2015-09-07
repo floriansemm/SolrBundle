@@ -118,7 +118,6 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         $this->solrClientFake
             ->expects($this->once())
             ->method('select')
-            ->with($selectQuery, $index)
             ->will($this->returnValue($queryResult));
     }
 
