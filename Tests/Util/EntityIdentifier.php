@@ -7,6 +7,6 @@ class EntityIdentifier
 {
     public static function generate()
     {
-        return rand(1, 15);
+        return rand(1, 100000000);
     }
 } 
