@@ -28,7 +28,7 @@ class SolrQuery extends AbstractQuery
     /**
      * @var string
      */
-    private $customQuery = '';
+    private $customQuery = '*:*';
 
     /**
      * @return array
