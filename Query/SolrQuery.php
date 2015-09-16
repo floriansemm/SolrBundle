@@ -165,9 +165,9 @@ class SolrQuery extends AbstractQuery
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
             if ($this->useWildcards) {
-                $term .= $fieldName . ':*' . $fieldValue . '*';
+                $term .= $fieldName . ':"*' . $fieldValue . '*"';
             } else {
-                $term .= $fieldName . ':' . $fieldValue;
+                $term .= $fieldName . ':"' . $fieldValue .'"';
             }
 
             if ($termCount < count($this->searchTerms)) {
