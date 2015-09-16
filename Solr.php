@@ -237,15 +237,16 @@ class Solr implements SolrInterface
     public function query(AbstractQuery $query)
     {
         $entity = $query->getEntity();
-
-        $queryString = $query->getQuery();
         $runQueryInIndex = $query->getIndex();
+
         $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
-        $selectQuery->setQuery($queryString);
+
+        $selectQuery->setQuery($query->getQuery());
         $selectQuery->setFilterQueries($query->getFilterQueries());
+        $selectQuery->setSorts($query->getSorts());
 
         try {
-            $response = $this->solrClientCore->select($query, $runQueryInIndex);
+            $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
