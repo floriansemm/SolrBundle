@@ -22,6 +22,9 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @return SolrQuery
+     */
     private function createQueryWithFieldMapping()
     {
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
@@ -34,8 +37,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     * @return \FS\SolrBundle\SolrQuery
+     * @return SolrQuery
      */
     private function createQueryWithSearchTerms()
     {

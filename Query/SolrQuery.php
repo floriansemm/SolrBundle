@@ -28,7 +28,7 @@ class SolrQuery extends AbstractQuery
     /**
      * @var string
      */
-    private $customQuery = '*:*';
+    private $customQuery;
 
     /**
      * @return array
@@ -153,7 +153,7 @@ class SolrQuery extends AbstractQuery
 
         $term = '';
         if (count($this->searchTerms) == 0) {
-            return $term;
+            return '*:*';
         }
 
         $logicOperator = 'AND';
