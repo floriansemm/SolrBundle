@@ -78,7 +78,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSolrQuery_QueryTermShouldCorrect()
     {
-        $expected = 'title_s:*foo* OR text_t:*bar*';
+        $expected = 'title_s:"*foo*" OR text_t:"*bar*"';
 
         $query = $this->createQueryWithSearchTerms();
 
@@ -125,7 +125,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_TermsConcatWithOr()
     {
-        $expected = 'title_s:*foo* OR text_t:*bar*';
+        $expected = 'title_s:"*foo*" OR text_t:"*bar*"';
 
         $query = $this->createQueryWithSearchTerms();
 
@@ -134,7 +134,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_TermsConcatWithAnd()
     {
-        $expected = 'title_s:*foo* AND text_t:*bar*';
+        $expected = 'title_s:"*foo*" AND text_t:"*bar*"';
 
         $query = $this->createQueryWithSearchTerms();
         $query->setUseAndOperator(true);
@@ -147,7 +147,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $solrQuery = $this->createQueryWithFieldMapping();
         $solrQuery->queryAllFields('foo');
 
-        $expected = 'title_s:*foo* OR text_t:*foo* OR created_at_dt:*foo*';
+        $expected = 'title_s:"*foo*" OR text_t:"*foo*" OR created_at_dt:"*foo*"';
 
         $this->assertEquals($expected, $solrQuery->getQuery());
     }
