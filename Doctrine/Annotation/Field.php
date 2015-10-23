@@ -31,13 +31,21 @@ class Field extends Annotation
      */
     private static $TYP_MAPPING = array(
         'string' => '_s',
+        'strings' => '_ss',
         'text' => '_t',
+        'texts' => '_txt',
         'date' => '_dt',
+        'dates' => '_dts',
         'boolean' => '_b',
+        'booleans' => '_bs',
         'integer' => '_i',
+        'integers' => '_is',
         'long' => '_l',
+        'longs' => '_ls',
         'float' => '_f',
+        'floats' => '_fs',
         'double' => '_d',
+        'doubles' => '_ds',
     );
 
     /**
