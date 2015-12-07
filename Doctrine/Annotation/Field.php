@@ -27,6 +27,11 @@ class Field extends Annotation
     public $boost = 0;
 
     /**
+     * @var string
+     */
+    public $getter;
+
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array(
@@ -70,6 +75,16 @@ class Field extends Annotation
         }
 
         return self::$TYP_MAPPING[$this->type];
+    }
+
+    /**
+     * Related object getter name
+     *
+     * @return string
+     */
+    public function getGetterName()
+    {
+        return $this->getter;
     }
 
     /**
