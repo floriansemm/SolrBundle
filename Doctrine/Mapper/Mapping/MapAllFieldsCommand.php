@@ -3,7 +3,7 @@ namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * command maps all fields of the entity
@@ -35,7 +35,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
             $value = $field->getValue();
             $getter = $field->getGetterName();
             if (!empty($getter)) {
-                if ($value instanceof ArrayCollection) {
+                if ($value instanceof Collection) {
                     $values = array();
                     foreach ($value as $relatedObj) {
                         $values[] = $relatedObj->{$getter}();
