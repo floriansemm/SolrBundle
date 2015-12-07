@@ -3,7 +3,6 @@ namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * command maps all fields of the entity
@@ -32,22 +31,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
                 continue;
             }
 
-            $value = $field->getValue();
-            $getter = $field->getGetterName();
-            if (!empty($getter)) {
-                if ($value instanceof ArrayCollection) {
-                    $values = array();
-                    foreach ($value as $relatedObj) {
-                        $values[] = $relatedObj->{$getter}();
-                    }
-                    
-                    $document->addField($field->getNameWithAlias(), $values, $field->getBoost());
-                } else {
-                    $document->addField($field->getNameWithAlias(), $value->{$getter}(), $field->getBoost());
-                }
-            } else {
-                $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
-            }
+            $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
         }
 
         return $document;
