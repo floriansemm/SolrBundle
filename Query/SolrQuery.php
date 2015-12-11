@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Query;
 
+use Solarium\Core\Query\Query;
+
 class SolrQuery extends AbstractQuery
 {
 
@@ -30,8 +32,10 @@ class SolrQuery extends AbstractQuery
      */
     private $customQuery;
 
+
+
     /**
-     * @return array
+     * @return ResultSet
      */
     public function getResult()
     {
@@ -144,7 +148,7 @@ class SolrQuery extends AbstractQuery
     /**
      * @return string
      */
-    public function getQuery()
+    public function prepareQuery()
     {
         if ($this->customQuery) {
             $this->setQuery($this->customQuery);
@@ -165,7 +169,7 @@ class SolrQuery extends AbstractQuery
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
             if ($this->useWildcards) {
-                $term .= $fieldName . ':"*' . $fieldValue . '*"';
+                $term .= $fieldName . ':*' . $fieldValue . '*';
             } else {
                 $term .= $fieldName . ':"' . $fieldValue .'"';
             }
@@ -176,7 +180,6 @@ class SolrQuery extends AbstractQuery
 
             $termCount++;
         }
-
         $this->setQuery($term);
 
         return $term;

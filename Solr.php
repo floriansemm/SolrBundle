@@ -3,6 +3,9 @@
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Query\ResultSet;
+use Solarium\Core\Query\Query;
+use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -232,42 +235,43 @@ class Solr implements SolrInterface
     }
 
     /**
+     * Get select query
+     *
+     * @param AbstractQuery $query
+     *
+     * @return \Solarium\QueryType\Select\Query\Query
+     */
+    public function getSelectQuery(AbstractQuery $query)
+    {
+        $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
+
+        $selectQuery->setQuery($query->prepareQuery());
+        $selectQuery->setFilterQueries($query->getFilterQueries());
+        $selectQuery->setSorts($query->getSorts());
+
+        return $selectQuery;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function query(AbstractQuery $query)
     {
-        $entity = $query->getEntity();
+        $entity          = $query->getEntity();
         $runQueryInIndex = $query->getIndex();
-
-        $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
-
-        $selectQuery->setQuery($query->getQuery());
-        $selectQuery->setFilterQueries($query->getFilterQueries());
-        $selectQuery->setSorts($query->getSorts());
+        $selectQuery     = $query->getSelectQuery();
 
         try {
             $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);
+            return new ResultSet($entity, $this->entityMapper, $response);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
-            return array();
+            return new ResultSet($entity, null, null);
         }
-
-        $this->numberOfFoundDocuments = $response->getNumFound();
-        if ($this->numberOfFoundDocuments == 0) {
-            return array();
-        }
-
-        $targetEntity = $entity;
-        $mappedEntities = array();
-        foreach ($response as $document) {
-            $mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
-        }
-
-        return $mappedEntities;
     }
 
     /**
