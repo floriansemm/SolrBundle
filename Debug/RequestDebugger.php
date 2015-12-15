@@ -5,12 +5,12 @@ namespace FS\SolrBundle\Debug;
 use Psr\Log\LoggerInterface;
 use Solarium\Core\Event\Events;
 use Solarium\Core\Event\PreExecuteRequest;
-use Solarium\Core\Plugin\Plugin;
+use Solarium\Core\Plugin\AbstractPlugin;
 
 /**
  * Listens on solarium.core.preExecuteRequest event
  */
-class RequestDebugger extends Plugin
+class RequestDebugger extends AbstractPlugin
 {
 
     /**
@@ -24,6 +24,8 @@ class RequestDebugger extends Plugin
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
+        return parent::__construct();
     }
 
     /**
