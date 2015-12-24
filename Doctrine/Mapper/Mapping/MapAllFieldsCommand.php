@@ -42,7 +42,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
                     }
                     
                     $document->addField($field->getNameWithAlias(), $values, $field->getBoost());
-                } else {
+                } elseif (is_object($value) && method_exists($value, $getter)) {
                     $document->addField($field->getNameWithAlias(), $value->{$getter}(), $field->getBoost());
                 }
             } else {
