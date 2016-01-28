@@ -22,6 +22,11 @@
         <parameter key="solr.console.command.result.class">FS\SolrBundle\Console\ConsoleCommandResults</parameter>
         <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
         <parameter key="solr.console.result.factory.class">FS\SolrBundle\Console\ConsoleResultFactory</parameter>
+
+        <parameter key="solr.client.plugin.logger.class">FS\SolrBundle\Plugin\LoggerPlugin</parameter>
+        <parameter key="solr.client.logger.chain.class">FS\SolrBundle\Logging\LoggerChain</parameter>
+        <parameter key="solr.client.logger.debug.class">FS\SolrBundle\Logging\DebugLogger</parameter>
+        <parameter key="solr.data_collector.class">FS\SolrBundle\DataCollector\SolrRequestCollector</parameter>
     </parameters>
 
     <services>
@@ -33,10 +38,33 @@
             <argument type="service" id="solr.doctrine.entity_mapper"/>
         </service>
 
-        <service id="solr.client.adapter" class="%solr.client.adapter.class%" factory-service="solr.client.adapter.builder" factory-method="build"/>
+        <service id="solr.client.adapter" class="%solr.client.adapter.class%" factory-service="solr.client.adapter.builder" factory-method="build" />
 
         <service id="solr.client.adapter.builder" class="%solr.client.adapter.builder.class%">
             <argument type="collection"/>
+            <call method="addPlugin">
+                <argument>SolrBundleLogger</argument>
+                <argument type="service" id="solr.client.plugin.logger" />
+            </call>
+        </service>
+
+        <service id="solr.client.plugin.logger" class="%solr.client.plugin.logger.class%">
+            <call method="setLogger">
+                <argument type="service" id="solr.client.logger.chain" />
+            </call>
+        </service>
+
+        <service id="solr.client.logger.chain" class="%solr.client.logger.chain.class%">
+            <call method="addLogger">
+                <argument type="service" id="solr.client.logger.debug" />
+            </call>
+        </service>
+
+        <service id="solr.client.logger.debug" class="%solr.client.logger.debug.class%" />
+
+        <service id="solr.data_collector" class="%solr.data_collector.class%" public="false">
+            <argument type="service" id="solr.client.logger.debug" />
+            <tag name="data_collector" template="FSSolrBundle:Profiler:solr" id="solr" />
         </service>
 
         <service class="FS\SolrBundle\Debug\RequestDebugger" id="solr.debug.client_debugger">
@@ -94,6 +122,10 @@
 
         <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
             <argument id="solr.doctrine.hydration.value_hydrator" type="service"/>
+        </service>
+
+        <service id="solr.twig.solr_extension" class="FS\SolrBundle\Twig\SolrExtension" public="false">
+            <tag name="twig.extension" />
         </service>
     </services>
 </container>
