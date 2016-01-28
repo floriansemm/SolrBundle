@@ -34,6 +34,12 @@ class ValueHydrator implements HydratorInterface
                 }
             }
 
+            $field = $metaInformation->getField($classProperty->name);
+            if ($field !== null && $field->hasGetter()) {
+                // Prevent hydration of related entities
+                continue;
+            }
+
             $classProperty->setAccessible(true);
             $classProperty->setValue($targetEntity, $value);
         }

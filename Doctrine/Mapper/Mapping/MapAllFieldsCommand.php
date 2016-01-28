@@ -32,7 +32,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
                 continue;
             }
 
-            $value = $field->getValue();
+            $value  = $field->getValue();
             $getter = $field->getGetterName();
             if (!empty($getter)) {
                 if ($value instanceof Collection) {

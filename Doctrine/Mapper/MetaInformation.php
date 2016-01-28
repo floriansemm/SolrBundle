@@ -161,7 +161,12 @@ class MetaInformation implements MetaInformationInterface
      */
     public function setFields($fields)
     {
-        $this->fields = $fields;
+        $transformedFields = [];
+        foreach ($fields as $field) {
+            $transformedFields[$field->name] = $field;
+        }
+
+        $this->fields = $transformedFields;
     }
 
     /**

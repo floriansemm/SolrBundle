@@ -96,6 +96,16 @@ class Field extends Annotation
     }
 
     /**
+     * Check if the current anno has a value getter
+     *
+     * @return bool
+     */
+    public function hasGetter()
+    {
+        return !empty($this->getter);
+    }
+
+    /**
      * @return string
      */
     public function getValue()
