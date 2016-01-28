@@ -270,7 +270,7 @@ class Solr implements SolrInterface
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
-            return new ResultSet($entity, null, null);
+            return new ResultSet($entity);
         }
     }
 

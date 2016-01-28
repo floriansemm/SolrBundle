@@ -36,7 +36,7 @@ class ResultSet implements \ArrayAccess
     private $total = 0;
 
 
-    public function __construct($entity, EntityMapper $mapper, Result $response)
+    public function __construct($entity, EntityMapper $mapper=null, Result $response=null)
     {
         if ($mapper === null || $response === null) {
             return $this;
