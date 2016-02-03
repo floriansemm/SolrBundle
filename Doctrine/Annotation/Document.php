@@ -31,6 +31,11 @@ class Document extends Annotation
     public $indexHandler;
 
     /**
+     * @var string
+     */
+    public $finderMethod;
+
+    /**
      * @throws \InvalidArgumentException if boost is not a number
      *
      * @return number

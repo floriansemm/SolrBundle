@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\VirtualField;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Doctrine\Common\Collections\Collection;
 
@@ -21,7 +22,7 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
     public function createDocument(MetaInformationInterface $meta)
     {
         $fields = $meta->getFields();
-        if (count($fields) == 0) {
+        if (count($fields) === 0) {
             return null;
         }
 
@@ -48,6 +49,25 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
             } else {
                 $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
             }
+        }
+
+        $virtualFields = $meta->getVirtualFields();
+        if (count($virtualFields) === 0) {
+            return $document;
+        }
+
+        foreach ($virtualFields as $virtualField) {
+            if (!$virtualField instanceof VirtualField) {
+                continue;
+            }
+
+            $entity = $meta->getEntity();
+            $getter = $virtualField->name;
+            if (empty($getter) || !method_exists($entity, $getter)) {
+                continue;
+            }
+
+            $document->addField($virtualField->getNameWithAlias(), $entity->{$getter}(), $virtualField->getBoost());
         }
 
         return $document;

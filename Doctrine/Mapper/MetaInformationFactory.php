@@ -59,7 +59,9 @@ class MetaInformationFactory
         $metaInformation->setDocumentName($this->getDocumentName($className));
         $metaInformation->setFieldMapping($this->annotationReader->getFieldMapping($entity));
         $metaInformation->setFields($this->annotationReader->getFields($entity));
+        $metaInformation->setVirtualFields($this->annotationReader->getVirtualFields($entity));
         $metaInformation->setRepository($this->annotationReader->getRepository($entity));
+        $metaInformation->setFinderMethod($this->annotationReader->getFinderMethod($entity));
         $metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
         $metaInformation->setSynchronizationCallback($this->annotationReader->getSynchronizationCallback($entity));

@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Query\ResultSet;
 use Solarium\Core\Query\Query;
@@ -263,15 +264,24 @@ class Solr implements SolrInterface
 
         try {
             $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);
-            return new ResultSet($entity, $this->entityMapper, $response);
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
-            return new ResultSet($entity);
+            return new ArrayCollection();
         }
+
+        $this->numberOfFoundDocuments = $response->getNumFound();
+        if ($this->numberOfFoundDocuments == 0) {
+            return new ArrayCollection();
+        }
+
+        $targetEntity = $entity;
+        $mappedEntities = $this->entityMapper->toEntities($response, $targetEntity);
+
+        return new ArrayCollection($mappedEntities);
     }
 
     /**

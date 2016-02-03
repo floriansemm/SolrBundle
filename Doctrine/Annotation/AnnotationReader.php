@@ -13,10 +13,11 @@ class AnnotationReader
      */
     private $reader;
 
-    const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
-    const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';
-    const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
-    const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
+    const DOCUMENT_CLASS            = 'FS\SolrBundle\Doctrine\Annotation\Document';
+    const FIELD_CLASS               = 'FS\SolrBundle\Doctrine\Annotation\Field';
+    const VIRTUAL_FIELD_CLASS       = 'FS\SolrBundle\Doctrine\Annotation\VirtualField';
+    const FIELD_IDENTIFIER_CLASS    = 'FS\SolrBundle\Doctrine\Annotation\Id';
+    const DOCUMENT_INDEX_CLASS      = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const SYNCHRONIZATION_FILTER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
 
     public function __construct()
@@ -55,6 +56,33 @@ class AnnotationReader
     }
 
     /**
+     * @param object $entity
+     * @param string $type
+     *
+     * @return Annotation[]
+     */
+    private function getMethodsByType($entity, $type)
+    {
+        $methods    = $this->readClassMethods($entity);
+
+        $ret    = [];
+        foreach ($methods as $method) {
+            $annotation = $this->reader->getMethodAnnotation($method, $type);
+
+            if (null === $annotation) {
+                continue;
+            }
+
+            $method->setAccessible(true);
+            $annotation->name   = $method->getName();
+
+            array_push($ret, $annotation);
+        }
+
+        return $ret;
+    }
+
+    /**
      * @param \ReflectionClass $reflectionClass
      *
      * @return \ReflectionProperty[]
@@ -70,6 +98,21 @@ class AnnotationReader
     }
 
     /**
+     * @param \ReflectionClass $reflectionClass
+     *
+     * @return array|\ReflectionMethod[]
+     */
+    private function getParentMethods(\ReflectionClass $reflectionClass)
+    {
+        $parent = $reflectionClass->getParentClass();
+        if ($parent != null) {
+            return array_merge($reflectionClass->getMethods(), $this->getParentMethods($parent));
+        }
+
+        return $reflectionClass->getMethods();
+    }
+
+    /**
      * @param object $entity
      *
      * @return array
@@ -77,6 +120,16 @@ class AnnotationReader
     public function getFields($entity)
     {
         return $this->getPropertiesByType($entity, self::FIELD_CLASS);
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return VirtualField[]
+     */
+    public function getVirtualFields($entity)
+    {
+        return $this->getMethodsByType($entity, self::VIRTUAL_FIELD_CLASS);
     }
 
     /**
@@ -184,6 +237,22 @@ class AnnotationReader
     /**
      * @param object $entity
      *
+     * @return string finder method name of repository
+     */
+    public function getFinderMethod($entity)
+    {
+        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS);
+
+        if ($annotation instanceof Document) {
+            return $annotation->finderMethod;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param object $entity
+     *
      * @return boolean
      */
     public function hasDocumentDeclaration($entity)
@@ -244,5 +313,24 @@ class AnnotationReader
         }
 
         return $properties;
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return \ReflectionMethod[]
+     */
+    private function readClassMethods($entity)
+    {
+        $reflectionClass    = new \ReflectionClass($entity);
+        /** @var \ReflectionMethod[] $inheritedMethods */
+        $inheritedMethods   = array_merge($this->getParentMethods($reflectionClass), $reflectionClass->getMethods());
+
+        $methods = array();
+        foreach ($inheritedMethods as $method) {
+            $methods[$method->getName()] = $method;
+        }
+
+        return $methods;
     }
 }

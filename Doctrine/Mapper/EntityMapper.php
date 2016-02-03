@@ -1,10 +1,12 @@
 <?php
 namespace FS\SolrBundle\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
+use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 class EntityMapper
@@ -15,7 +17,7 @@ class EntityMapper
     private $mappingCommand = null;
 
     /**
-     * @var HydratorInterface
+     * @var DoctrineHydrator
      */
     private $doctrineHydrator;
 
@@ -64,23 +66,17 @@ class EntityMapper
     }
 
     /**
-     * @param \ArrayAccess $document
-     * @param object       $sourceTargetEntity
+     * @param \ArrayAccess    $document
+     * @param MetaInformation $metaInformation
      *
      * @return object
      *
      * @throws \InvalidArgumentException if $sourceTargetEntity is null
      */
-    public function toEntity(\ArrayAccess $document, $sourceTargetEntity)
+    public function toEntity(\ArrayAccess $document, MetaInformation $metaInformation)
     {
-        if (null === $sourceTargetEntity) {
-            throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
-        }
-
-        $metaInformationFactory = new MetaInformationFactory();
-        $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
-
         $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
+
         if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {
             return $hydratedDocument;
         }
@@ -90,6 +86,32 @@ class EntityMapper
         if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
             return $this->doctrineHydrator->hydrate($document, $metaInformation);
         }
+    }
+
+    /**
+     * @param Result $result
+     * @param object $sourceTargetEntity
+     *
+     * @return array
+     */
+    public function toEntities(Result $result, $sourceTargetEntity)
+    {
+        $metaInformationFactory = new MetaInformationFactory();
+        $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
+
+        $hydroMode  = $this->hydrationMode;
+        $this->setHydrationMode(HydrationModes::HYDRATE_INDEX);
+        $entities = [];
+        foreach ($result as $document) {
+            array_push($entities, $this->toEntity($document, $metaInformation));
+        }
+
+        $this->setHydrationMode($hydroMode);
+        if ($this->hydrationMode === HydrationModes::HYDRATE_DOCTRINE) {
+            $entities = $this->doctrineHydrator->hydrateEntities($entities, $metaInformation);
+        }
+
+        return $entities;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\VirtualField;
 
 /**
  * Defines common methods for meta-information
@@ -38,9 +39,19 @@ interface MetaInformationInterface
     public function getFields();
 
     /**
+     * @return VirtualField[]
+     */
+    public function getVirtualFields();
+
+    /**
      * @return string
      */
     public function getRepository();
+
+    /**
+     * @return string
+     */
+    public function getFinderMethod();
 
     /**
      * @return object

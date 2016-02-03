@@ -72,7 +72,7 @@ class Field extends Annotation
      *
      * @return string
      */
-    private function getTypeSuffix($type)
+    protected function getTypeSuffix($type)
     {
         if ($type == '') {
             return '';
@@ -145,11 +145,11 @@ class Field extends Annotation
      * contain only lowercase characters and underscores to maintain
      * retro compatibility with old components).
      *
-     * @param $name The field name
+     * @param string $name The field name
      *
      * @return string normalized field name
      */
-    private function normalizeName($name)
+    protected function normalizeName($name)
     {
         $words = preg_split('/(?=[A-Z])/', $name);
         $words = array_map(
