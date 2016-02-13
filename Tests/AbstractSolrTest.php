@@ -6,6 +6,7 @@ namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+use Solarium\QueryType\Select\Result\Result;
 
 abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
 {

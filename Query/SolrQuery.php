@@ -148,16 +148,20 @@ class SolrQuery extends AbstractQuery
     /**
      * @return string
      */
-    public function prepareQuery()
+    public function getQuery()
     {
         if ($this->customQuery) {
-            $this->setQuery($this->customQuery);
+            parent::setQuery($this->customQuery);
+
             return $this->customQuery;
         }
 
         $term = '';
         if (count($this->searchTerms) == 0) {
-            return '*:*';
+            $query = '*:*';
+            parent::setQuery($query);
+
+            return $query;
         }
 
         $logicOperator = 'AND';
@@ -180,7 +184,7 @@ class SolrQuery extends AbstractQuery
 
             $termCount++;
         }
-        $this->setQuery($term);
+        parent::setQuery($term);
 
         return $term;
     }

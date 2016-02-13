@@ -245,7 +245,7 @@ class Solr implements SolrInterface
     {
         $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
 
-        $selectQuery->setQuery($query->prepareQuery());
+        $selectQuery->setQuery($query->getQuery());
         $selectQuery->setFilterQueries($query->getFilterQueries());
         $selectQuery->setSorts($query->getSorts());
 
@@ -257,9 +257,9 @@ class Solr implements SolrInterface
      */
     public function query(AbstractQuery $query)
     {
-        $entity          = $query->getEntity();
+        $entity = $query->getEntity();
         $runQueryInIndex = $query->getIndex();
-        $selectQuery     = $query->getSelectQuery();
+        $selectQuery = $this->getSelectQuery($query);
 
         try {
             $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);

@@ -35,24 +35,6 @@ abstract class AbstractQuery extends Query
     private $metaInformation;
 
     /**
-     * @var \Solarium\QueryType\Select\Query\Query
-     */
-    private $selectQuery;
-
-
-    /**
-     * @return \Solarium\QueryType\Select\Query\Query
-     */
-    public function getSelectQuery()
-    {
-        if (!$this->selectQuery) {
-            $this->selectQuery = $this->solr->getSelectQuery($this);
-        }
-
-        return $this->selectQuery;
-    }
-
-    /**
      * @return MetaInformationInterface
      */
     public function getMetaInformation()
@@ -144,6 +126,4 @@ abstract class AbstractQuery extends Query
     {
         $this->index = $index;
     }
-
-    abstract public function prepareQuery();
 }

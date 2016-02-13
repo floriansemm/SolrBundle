@@ -162,7 +162,6 @@ class SolrTest extends AbstractSolrTest
 
         $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
-
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
     }

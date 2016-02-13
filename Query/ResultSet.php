@@ -12,12 +12,7 @@ namespace FS\SolrBundle\Query;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use Solarium\QueryType\Select\Result\Result;
 
-/**
- * Class ResultSet
- *
- * @package FS\SolrBundle\Query
- */
-class ResultSet implements \ArrayAccess
+class ResultSet implements \ArrayAccess, \Countable
 {
 
     /**
@@ -35,30 +30,27 @@ class ResultSet implements \ArrayAccess
      */
     private $total = 0;
 
-
-    public function __construct($entity, EntityMapper $mapper, Result $response)
+    /**
+     * @param object       $entity
+     * @param EntityMapper $mapper
+     * @param Result       $response
+     */
+    public function __construct($entity, EntityMapper $mapper = null, \IteratorAggregate $response = null)
     {
-        if ($mapper === null || $response === null) {
-            return $this;
-        }
-
-        $this->total = $response->getNumFound();
-        if ($this->total == 0) {
-            return $this;
-        }
-
-        $mappedEntities = array();
-        foreach ($response as $document) {
-            $mappedEntities[] = $mapper->toEntity($document, $entity);
-        }
-
-        $this->entities = $mappedEntities;
         $this->response = $response;
+        if ($response !== null) {
+            $this->total = $response->getNumFound();
+        }
+
+        $this->entities = array();
+        if ($response !== null) {
+            foreach ($response as $document) {
+                $this->entities[] = $mapper->toEntity($document, $entity);
+            }
+        }
     }
 
     /**
-     * Response getter
-     *
      * @return Result
      */
     public function getResponse()
@@ -67,8 +59,6 @@ class ResultSet implements \ArrayAccess
     }
 
     /**
-     * Entities getter
-     *
      * @return array
      */
     public function getEntities()
@@ -77,17 +67,11 @@ class ResultSet implements \ArrayAccess
     }
 
     /**
-     * Entities setter
-     *
      * @param array $entities
-     *
-     * @return ResultSet $this
      */
     public function setEntities($entities)
     {
         $this->entities = $entities;
-
-        return $this;
     }
 
     /**
@@ -139,5 +123,13 @@ class ResultSet implements \ArrayAccess
     public function __toArray()
     {
         return $this->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->entities);
     }
 }
