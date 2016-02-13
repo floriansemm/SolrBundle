@@ -25,14 +25,12 @@ class SolrQuery extends AbstractQuery
     /**
      * @var bool
      */
-    private $useWildcards = true;
+    private $useWildcards = false;
 
     /**
      * @var string
      */
     private $customQuery;
-
-
 
     /**
      * @return ResultSet
@@ -172,11 +170,17 @@ class SolrQuery extends AbstractQuery
         $termCount = 1;
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
+
             if ($this->useWildcards) {
-                $term .= $fieldName . ':*' . $fieldValue . '*';
-            } else {
-                $term .= $fieldName . ':"' . $fieldValue .'"';
+                $fieldValue = '*' . $fieldValue . '*';
             }
+
+            $termParts = explode(' ', $fieldValue);
+            if (count($termParts) > 1) {
+                $fieldValue = '"'.$fieldValue.'"';
+            }
+
+            $term .= $fieldName . ':' . $fieldValue;
 
             if ($termCount < count($this->searchTerms)) {
                 $term .= ' ' . $logicOperator . ' ';
