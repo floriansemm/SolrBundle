@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
+use phpDocumentor\Reflection\DocBlock\Type\Collection;
 
 /**
  * Defines a field of a solr-document
@@ -34,23 +35,34 @@ class Field extends Annotation
     /**
      * @var array
      */
-    private static $TYP_MAPPING = array(
+    private static $TYP_MAPPING = array();
+
+    /**
+     * @var array
+     */
+    private static $TYP_SIMPLE_MAPPING = array(
         'string' => '_s',
-        'strings' => '_ss',
         'text' => '_t',
-        'texts' => '_txt',
         'date' => '_dt',
-        'dates' => '_dts',
         'boolean' => '_b',
-        'booleans' => '_bs',
         'integer' => '_i',
-        'integers' => '_is',
         'long' => '_l',
-        'longs' => '_ls',
         'float' => '_f',
-        'floats' => '_fs',
-        'double' => '_d',
+        'double' => '_d'
+    );
+
+    /**
+     * @var array
+     */
+    private static $TYP_COMPLEX_MAPPING = array(
         'doubles' => '_ds',
+        'floats' => '_fs',
+        'longs' => '_ls',
+        'integers' => '_is',
+        'booleans' => '_bs',
+        'dates' => '_dts',
+        'texts' => '_txt',
+        'strings' => '_ss',
     );
 
     /**
@@ -74,6 +86,8 @@ class Field extends Annotation
      */
     private function getTypeSuffix($type)
     {
+        self::$TYP_MAPPING = array_merge(self::$TYP_COMPLEX_MAPPING, self::$TYP_SIMPLE_MAPPING);
+
         if ($type == '') {
             return '';
         }
@@ -150,5 +164,13 @@ class Field extends Annotation
         );
 
         return implode('_', $words);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getComplexFieldMapping()
+    {
+        return self::$TYP_COMPLEX_MAPPING;
     }
 }

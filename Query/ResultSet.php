@@ -89,6 +89,10 @@ class ResultSet implements \ArrayAccess, \Countable
      */
     public function offsetGet($offset)
     {
+        if (count($this->entities) === 0) {
+            throw new \OutOfBoundsException(sprintf('Index %s is not defined', $offset));
+        }
+
         return $this->entities[$offset];
     }
 

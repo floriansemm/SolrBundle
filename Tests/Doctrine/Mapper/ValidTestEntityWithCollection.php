@@ -124,5 +124,23 @@ class ValidTestEntityWithCollection
     {
         $this->created_at = $created_at;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
+    /**
+     * @param ArrayCollection $collection
+     */
+    public function setCollection($collection)
+    {
+        $this->collection = $collection;
+    }
+
+
 }
 

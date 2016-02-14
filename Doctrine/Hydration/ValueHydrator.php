@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
+use Doctrine\Common\Collections\Collection;
+use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
@@ -20,6 +22,12 @@ class ValueHydrator implements HydratorInterface
         foreach ($document as $property => $value) {
             if ($property === MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME) {
                 $value = $this->removePrefixedKeyFieldName($value);
+            }
+
+            // skip field if value is array or "flat" object
+            // hydrated object should contain a list of real entities / entity
+            if ($this->isComplexValue($property, $value)) {
+                continue;
             }
 
             try {
@@ -91,5 +99,26 @@ class ValueHydrator implements HydratorInterface
         $pascalCased = str_replace(' ', '', $words);
 
         return lcfirst($pascalCased);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isComplexValue($fieldName, $value)
+    {
+        if (is_array($value)) {
+            return true;
+        }
+
+        $fieldSuffix = $this->removePrefixedKeyFieldName($fieldName);
+        if ($fieldSuffix === false) {
+            return false;
+        }
+
+        if (array_key_exists($fieldSuffix, Field::getComplexFieldMapping())) {
+            return true;
+        }
+
+        return false;
     }
 } 
