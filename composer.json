@@ -24,7 +24,7 @@
   "require-dev": {
     "behat/behat": "dev-master"
   },
-  "minimum-stability": "alpha",
+  "minimum-stability": "beta",
   "autoload": {
     "psr-0": {
       "FS\\SolrBundle": ""
