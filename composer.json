@@ -22,9 +22,9 @@
     "doctrine/orm": "^2.3"
   },
   "require-dev": {
-    "behat/behat": "3.*"
+    "behat/behat": "dev-master"
   },
-  "minimum-stability": "alpha"
+  "minimum-stability": "alpha",
   "autoload": {
     "psr-0": {
       "FS\\SolrBundle": ""
