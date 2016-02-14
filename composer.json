@@ -29,6 +29,7 @@
       "FS\\SolrBundle": ""
     }
   },
+  "minimum-stability": "dev",
   "config": {
     "bin-dir": "bin"
   },
