@@ -103,6 +103,7 @@ class Repository implements RepositoryInterface
     public function findBy(array $args)
     {
         $query = $this->solr->createQuery($this->entity);
+        $query->setHydrationMode($this->hydrationMode);
 
         foreach ($args as $fieldName => $fieldValue) {
             $query->addSearchTerm($fieldName, $fieldValue);

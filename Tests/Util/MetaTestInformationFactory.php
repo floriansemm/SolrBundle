@@ -8,11 +8,15 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 class MetaTestInformationFactory
 {
     /**
+     * @param object $entity
+     *
      * @return MetaInformation
      */
-    public static function getMetaInformation()
+    public static function getMetaInformation($entity = null)
     {
-        $entity = new ValidTestEntity();
+        if ($entity === null) {
+            $entity = new ValidTestEntity();
+        }
         $entity->setId(2);
 
         $metaInformation = new MetaInformation();

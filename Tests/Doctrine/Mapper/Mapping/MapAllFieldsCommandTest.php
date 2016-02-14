@@ -2,7 +2,12 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithCollection;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
 
@@ -14,12 +19,9 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
 
     public static $MAPPED_FIELDS = array('title_s', 'text_t', 'created_at_dt');
 
-    /**
-     * @group foo
-     */
     public function testMapEntity_DocumentShouldContainThreeFields()
     {
-        $command = new MapAllFieldsCommand();
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
 
         $actual = $command->createDocument(MetaTestInformationFactory::getMetaInformation());
 
@@ -32,6 +34,69 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
         $this->assertEquals(1.8, $boostTitleField, 'boost value of field title_s should be 1.8');
 
         $this->assertHasDocumentFields($actual, self::$MAPPED_FIELDS);
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationFieldByGetter()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity1 = new ValidTestEntity();
+        $entity1->setTitle('title 1');
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+
+        $collection = new ArrayCollection();
+        $collection->add($entity1);
+        $collection->add($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'getTitle'));
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $this->assertArrayHasKey('collection_ss', $actual->getFields());
+        $collectionField = $actual->getFields()['collection_ss'];
+
+        $this->assertEquals(2, count($collectionField));
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationFieldAllFields()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity1 = new ValidTestEntity();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+        $entity1->setText('text 2');
+
+        $collection = new ArrayCollection();
+        $collection->add($entity1);
+        $collection->add($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection));
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $this->assertArrayHasKey('collection_ss', $actual->getFields());
+        $collectionField = $actual->getFields()['collection_ss'];
+
+        $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
+        $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
     }
 }
 

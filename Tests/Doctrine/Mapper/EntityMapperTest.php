@@ -6,6 +6,7 @@ use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
 
@@ -36,7 +37,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
     public function testToDocument_DocumentIsUpdated()
     {
         $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
-        $mapper->setMappingCommand(new MapAllFieldsCommand(new AnnotationReader()));
+        $mapper->setMappingCommand(new MapAllFieldsCommand(new MetaInformationFactory()));
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertTrue($actual instanceof Document);
