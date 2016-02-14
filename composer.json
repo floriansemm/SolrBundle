@@ -12,7 +12,7 @@
   "license": "MIT",
   "require": {
     "php": ">=5.4.5",
-    "solarium/solarium": "^3.5",
+    "solarium/solarium": "dev-develop",
     "symfony/dependency-injection": "^2.3|^3.0",
     "symfony/http-kernel": "^2.3|^3.0",
     "symfony/config": "^2.3|^3.0",
@@ -24,12 +24,12 @@
   "require-dev": {
     "behat/behat": "3.*"
   },
-  "minimum-stability": "alpha",
   "autoload": {
     "psr-0": {
       "FS\\SolrBundle": ""
     }
   },
+  "minimum-stability": "dev",
   "config": {
     "bin-dir": "bin"
   },
