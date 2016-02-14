@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 
 class SolrSetupFeatureContext implements Context
 {
@@ -95,7 +96,7 @@ class SolrSetupFeatureContext implements Context
     private function setupCommandFactory()
     {
         $factory = new \FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory();
-        $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand(), 'all');
+        $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand(new MetaInformationFactory()), 'all');
         $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand(), 'identifier');
 
         return $factory;
