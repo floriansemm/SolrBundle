@@ -49,6 +49,8 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
             $value = $field->getValue();
             if ($value instanceof Collection) {
                 $document->addField($field->getNameWithAlias(), $this->mapCollection($field), $field->getBoost());
+            } elseif (is_object($value)) {
+                $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
             } else {
                 $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
             }
@@ -57,6 +59,30 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
         return $document;
     }
 
+    private function mapObject(Field $field)
+    {
+        $value = $field->getValue();
+        $getter = $field->getGetterName();
+        if (!empty($getter)) {
+            return $value->{$getter}();
+        }
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($value);
+
+        $field = array();
+        $document = $this->createDocument($metaInformation);
+        foreach ($document as $fieldName => $value) {
+            $field[$fieldName] = $value;
+        }
+
+        return $field;
+    }
+
+    /**
+     * @param Field $field
+     *
+     * @return array
+     */
     private function mapCollection(Field $field)
     {
         /** @var Collection $value */

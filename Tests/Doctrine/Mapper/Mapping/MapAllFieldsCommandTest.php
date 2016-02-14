@@ -8,6 +8,7 @@ use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithCollection;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
 
@@ -97,6 +98,62 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
 
         $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
         $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationField_AllFields()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('embbeded object');
+
+        $entity1 = new ValidTestEntityWithRelation();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+        $entity1->setRelation($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity1));
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $this->assertArrayHasKey('relation_ss', $actual->getFields());
+        $collectionField = $actual->getFields()['relation_ss'];
+
+        $this->assertEquals(4, count($collectionField), 'collection contains 4 fields');
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationField_Getter()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('embedded object');
+
+        $entity1 = new ValidTestEntityWithRelation();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+        $entity1->setRelation($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity2, 'getter'=>'getTitle'));
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $this->assertArrayHasKey('relation_ss', $actual->getFields());
+        $collectionField = $actual->getFields()['relation_ss'];
+
+        $this->assertEquals('embedded object', $collectionField);
     }
 }
 
