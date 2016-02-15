@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Query\Exception\UnknownFieldException;
+
 class SolrQuery extends AbstractQuery
 {
 
@@ -112,10 +114,16 @@ class SolrQuery extends AbstractQuery
      * @param string $value
      *
      * @return SolrQuery
+     *
+     * @throws UnknownFieldException if $field has not mapping / is unknown
      */
     public function addSearchTerm($field, $value)
     {
         $documentFieldsAsValues = array_flip($this->mappedFields);
+
+        if (!array_key_exists($field, $documentFieldsAsValues)) {
+            throw new UnknownFieldException(sprintf('Entity %s has no mapping for field %s', get_class($this->getEntity()), $field));
+        }
 
         if (array_key_exists($field, $documentFieldsAsValues)) {
             $documentFieldName = $documentFieldsAsValues[$field];

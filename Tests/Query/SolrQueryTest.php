@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Query;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Query\Exception\UnknownFieldException;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrQueryFacade;
 
@@ -99,28 +100,14 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('text_t', $terms), 'text_t not in terms');
     }
 
-    public function testAddSearchTerm_OneFieldOfTwoNotMapped()
-    {
-        $solrQuery = $this->createQueryWithFieldMapping();
-
-        $solrQuery->addSearchTerm('title', 'foo')
-            ->addSearchTerm('foo', 'bar');
-
-        $terms = $solrQuery->getSearchTerms();
-
-        $this->assertTrue(array_key_exists('title_s', $terms), 'title_s not in terms');
-        $this->assertEquals(1, count($terms));
-    }
-
+    /**
+     * @expectedException \FS\SolrBundle\Query\Exception\UnknownFieldException
+     */
     public function testAddSearchTerm_UnknownField()
     {
         $solrQuery = $this->createQueryWithFieldMapping();
 
         $solrQuery->addSearchTerm('unknownfield', 'foo');
-
-        $terms = $solrQuery->getSearchTerms();
-
-        $this->assertEquals(0, count($terms));
     }
 
     public function testGetQuery_TermsConcatWithOr()
