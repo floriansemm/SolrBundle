@@ -125,11 +125,8 @@ class SolrQuery extends AbstractQuery
             throw new UnknownFieldException(sprintf('Entity %s has no mapping for field %s', get_class($this->getEntity()), $field));
         }
 
-        if (array_key_exists($field, $documentFieldsAsValues)) {
-            $documentFieldName = $documentFieldsAsValues[$field];
-
-            $this->searchTerms[$documentFieldName] = $value;
-        }
+        $documentFieldName = $documentFieldsAsValues[$field];
+        $this->searchTerms[$documentFieldName] = $value;
 
         return $this;
     }
