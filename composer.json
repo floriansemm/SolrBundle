@@ -12,17 +12,17 @@
   "license": "MIT",
   "require": {
     "php": ">=5.4.5",
-    "solarium/solarium": "dev-develop",
-    "symfony/dependency-injection": "^2.3|^3.0",
-    "symfony/http-kernel": "^2.3|^3.0",
-    "symfony/config": "^2.3|^3.0",
-    "symfony/doctrine-bridge": "^2.3|^3.0",
+    "solarium/solarium": "^3.5",
+    "symfony/dependency-injection": "^2.3",
+    "symfony/http-kernel": "^2.3",
+    "symfony/config": "^2.3",
+    "symfony/doctrine-bridge": "^2.3",
     "doctrine/mongodb": "*",
     "doctrine/mongodb-odm": "*",
     "doctrine/orm": "^2.3"
   },
   "require-dev": {
-    "behat/behat": "dev-master"
+    "behat/behat": "^3.0"
   },
   "minimum-stability": "beta",
   "autoload": {
