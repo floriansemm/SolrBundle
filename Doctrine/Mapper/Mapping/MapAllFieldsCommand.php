@@ -67,7 +67,12 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
                 continue;
             }
 
-            $document->addField($virtualField->getNameWithAlias(), $entity->{$getter}(), $virtualField->getBoost());
+            $value = $entity->{$getter}();
+            if ($value instanceof Collection) {
+                $document->addField($virtualField->getNameWithAlias(), $value->toArray(), $virtualField->getBoost());
+            } else {
+                $document->addField($virtualField->getNameWithAlias(), $value, $virtualField->getBoost());
+            }
         }
 
         return $document;

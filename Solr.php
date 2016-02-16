@@ -270,18 +270,18 @@ class Solr implements SolrInterface
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
-            return new ArrayCollection();
+            return new ResultSet();
         }
 
         $this->numberOfFoundDocuments = $response->getNumFound();
         if ($this->numberOfFoundDocuments == 0) {
-            return new ArrayCollection();
+            return new ResultSet([], $response);
         }
 
         $targetEntity = $entity;
         $mappedEntities = $this->entityMapper->toEntities($response, $targetEntity);
 
-        return new ArrayCollection($mappedEntities);
+        return new ResultSet($mappedEntities, $response);
     }
 
     /**

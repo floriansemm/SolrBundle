@@ -9,6 +9,7 @@
 namespace FS\SolrBundle\Query;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use Solarium\QueryType\Select\Result\Result;
 
@@ -17,43 +18,27 @@ use Solarium\QueryType\Select\Result\Result;
  *
  * @package FS\SolrBundle\Query
  */
-class ResultSet implements \ArrayAccess
+class ResultSet extends ArrayCollection
 {
-
-    /**
-     * @var array
-     */
-    private $entities = array();
-
     /**
      * @var Result
      */
     private $response;
 
+
     /**
-     * @var int
+     * ResultSet constructor.
+     *
+     * @param array $elements
+     * @param Result|null $result
      */
-    private $total = 0;
-
-
-    public function __construct($entity, EntityMapper $mapper=null, Result $response=null)
+    public function __construct(array $elements = array(), Result $result = null)
     {
-        if ($mapper === null || $response === null) {
-            return $this;
-        }
+        parent::__construct($elements);
 
-        $this->total = $response->getNumFound();
-        if ($this->total == 0) {
-            return $this;
+        if ($result !== null) {
+            $this->response = $result;
         }
-
-        $mappedEntities = array();
-        foreach ($response as $document) {
-            $mappedEntities[] = $mapper->toEntity($document, $entity);
-        }
-
-        $this->entities = $mappedEntities;
-        $this->response = $response;
     }
 
     /**
@@ -64,80 +49,5 @@ class ResultSet implements \ArrayAccess
     public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * Entities getter
-     *
-     * @return array
-     */
-    public function getEntities()
-    {
-        return $this->entities;
-    }
-
-    /**
-     * Entities setter
-     *
-     * @param array $entities
-     *
-     * @return ResultSet $this
-     */
-    public function setEntities($entities)
-    {
-        $this->entities = $entities;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->entities[$offset] = $value;
-    }
-
-    /**
-     * @param mixed $offset
-     * @return mixed
-     */
-    public function offsetGet($offset)
-    {
-        return $this->entities[$offset];
-    }
-
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->entities[$offset]);
-    }
-
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->entities[$offset]);
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->entities;
-    }
-
-    /**
-     * @return array
-     */
-    public function __toArray()
-    {
-        return $this->toArray();
     }
 }

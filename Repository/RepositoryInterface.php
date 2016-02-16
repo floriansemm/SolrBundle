@@ -2,6 +2,9 @@
 
 namespace FS\SolrBundle\Repository;
 
+
+use FS\SolrBundle\Query\SolrQuery;
+
 /**
  * Defines common finder-method for document-repositories
  */
@@ -33,4 +36,9 @@ interface RepositoryInterface
      * @return array
      */
     public function findAll();
+
+    /**
+     * @return SolrQuery
+     */
+    public function createQuery();
 }

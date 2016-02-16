@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Query;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Solarium\Core\Query\Query;
 
 class SolrQuery extends AbstractQuery

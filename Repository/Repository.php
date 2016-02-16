@@ -120,4 +120,12 @@ class Repository implements RepositoryInterface
 
         return array_pop($found);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createQuery()
+    {
+        return $this->solr->createQuery($this->entity);
+    }
 }
