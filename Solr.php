@@ -244,6 +244,7 @@ class Solr implements SolrInterface
         $selectQuery->setQuery($query->getQuery());
         $selectQuery->setFilterQueries($query->getFilterQueries());
         $selectQuery->setSorts($query->getSorts());
+        $selectQuery->setFields($query->getFields());
 
         try {
             $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);
