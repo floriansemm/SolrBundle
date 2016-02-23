@@ -138,4 +138,34 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $solrQuery->getQuery());
     }
+
+    public function testGetQuery_NoWildcard_Word()
+    {
+        $solrQuery = $this->createQueryWithFieldMapping();
+        $solrQuery->setUseWildcard(false);
+        $solrQuery->addSearchTerm('title', 'a_word');
+
+        $expected = 'title_s:"a_word"';
+
+        $this->assertEquals($expected, $solrQuery->getQuery());
+    }
+
+    public function testGetQuery_NoSearchTerm()
+    {
+        $solrQuery = $this->createQueryWithFieldMapping();
+
+        $expected = '*:*';
+
+        $this->assertEquals($expected, $solrQuery->getQuery());
+    }
+
+    public function testGetQuery_CustomQuery()
+    {
+        $solrQuery = $this->createQueryWithFieldMapping();
+        $solrQuery->setCustomQuery('title_s:[*:*]');
+
+        $expected = 'title_s:[*:*]';
+
+        $this->assertEquals($expected, $solrQuery->getQuery());
+    }
 }
