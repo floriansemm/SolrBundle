@@ -45,7 +45,7 @@
             <tag name="monolog.logger" channel="solr" />
         </service>
 
-        <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" public="false"/>
+        <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" />
 
         <service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false"/>
 
