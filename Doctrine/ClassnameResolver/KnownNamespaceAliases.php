@@ -31,7 +31,10 @@ class KnownNamespaceAliases
     public function addEntityNamespaces(OrmConfiguration $configuration)
     {
         $this->knownNamespaceAlias = array_merge($this->knownNamespaceAlias, $configuration->getEntityNamespaces());
-        $this->entityClassnames = array_merge($this->entityClassnames, $configuration->getMetadataDriverImpl()->getAllClassNames());
+
+        if ($configuration->getMetadataDriverImpl()) {
+            $this->entityClassnames = array_merge($this->entityClassnames, $configuration->getMetadataDriverImpl()->getAllClassNames());
+        }
     }
 
     /**
