@@ -165,38 +165,53 @@ class MetaInformation implements MetaInformationInterface
     }
 
     /**
-     * @param string $field
+     * @param string $fieldName
      *
      * @return boolean
      */
-    public function hasField($field)
+    public function hasField($fieldName)
     {
-        if (count($this->fields) == 0) {
+        $fields = array_filter($this->fields, function(Field $field) use ($fieldName) {
+            return $field->name == $fieldName || $field->getNameWithAlias() == $fieldName;
+        });
+
+        if (count($fields) == 0) {
             return false;
         }
 
-        return isset($this->fields[$field]);
+        return true;
     }
 
     /**
-     * @param string $field
+     * @param string $fieldName
      * @param string $value
+     *
+     * @throws \InvalidArgumentException if $fieldName does not exist
      */
-    public function setFieldValue($field, $value)
+    public function setFieldValue($fieldName, $value)
     {
-        $this->fields[$field]->value = $value;
+        if ($this->hasField($fieldName) == false) {
+            throw new \InvalidArgumentException(sprintf('Field %s does not exist', $fieldName));
+        }
+
+        $field = $this->getField($fieldName);
+        $field->value = $value;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getField($field)
+    public function getField($fieldName)
     {
-        if (!$this->hasField($field)) {
+        if (!$this->hasField($fieldName)) {
             return null;
         }
 
-        return $this->fields[$field];
+        $fields = array_filter($this->fields, function(Field $field) use ($fieldName) {
+            return $field->name == $fieldName || $field->getNameWithAlias() == $fieldName;
+        });
+
+        return array_pop($fields);
     }
 
     /**
