@@ -10,7 +10,6 @@ namespace FS\SolrBundle\Query;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
-use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use Solarium\QueryType\Select\Result\Result;
 
 /**
