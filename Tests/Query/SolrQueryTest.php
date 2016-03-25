@@ -166,7 +166,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $solrQuery->setUseWildcard(false);
         $solrQuery->addSearchTerm('title', 'a_word');
 
-        $expected = 'title_s:"a_word"';
+        $expected = 'title_s:a_word';
 
         $this->assertEquals($expected, $solrQuery->getQuery());
     }
