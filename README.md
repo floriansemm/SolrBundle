@@ -48,21 +48,15 @@ public function registerBundles()
 # app/config/config.yml
 fs_solr:
     endpoints:
-        core1:
+        core0:
             host: host
             port: 8983
-            path: /solr/core1
-            core: corename
-            timeout: 5
-        core2:
-            host: host
-            port: 8983
-            path: /solr/core2
+            path: /solr/core0
             core: corename
             timeout: 5
 ```
 
-With this config you can setup two cores: `core1` and `core2`. See section `Specify cores` for more information.
+See section `Specify cores` for more detaild information about how to setup cores.
 
 ## Usage
 
@@ -116,45 +110,26 @@ class Post
 }
 ```
 
-### Supported field types
+## `@Solr\Document` annotation
 
-Currently is a basic set of types implemented.
+Entities must have this annotation to mark them as document.
 
-- string
-- text
-- date
-- integer
-- float
-- double
-- long
-- boolean
+### Setup custom repository class
 
-It is possible to use custom field types (schema.xml).
-
-### Filter annotation
-
-In some cases a entity should not be index. For this you have the `SynchronizationFilter` Annotation.
+If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class.
 
 ```php
 /**
- * @Solr\Document
- * @Solr\SynchronizationFilter(callback="shouldBeIndex")
+ * @Solr\Document(repository="My/Custom/Repository")
  */
 class SomeEntity
 {
-    /**
-     * @return boolean
-    */
-    public function shouldBeIndex()
-    {
-        // put your logic here
-    }
+    // ...
 }
 ```
 
-The callback property specifies an callable function, which decides whether the should index or not.    
 
-### Specify cores
+### Specify a core for a document
 
 It is possible to specify a core dedicated to a document
 
@@ -189,34 +164,110 @@ class SomeEntity
 Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
 then a default core will be used (first in the `endpoints` list). To index a document in all cores use `*` as index value:
 
-```php
-@Solr\Document(index="*")
-```
+## `@Solr\Field` annotation
 
-### Solr field configuration
+Add this annotation with a type to a property an the value will be indexed. 
 
-Solr comes with a set of predefined field-name/field-types mapping:
+### Supported simple field types
 
-- title (solr-type: general_text)
-- text (solr-type: general_text)
-- category (solr-type: general_text)
-- content_type (solr-type: string)
+Currently is a basic set of types implemented.
 
-For details have a look into your schema.xml.
+- string(s)
+- text(s)
+- date(s)
+- integer(s)
+- float(s)
+- double(s)
+- long(s)
+- boolean(s)
 
-So if you have an entity with a property "category", then you don't need a type-declaration in the annotation:
+### Object relations
+
+Indexing of relations works in simplified way. Related entities will not indexed as a new document only a searchable value.
+Related entity do not need a `@Solr\Document` annotation.
+
+#### ManyToOne relation
 
 ```php
 /**
- * @Solr\Field
- * @ORM\Column(name="category", type="text")
+ * @var Category
+ *
+ * @Solr\Field(type="string", getter="getTitle")
+ *
+ * @ORM\ManyToOne(targetEntity="Acme\DemoBundle\Entity\Category", inversedBy="posts", cascade={"persist"})
+ * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
  */
-private $category = '';
+private $category;
 ```
 
-The field has in this case automaticaly the type "general_text".
+Related entity:
 
-If you persist this entity, it will put automatically to the index. Update and delete happens automatically too.
+```php
+class Category
+{
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+}
+```
+
+#### OneToMany relation
+
+To index a set of objects it is important to use the fieldtype `strings`.
+
+```php
+/**
+ * @var Tag[]
+ *
+ * @Solr\Field(type="strings", getter="getName")
+ * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+ */
+private $tags;
+```
+
+Related entity:
+
+```php
+class Tag
+{
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+}
+```
+
+### `@Solr\SynchronizationFilter(callback="shouldBeIndex")` annotation
+
+In some cases a entity should not be index. For this you have the `SynchronizationFilter` annotation to run a filter-callback.
+
+```php
+/**
+ * // ....
+ * @Solr\SynchronizationFilter(callback="shouldBeIndex")
+ */
+class SomeEntity
+{
+    /**
+     * @return boolean
+    */
+    public function shouldBeIndex()
+    {
+        // put your logic here
+    }
+}
+```
+
+The callback property specifies an callable function, which decides whether the should index or not.    
+
+## Queries
 
 ### Query a field of a document
 
@@ -229,8 +280,13 @@ $query->addSearchTerm('title', 'my title');
 $result = $query->getResult();
 ```
 
-The $result array contains all found entities. The solr-service does all mappings from SolrDocument
-to your entity for you.
+or 
+
+```php
+$posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
+    'title' => 'my title'
+));
+```
 
 ### Query all fields of a document
 
@@ -290,34 +346,10 @@ public function find($id)
 }
 ```
 
-### Index manually an entity
-
-To index your entities manually, you can do it the following way:
-
-```php
-$this->get('solr.client')->addDocument($entity);
-$this->get('solr.client')->updateDocument($entity);
-$this->get('solr.client')->removeDocument($entity);
-```
-
-`removeDocument()` requires that the entity-id is set.
-
-### Use document repositories
-
-If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class. The usage is the same
-like Doctrine-Repositories:
-
-```php
-$myRepository = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post');
-$result = $myRepository->mySpecialFindMethod();
-``` 
-
-If you haven't declared a concrete repository in your entity and you calling `$this->get('solr.client')->getRepository('AcmeDemoBundle:Post')`, you will
-get an instance of `FS\SolrBundle\Repository\Repository`.
-
-### Commands
+## Commands
 
 There are two commands with this bundle:
 
 * `solr:index:clear` - delete all documents in the index
-* `solr:synchronize` - synchronize the db with the index
+* `solr:index:populate` - synchronize the db with the index
+* `solr:schema:show` - shows your configured documents
