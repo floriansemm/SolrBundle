@@ -19,7 +19,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('solr:synchronize')
+        $this->setName('solr:input:populate')
             ->addArgument('entity', InputArgument::REQUIRED, 'The entity you want to index')
             ->addOption(
                 'source',
