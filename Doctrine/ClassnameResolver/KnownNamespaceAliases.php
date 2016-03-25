@@ -15,6 +15,8 @@ class KnownNamespaceAliases
      */
     private $knownNamespaceAlias = array();
 
+    private $entityClassnames = array();
+
     /**
      * @param OdmConfiguration $configuration
      */
@@ -29,6 +31,10 @@ class KnownNamespaceAliases
     public function addEntityNamespaces(OrmConfiguration $configuration)
     {
         $this->knownNamespaceAlias = array_merge($this->knownNamespaceAlias, $configuration->getEntityNamespaces());
+
+        if ($configuration->getMetadataDriverImpl()) {
+            $this->entityClassnames = array_merge($this->entityClassnames, $configuration->getMetadataDriverImpl()->getAllClassNames());
+        }
     }
 
     /**
@@ -62,4 +68,12 @@ class KnownNamespaceAliases
     {
         return array_keys($this->knownNamespaceAlias);
     }
-} 
+
+    /**
+     * @return array
+     */
+    public function getEntityClassnames()
+    {
+        return $this->entityClassnames;
+    }
+}

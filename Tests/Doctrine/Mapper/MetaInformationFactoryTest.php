@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
@@ -68,6 +69,11 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedClassName, $actual->getClassName(), 'wrong classname');
         $this->assertEquals($expectedDocumentName, $actual->getDocumentName(), 'wrong documentname');
         $this->assertEquals(4, count($actual->getFields()), '4 fields are mapped');
+
+        $this->assertTrue($actual->hasField('title'), 'field should be able to located by field-name');
+        $this->assertTrue($actual->hasField('text_t'), 'field should be able to located by field-name with suffix');
+
+        $this->assertTrue($actual->getField('title') instanceof Field);
     }
 
     /**
