@@ -26,7 +26,7 @@ class ValueHydrator implements HydratorInterface
 
             // skip field if value is array or "flat" object
             // hydrated object should contain a list of real entities / entity
-            if ($this->isComplexValue($property, $value)) {
+            if ($this->isComplexValue($property, $value, $metaInformation)) {
                 continue;
             }
 
@@ -104,9 +104,13 @@ class ValueHydrator implements HydratorInterface
     /**
      * @return bool
      */
-    public function isComplexValue($fieldName, $value)
+    public function isComplexValue($fieldName, $value, MetaInformationInterface $metaInformation)
     {
         if (is_array($value)) {
+            return true;
+        }
+
+        if ($metaInformation->getField($fieldName) && $metaInformation->getField($fieldName)->getter) {
             return true;
         }
 
