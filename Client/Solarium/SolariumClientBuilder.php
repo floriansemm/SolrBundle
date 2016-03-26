@@ -1,14 +1,15 @@
 <?php
 
-namespace FS\SolrBundle\Client;
+namespace FS\SolrBundle\Client\Solarium;
 
+use FS\SolrBundle\Client\Builder;
 use Solarium\Client;
 use Solarium\Core\Plugin\AbstractPlugin;
 
 /**
  * Creates an instance of the Solarium Client
  */
-class SolrBuilder implements Builder
+class SolariumClientBuilder implements Builder
 {
     /**
      * @var array

@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Plugin;
+namespace FS\SolrBundle\Client\Solarium;
 
 use FS\SolrBundle\Logging\SolrLoggerInterface;
 use Solarium\Core\Event\Events;

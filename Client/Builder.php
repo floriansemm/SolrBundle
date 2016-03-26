@@ -2,9 +2,6 @@
 
 namespace FS\SolrBundle\Client;
 
-/**
- * Defines class which can instantiate a solr-client
- */
 interface Builder
 {
     /**

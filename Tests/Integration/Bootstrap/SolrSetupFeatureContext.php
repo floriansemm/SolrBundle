@@ -145,7 +145,7 @@ class SolrSetupFeatureContext implements Context
             ),
         );
 
-        $builder = new \FS\SolrBundle\Client\SolrBuilder($config);
+        $builder = new \FS\SolrBundle\Client\Solarium\SolariumClientBuilder($config);
         $solrClient = $builder->build();
 
         return $solrClient;

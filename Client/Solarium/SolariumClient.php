@@ -1,27 +1,27 @@
 <?php
 
-namespace FS\SolrBundle\Client;
+namespace FS\SolrBundle\Client\Solarium;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use Solarium\Core\Query\QueryInterface;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
-use \Solarium\Client as SolariumClient;
+use \Solarium\Client;
 
 /**
  * Wrapper class for \Solarium\Client to perform actions on multiple cores
  */
-class Client
+class SolariumClient
 {
     /**
-     * @var SolariumClient
+     * @var Client
      */
     private $solariumClient;
 
     /**
-     * @param SolariumClient $solariumClient
+     * @param Client $solariumClient
      */
-    public function __construct(SolariumClient $solariumClient)
+    public function __construct(Client $solariumClient)
     {
         $this->solariumClient = $solariumClient;
     }

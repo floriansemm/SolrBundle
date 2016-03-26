@@ -7,7 +7,7 @@
     <parameters>
 
         <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
-        <parameter key="solr.client.adapter.builder.class">FS\SolrBundle\Client\SolrBuilder</parameter>
+        <parameter key="solr.client.adapter.builder.class">FS\SolrBundle\Client\Solarium\SolariumClientBuilder</parameter>
         <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
 
         <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
@@ -23,7 +23,7 @@
         <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
         <parameter key="solr.console.result.factory.class">FS\SolrBundle\Console\ConsoleResultFactory</parameter>
 
-        <parameter key="solr.client.plugin.logger.class">FS\SolrBundle\Plugin\LoggerPlugin</parameter>
+        <parameter key="solr.client.plugin.logger.class">FS\SolrBundle\Client\Solarium\LoggerPlugin</parameter>
         <parameter key="solr.client.logger.chain.class">FS\SolrBundle\Logging\LoggerChain</parameter>
         <parameter key="solr.client.logger.debug.class">FS\SolrBundle\Logging\DebugLogger</parameter>
         <parameter key="solr.data_collector.class">FS\SolrBundle\DataCollector\RequestCollector</parameter>
