@@ -26,7 +26,7 @@
         <parameter key="solr.client.plugin.logger.class">FS\SolrBundle\Plugin\LoggerPlugin</parameter>
         <parameter key="solr.client.logger.chain.class">FS\SolrBundle\Logging\LoggerChain</parameter>
         <parameter key="solr.client.logger.debug.class">FS\SolrBundle\Logging\DebugLogger</parameter>
-        <parameter key="solr.data_collector.class">FS\SolrBundle\DataCollector\SolrRequestCollector</parameter>
+        <parameter key="solr.data_collector.class">FS\SolrBundle\DataCollector\RequestCollector</parameter>
     </parameters>
 
     <services>
@@ -122,10 +122,6 @@
 
         <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
             <argument id="solr.doctrine.hydration.value_hydrator" type="service"/>
-        </service>
-
-        <service id="solr.twig.solr_extension" class="FS\SolrBundle\Twig\SolrExtension" public="false">
-            <tag name="twig.extension" />
         </service>
     </services>
 </container>

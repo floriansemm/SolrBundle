@@ -17,7 +17,7 @@
             {% if collector.querycount > 0 %}
                 {% set status = collector.querycount > 50 ? 'yellow' %}
 
-                {{ include('@FSSolrBundle/Collector/icon.svg') }}
+                {{ include('@FSSolr/Profiler/icon.svg') }}
 
                 <span class="sf-toolbar-value">{{ collector.querycount }}</span>
                 <span class="sf-toolbar-info-piece-additional-detail">
@@ -61,7 +61,7 @@
     {% else %}
 
         <span class="label {{ collector.querycount == 0 ? 'disabled' }}">
-            <span class="icon">{{ include('@FSSolrBundle/Collector/icon.svg') }}</span>
+            <span class="icon">{{ include('@FSSolr/Profiler/icon.svg') }}</span>
             <strong>Solr</strong>
         </span>
 
@@ -105,10 +105,8 @@
                 <tr>
                     <th class="nowrap" onclick="javascript:sortTable(this, 0, 'queries-1')" data-sort-direction="-1" style="cursor: pointer;">#<span class="text-muted">&#9650;</span></th>
                     <th class="nowrap" onclick="javascript:sortTable(this, 1, 'queries-1')" style="cursor: pointer;">Time<span></span></th>
-                    <th class="nowrap" style="cursor: pointer;">
-                        End Point
-                    </th>
-                    <th style="width: 100%;">Parameters</th>
+                    <th class="nowrap" style="cursor: pointer;">End Point</th>
+                    <th>Parameters</th>
                 </tr>
             </thead>
             <tbody id="queries-1">
@@ -120,55 +118,13 @@
                             {{ query.endpoint }}
                         </td>
                         <td>
-                            {{ query.params | solr_pretty_params }}
+                            {{ query.params | replace({'&': "<br />"}) | raw }}
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
-
-    {#<h2>Entities Mapping</h2>#}
-
-    {#{% for manager, classes in collector.entities %}#}
-        {#{% if collector.managers|length > 1 %}#}
-            {#<h3>{{ manager }} <small>entity manager</small></h3>#}
-        {#{% endif %}#}
-
-        {#{% if classes is empty %}#}
-            {#<div class="empty">#}
-                {#<p>No loaded entities.</p>#}
-            {#</div>#}
-        {#{% else %}#}
-            {#<table>#}
-                {#<thead>#}
-                {#<tr>#}
-                    {#<th scope="col">Class</th>#}
-                    {#<th scope="col">Mapping errors</th>#}
-                {#</tr>#}
-                {#</thead>#}
-                {#<tbody>#}
-                {#{% for class in classes %}#}
-                    {#{% set contains_errors = collector.mappingErrors[manager] is defined and collector.mappingErrors[manager][class] is defined %}#}
-                    {#<tr class="{{ contains_errors ? 'status-error' }}">#}
-                        {#<td>{{ class }}</td>#}
-                        {#<td class="font-normal">#}
-                            {#{% if contains_errors %}#}
-                                {#<ul>#}
-                                    {#{% for error in collector.mappingErrors[manager][class] %}#}
-                                        {#<li>{{ error }}</li>#}
-                                    {#{% endfor %}#}
-                                {#</ul>#}
-                            {#{% else %}#}
-                                {#No errors.#}
-                            {#{% endif %}#}
-                        {#</td>#}
-                    {#</tr>#}
-                {#{% endfor %}#}
-                {#</tbody>#}
-            {#</table>#}
-        {#{% endif %}#}
-    {#{% endfor %}#}
 
     <script type="text/javascript">//<![CDATA[
         function sortTable(header, column, targetId) {

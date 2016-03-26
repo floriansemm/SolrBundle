@@ -1,26 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zach
- * Date: 1/28/16
- * Time: 10:02 AM
- */
 
 namespace FS\SolrBundle\Logging;
 
-
-/**
- * Class LoggerChain
- *
- * @package FS\SolrBundle\Logging
- */
 class LoggerChain implements SolrLoggerInterface
 {
     /**
      * @var SolrLoggerInterface[]
      */
     protected $loggers = [];
-
 
     /**
      * @param SolrLoggerInterface $logger

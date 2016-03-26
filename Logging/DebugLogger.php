@@ -1,19 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zach
- * Date: 1/28/16
- * Time: 11:26 AM
- */
 
 namespace FS\SolrBundle\Logging;
 
-
-/**
- * Class DebugLogger
- *
- * @package FS\SolrBundle\Logging
- */
 class DebugLogger implements SolrLoggerInterface
 {
     /**
@@ -30,7 +18,6 @@ class DebugLogger implements SolrLoggerInterface
      * @var integer
      */
     private $currentQuery = 0;
-
 
     /**
      * @return array

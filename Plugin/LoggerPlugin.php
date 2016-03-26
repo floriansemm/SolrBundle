@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: zach
- * Date: 1/28/16
- * Time: 11:03 AM
- */
-
 namespace FS\SolrBundle\Plugin;
-
 
 use FS\SolrBundle\Logging\SolrLoggerInterface;
 use Solarium\Core\Event\Events;
@@ -16,18 +8,12 @@ use Solarium\Core\Event\PostExecute;
 use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
 
-/**
- * Class LoggerPlugin
- *
- * @package FS\SolrBundle\Plugin
- */
 class LoggerPlugin extends AbstractPlugin
 {
     /**
      * @var SolrLoggerInterface
      */
     protected $logger;
-
 
     /**
      * {@inheritdoc}
@@ -44,7 +30,12 @@ class LoggerPlugin extends AbstractPlugin
      */
     public function preExecuteRequest(PreExecuteRequest $event)
     {
-        $this->getLogger()->startRequest($event->getRequest()->getUri());
+        $endpoint = $event->getEndpoint();
+        $uri = $event->getRequest()->getUri();
+
+        $path = sprintf('%s://%s:%s%s/%s', $endpoint->getScheme(), $endpoint->getHost(), $endpoint->getPort(), $endpoint->getPath(), urldecode($uri));
+
+        $this->getLogger()->startRequest($path);
     }
 
     /**
@@ -56,8 +47,6 @@ class LoggerPlugin extends AbstractPlugin
     }
 
     /**
-     * Client getter
-     *
      * @return \Solarium\Core\Client\Client
      */
     public function getClient()
@@ -67,19 +56,13 @@ class LoggerPlugin extends AbstractPlugin
 
     /**
      * @param SolrLoggerInterface $logger
-     *
-     * @return $this
      */
     public function setLogger(SolrLoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        return $this;
     }
 
     /**
-     * Logger getter
-     *
      * @return SolrLoggerInterface
      */
     public function getLogger()
