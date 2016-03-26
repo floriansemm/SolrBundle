@@ -107,9 +107,9 @@ class Post
 
 ## `@Solr\Document` annotation
 
-Entities must have this annotation to mark them as document.
+Entities must have this annotation to mark them as document. It has two optional properties: `repository`, `index`, `indexHandler`
 
-### Setup custom repository class
+### Setup custom repository class with `repository` option
 
 If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class.
 
