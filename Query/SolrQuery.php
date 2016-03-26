@@ -34,7 +34,7 @@ class SolrQuery extends AbstractQuery
     private $customQuery;
 
     /**
-     * @return ResultSet
+     * @return array
      */
     public function getResult()
     {

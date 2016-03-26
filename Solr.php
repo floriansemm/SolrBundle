@@ -4,9 +4,6 @@ namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumClient;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
-use FS\SolrBundle\Query\ResultSet;
-use Solarium\Core\Query\Query;
-use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
