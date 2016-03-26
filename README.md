@@ -56,22 +56,17 @@ fs_solr:
             timeout: 5
 ```
 
-See section `Specify cores` for more detaild information about how to setup cores.
+### Step 4: Configure your entities
 
-## Usage
-
-### Annotations
-
-To put an entity to the index, you must add some annotations to your entity:
+To put an entity to the index, you must add some annotations to your entity. Basic configuration requires two annoations: 
+`@Solr\Document()`, `@Solr\Id()`. This two annotations makes a entity indexable. To index data add `@Solr\Field()` to your properties.
 
 ```php
-// your Entity
-
 // ....
 use FS\SolrBundle\Doctrine\Annotation as Solr;
     
 /**
-* @Solr\Document(repository="Full\Qualified\Class\Name")
+* @Solr\Document()
 * @ORM\Table()
 */
 class Post
@@ -83,10 +78,9 @@ class Post
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-
     private $id;
+    
     /**
-     *
      * @Solr\Field(type="string")
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -94,7 +88,6 @@ class Post
     private $title = '';
 
     /**
-     * 
      * @Solr\Field(type="string")
      *
      * @ORM\Column(name="text", type="text")
@@ -109,6 +102,8 @@ class Post
     private $created_at = null;
 }
 ```
+
+# Annotation reference
 
 ## `@Solr\Document` annotation
 
@@ -128,8 +123,7 @@ class SomeEntity
 }
 ```
 
-
-### Specify a core for a document
+### `index` property
 
 It is possible to specify a core dedicated to a document
 
@@ -142,6 +136,8 @@ class SomeEntity
     // ...
 }
 ```
+
+### `indexHandler` property
 
 All documents will be indexed in the core `core0`. If your entities/document have different languages then you can setup
 a callback method, which returns the preferred core for the entity.
@@ -163,6 +159,25 @@ class SomeEntity
 
 Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
 then a default core will be used (first in the `endpoints` list). To index a document in all cores use `*` as index value:
+
+## `@Solr\Id` annotation
+
+This is required for entites to index them. The annotation has no futher properties.
+
+```php
+class Post
+{
+    /**
+     * @Solr\Id
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+
+    private $id;
+}
+```
 
 ## `@Solr\Field` annotation
 
@@ -224,6 +239,7 @@ To index a set of objects it is important to use the fieldtype `strings`.
  * @var Tag[]
  *
  * @Solr\Field(type="strings", getter="getName")
+ *
  * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
  */
 private $tags;
