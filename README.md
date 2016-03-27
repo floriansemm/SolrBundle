@@ -260,6 +260,8 @@ class Tag
 }
 ```
 
+[For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
+
 ### `@Solr\SynchronizationFilter(callback="shouldBeIndex")` annotation
 
 In some cases a entity should not be index. For this you have the `SynchronizationFilter` annotation to run a filter-callback.
@@ -303,8 +305,6 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
     'title' => 'my title'
 ));
 ```
-
-[For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
 
 ### Query all fields of a document
 
