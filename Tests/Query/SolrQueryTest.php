@@ -189,4 +189,30 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $solrQuery->getQuery());
     }
+
+    /**
+     * @test
+     */
+    public function searchInSetMultipleValues()
+    {
+        $solrQuery = $this->createQueryWithFieldMapping();
+        $solrQuery->addSearchTerm('title', array('value2', 'value1'));
+
+        $expected = 'title_s:["value1" TO "value2"]';
+
+        $this->assertEquals($expected, $solrQuery->getQuery());
+    }
+
+    /**
+     * @test
+     */
+    public function searchInSetSingleValues()
+    {
+        $solrQuery = $this->createQueryWithFieldMapping();
+        $solrQuery->addSearchTerm('title', array('value #1'));
+
+        $expected = 'title_s:"value #1"';
+
+        $this->assertEquals($expected, $solrQuery->getQuery());
+    }
 }

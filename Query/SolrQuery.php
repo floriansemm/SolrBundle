@@ -174,15 +174,7 @@ class SolrQuery extends AbstractQuery
         $termCount = 1;
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
-
-            if ($this->useWildcards) {
-                $fieldValue = '*' . $fieldValue . '*';
-            }
-
-            $termParts = explode(' ', $fieldValue);
-            if (count($termParts) > 1) {
-                $fieldValue = '"'.$fieldValue.'"';
-            }
+            $fieldValue = $this->querifyFieldValue($fieldValue);
 
             $term .= $fieldName . ':' . $fieldValue;
 
@@ -198,4 +190,41 @@ class SolrQuery extends AbstractQuery
         return $term;
     }
 
+    /**
+     * Transforms array to string representation and adds quotes
+     *
+     * @param string $fieldValue
+     *
+     * @return string
+     */
+    private function querifyFieldValue($fieldValue)
+    {
+        if (is_array($fieldValue) && count($fieldValue) > 1) {
+            sort($fieldValue);
+
+            $qutoed = array_map(function($value) {
+                return '"'. $value .'"';
+            }, $fieldValue);
+
+            $fieldValue = implode(' TO ', $qutoed);
+            $fieldValue = '['. $fieldValue . ']';
+
+            return $fieldValue;
+        }
+
+        if (is_array($fieldValue) && count($fieldValue) === 1) {
+            $fieldValue = array_pop($fieldValue);
+        }
+
+        if ($this->useWildcards) {
+            $fieldValue = '*' . $fieldValue . '*';
+        }
+
+        $termParts = explode(' ', $fieldValue);
+        if (count($termParts) > 1) {
+            $fieldValue = '"'.$fieldValue.'"';
+        }
+
+        return $fieldValue;
+    }
 }
