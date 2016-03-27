@@ -304,6 +304,8 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
 ));
 ```
 
+[For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
+
 ### Query all fields of a document
 
 The pervious examples have queried only the field 'title'. You can also query all fields with a string.
