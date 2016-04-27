@@ -27,7 +27,12 @@ class ShowSchemaCommand extends ContainerAwareCommand
         $metaInformationFactory = $this->getContainer()->get('solr.meta.information.factory');
 
         foreach ($namespaces->getEntityClassnames() as $classname) {
-            $metaInformation = $metaInformationFactory->loadInformation($classname);
+            try {
+                $metaInformation = $metaInformationFactory->loadInformation($classname);
+            } catch (\RuntimeException $e) {
+                $output->writeln(sprintf('<info>%s</info>', $e->getMessage()));
+                continue;
+            }
 
             $output->writeln(sprintf('<comment>%s</comment>', $classname));
             $output->writeln(sprintf('Documentname: %s', $metaInformation->getDocumentName()));
