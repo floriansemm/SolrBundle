@@ -16,13 +16,13 @@
     "symfony/dependency-injection": "^2.3",
     "symfony/http-kernel": "^2.3",
     "symfony/config": "^2.3",
-    "symfony/doctrine-bridge": "^2.3",
+    "symfony/doctrine-bridge": "^2.3"
+  },
+  "require-dev": {
+    "behat/behat": "^3.0",
     "doctrine/mongodb": "*",
     "doctrine/mongodb-odm": "*",
     "doctrine/orm": "^2.3"
-  },
-  "require-dev": {
-    "behat/behat": "^3.0"
   },
   "minimum-stability": "beta",
   "autoload": {
@@ -34,8 +34,9 @@
     "bin-dir": "bin"
   },
   "suggest": {
-    "doctrine/mongodb": "Required if you want to use the MongoDB ODM features",
-    "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM features"
+    "doctrine/orm": "Required if you want to use the Doctrine ORM",
+    "doctrine/mongodb": "Required if you want to use the MongoDB ODM",
+    "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM"
   },
   "target-dir": "FS/SolrBundle"
 }
