@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -21,7 +22,13 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     {
         $this->setName('solr:index:populate')
             ->addArgument('entity', InputArgument::OPTIONAL, 'The entity you want to index', null)
-            ->addArgument('flushsize', InputArgument::OPTIONAL, 'Number of items to handle before flushing data', 500)
+            ->addOption(
+                'flushsize',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Number of items to handle before flushing data',
+                500
+            )
             ->addOption(
                 'source',
                 null,
@@ -39,7 +46,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     {
         $entities = $this->getIndexableEntities($input->getArgument('entity'));
         $source = $input->getOption('source');
-        $batchSize = $input->getArgument('flushsize');
+        $batchSize = $input->getOption('flushsize');
         $solr = $this->getContainer()->get('solr.client');
 
         $objectManager = $this->getObjectManager($source);
@@ -152,7 +159,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         foreach ($namespaces->getEntityClassnames() as $classname) {
             try {
                 $metaInformation = $metaInformationFactory->loadInformation($classname);
-                array_push($metaInformation->getClassName(), $classname);
+                array_push($entities, $metaInformation->getClassName());
             } catch (\RuntimeException $e) {
                 continue;
             }
@@ -174,7 +181,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     {
         $objectManager = $this->getObjectManager($source);
         $repository = $objectManager->getRepository($entity);
-        $dataStoreMetadata = $objectManager->getClassMetadata($entity);
+        $dataStoreMetadata = $objectManager->getManager()->getClassMetadata($entity);
 
         $identifierColumns = $dataStoreMetadata->getIdentifierColumnNames();
 
