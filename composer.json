@@ -16,7 +16,7 @@
     "symfony/dependency-injection": "^2.3|^3.0",
     "symfony/http-kernel": "^2.3|^3.0",
     "symfony/config": "^2.3|^3.0",
-    "symfony/doctrine-bridge": "^2.8.5"
+    "symfony/doctrine-bridge": "^3.0"
   },
   "require-dev": {
     "behat/behat": "^3.1",
