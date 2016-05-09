@@ -46,7 +46,11 @@ class MetaInformationFactory
         $className = $this->getClass($entity);
 
         if (!is_object($entity)) {
-            $entity = new $className;
+            $reflectionClass = new \ReflectionClass($className);
+            if (!$reflectionClass->isInstantiable()) {
+                throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
+            }
+            $entity = $reflectionClass->newInstanceWithoutConstructor();
         }
 
         if (!$this->annotationReader->hasDocumentDeclaration($entity)) {
