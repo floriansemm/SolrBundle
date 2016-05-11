@@ -38,7 +38,9 @@
             <argument type="service" id="solr.doctrine.entity_mapper"/>
         </service>
 
-        <service id="solr.client.adapter" class="%solr.client.adapter.class%" factory-service="solr.client.adapter.builder" factory-method="build" />
+        <service id="solr.client.adapter" class="%solr.client.adapter.class%">
+            <factory service="solr.client.adapter.builder" method="build" />
+        </service>
 
         <service id="solr.client.adapter.builder" class="%solr.client.adapter.builder.class%">
             <argument type="collection"/>
