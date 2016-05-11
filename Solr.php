@@ -213,13 +213,30 @@ class Solr implements SolrInterface
     /**
      * @param MetaInformationInterface $metaInformation
      * @param object                   $entity
+     * @param array                    $changeSet
      *
      * @return boolean
      *
      * @throws \BadMethodCallException if callback method not exists
      */
-    private function addToIndex(MetaInformationInterface $metaInformation, $entity)
+    private function addToIndex(MetaInformationInterface $metaInformation, $entity, $changeSet = array())
     {
+        if (count($changeSet) > 0) {
+            $addToIndex = false;
+
+            /* Check all Solr fields on this entity and check if this field is in the change set */
+            foreach ($metaInformation->getFields() as $field) {
+                if (in_array($field->name, $changeSet)) {
+                    $addToIndex = true;
+                    break;
+                }
+            }
+
+            if (!$addToIndex) {
+                return false;
+            }
+        }
+
         if (!$metaInformation->hasSynchronizationFilter()) {
             return true;
         }
@@ -319,14 +336,15 @@ class Solr implements SolrInterface
 
     /**
      * @param object $entity
+     * @param array  $changeSet
      *
      * @return bool
      */
-    public function updateDocument($entity)
+    public function updateDocument($entity, $changeSet = array())
     {
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
-        if (!$this->addToIndex($metaInformations, $entity)) {
+        if (!$this->addToIndex($metaInformations, $entity, $changeSet)) {
             return;
         }
 
