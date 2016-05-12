@@ -55,6 +55,11 @@ class Solr implements SolrInterface
     private $numberOfFoundDocuments = 0;
 
     /**
+     * @var array
+     */
+    private $changeSet = array();
+
+    /**
      * @param Client                   $client
      * @param CommandFactory           $commandFactory
      * @param EventDispatcherInterface $manager
@@ -213,28 +218,15 @@ class Solr implements SolrInterface
     /**
      * @param MetaInformationInterface $metaInformation
      * @param object                   $entity
-     * @param array                    $changeSet
      *
      * @return boolean
      *
      * @throws \BadMethodCallException if callback method not exists
      */
-    private function addToIndex(MetaInformationInterface $metaInformation, $entity, $changeSet = array())
+    private function addToIndex(MetaInformationInterface $metaInformation, $entity)
     {
-        if (count($changeSet) > 0) {
-            $addToIndex = false;
-
-            /* Check all Solr fields on this entity and check if this field is in the change set */
-            foreach ($metaInformation->getFields() as $field) {
-                if (in_array($field->name, $changeSet)) {
-                    $addToIndex = true;
-                    break;
-                }
-            }
-
-            if (!$addToIndex) {
-                return false;
-            }
+        if (!$this->hasChangeSetChanges($metaInformation)) {
+            return false;
         }
 
         if (!$metaInformation->hasSynchronizationFilter()) {
@@ -247,6 +239,35 @@ class Solr implements SolrInterface
         }
 
         return $entity->$callback();
+    }
+
+    /**
+     * @param array $changeSet
+     */
+    public function setChangeSet($changeSet)
+    {
+        $this->changeSet = array_keys($changeSet);
+    }
+
+    /**
+     * @param MetaInformationInterface $metaInformation
+     * @return bool
+     */
+    private function hasChangeSetChanges(MetaInformationInterface $metaInformation)
+    {
+        /* If not set, act the same way as if there are changes */
+        if(empty($this->changeSet)) {
+            return true;
+        }
+
+        /* Check all Solr fields on this entity and check if this field is in the change set */
+        foreach ($metaInformation->getFields() as $field) {
+            if (in_array($field->name, $this->changeSet)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -336,15 +357,14 @@ class Solr implements SolrInterface
 
     /**
      * @param object $entity
-     * @param array  $changeSet
      *
      * @return bool
      */
-    public function updateDocument($entity, $changeSet = array())
+    public function updateDocument($entity)
     {
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
-        if (!$this->addToIndex($metaInformations, $entity, $changeSet)) {
+        if (!$this->addToIndex($metaInformations, $entity)) {
             return;
         }
 

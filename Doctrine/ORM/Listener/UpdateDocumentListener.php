@@ -26,10 +26,10 @@ class UpdateDocumentListener
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        $entityChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
 
         try {
-            $this->solr->updateDocument($entity, array_keys($entityChangeSet));
+            $this->solr->setChangeSet($args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity));
+            $this->solr->updateDocument($entity);
         } catch (\RuntimeException $e) {
         }
     }
