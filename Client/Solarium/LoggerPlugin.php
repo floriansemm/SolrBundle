@@ -4,7 +4,6 @@ namespace FS\SolrBundle\Client\Solarium;
 
 use FS\SolrBundle\Logging\SolrLoggerInterface;
 use Solarium\Core\Event\Events;
-use Solarium\Core\Event\PostExecute;
 use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
 
