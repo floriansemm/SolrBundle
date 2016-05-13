@@ -22,8 +22,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class Solr implements SolrInterface
 {
-
-
     /**
      * @var Client
      */
@@ -53,11 +51,6 @@ class Solr implements SolrInterface
      * @var int numFound
      */
     private $numberOfFoundDocuments = 0;
-
-    /**
-     * @var array
-     */
-    private $changeSet = array();
 
     /**
      * @param Client                   $client
@@ -202,7 +195,7 @@ class Solr implements SolrInterface
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         if (!$this->addToIndex($metaInformation, $entity)) {
-            return;
+            return false;
         }
 
         $doc = $this->toDocument($metaInformation);
@@ -225,10 +218,6 @@ class Solr implements SolrInterface
      */
     private function addToIndex(MetaInformationInterface $metaInformation, $entity)
     {
-        if (!$this->hasChangeSetChanges($metaInformation)) {
-            return false;
-        }
-
         if (!$metaInformation->hasSynchronizationFilter()) {
             return true;
         }
@@ -242,32 +231,27 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param array $changeSet
+     * {@inheritdoc}
      */
-    public function setChangeSet($changeSet)
-    {
-        $this->changeSet = array_keys($changeSet);
-    }
-
-    /**
-     * @param MetaInformationInterface $metaInformation
-     * @return bool
-     */
-    private function hasChangeSetChanges(MetaInformationInterface $metaInformation)
+    public function computeChangeSet(array $doctrineChangeSet, $entity)
     {
         /* If not set, act the same way as if there are changes */
-        if(empty($this->changeSet)) {
-            return true;
+        if (empty($doctrineChangeSet)) {
+            return array();
         }
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $documentChangeSet = array();
 
         /* Check all Solr fields on this entity and check if this field is in the change set */
         foreach ($metaInformation->getFields() as $field) {
-            if (in_array($field->name, $this->changeSet)) {
-                return true;
+            if (array_key_exists($field->name, $doctrineChangeSet)) {
+                $documentChangeSet[] = $field->name;
             }
         }
 
-        return false;
+        return $documentChangeSet;
     }
 
     /**
@@ -365,7 +349,7 @@ class Solr implements SolrInterface
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
         if (!$this->addToIndex($metaInformations, $entity)) {
-            return;
+            return false;
         }
 
         $doc = $this->toDocument($metaInformations);

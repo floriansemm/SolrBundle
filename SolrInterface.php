@@ -15,6 +15,8 @@ interface SolrInterface
 
     /**
      * @param object $entity
+     *
+     * @return bool
      */
     public function addDocument($entity);
 
@@ -40,4 +42,12 @@ interface SolrInterface
      * @throws \RuntimeException if repository of the given $entityAlias does not extend FS\SolrBundle\Repository\Repository
      */
     public function getRepository($entityAlias);
+
+    /**
+     * @param array  $doctrineChangeSet
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function computeChangeSet(array $doctrineChangeSet, $entity);
 }
