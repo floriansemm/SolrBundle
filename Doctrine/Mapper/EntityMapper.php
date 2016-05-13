@@ -10,7 +10,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
 class EntityMapper
 {
     /**
-     * @var CreateDocumentCommandInterface
+     * @var AbstractDocumentCommand
      */
     private $mappingCommand = null;
 

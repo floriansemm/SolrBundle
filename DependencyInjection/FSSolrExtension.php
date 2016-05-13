@@ -119,18 +119,7 @@ class FSSolrExtension extends Extension
         }
 
         if ($this->isOrmConfigured($container)) {
-            $container->getDefinition('solr.add.document.orm.listener')->addTag(
-                'doctrine.event_listener',
-                array('event' => 'postPersist')
-            );
-            $container->getDefinition('solr.delete.document.orm.listener')->addTag(
-                'doctrine.event_listener',
-                array('event' => 'preRemove')
-            );
-            $container->getDefinition('solr.update.document.orm.listener')->addTag(
-                'doctrine.event_listener',
-                array('event' => 'postUpdate')
-            );
+            $container->getDefinition('solr.document.orm.subscriber')->addTag('doctrine.event_subscriber');
         }
     }
 
