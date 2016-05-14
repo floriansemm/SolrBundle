@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Doctrine\ODM\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use FS\SolrBundle\SolrInterface;
+use Psr\Log\LoggerInterface;
 
 class DocumentIndexerSubscriber implements EventSubscriber
 {
@@ -14,11 +15,18 @@ class DocumentIndexerSubscriber implements EventSubscriber
     private $solr = null;
 
     /**
-     * @param SolrInterface $solr
+     * @var LoggerInterface
      */
-    public function __construct(SolrInterface $solr)
+    private $logger;
+
+    /**
+     * @param SolrInterface   $solr
+     * @param LoggerInterface $logger
+     */
+    public function __construct(SolrInterface $solr, LoggerInterface $logger)
     {
         $this->solr = $solr;
+        $this->logger = $logger;
     }
 
     /**
@@ -45,6 +53,7 @@ class DocumentIndexerSubscriber implements EventSubscriber
 
             $this->solr->updateDocument($document);
         } catch (\RuntimeException $e) {
+            $this->logger->critical($e->getMessage());
         }
     }
 
@@ -58,6 +67,7 @@ class DocumentIndexerSubscriber implements EventSubscriber
         try {
             $this->solr->removeDocument($entity);
         } catch (\RuntimeException $e) {
+            $this->logger->critical($e->getMessage());
         }
     }
 
@@ -71,6 +81,7 @@ class DocumentIndexerSubscriber implements EventSubscriber
         try {
             $this->solr->addDocument($entity);
         } catch (\RuntimeException $e) {
+            $this->logger->critical($e->getMessage());
         }
     }
 }
