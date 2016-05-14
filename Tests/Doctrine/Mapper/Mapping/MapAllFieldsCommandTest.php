@@ -155,5 +155,62 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
 
         $this->assertEquals('embedded object', $collectionField);
     }
+
+    /**
+     * @test
+     */
+    public function callGetterWithParameter()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity1 = new ValidTestEntity();
+        $date = new \DateTime();
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $metaInformation->setFields(array(
+            new Field(array('name' => 'created_at', 'type' => 'datetime', 'boost' => '1', 'value' => $date, 'getter' => "format('d.m.Y')"))
+        ));
+
+        $fields = $metaInformation->getFields();
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $fields = $actual->getFields();
+
+        $this->assertArrayHasKey('created_at_dt', $fields);
+        $this->assertEquals($date->format('d.m.Y'), $fields['created_at_dt']);
+    }
+
+    /**
+     * @test
+     */
+    public function callGetterWithParameters()
+    {
+        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+
+        $entity1 = new ValidTestEntity();
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $metaInformation->setFields(array(
+            new Field(array('name' => 'test_field', 'type' => 'datetime', 'boost' => '1', 'value' => new TestObject(), 'getter' => "testGetter('string3', 'string1', 'string')"))
+        ));
+
+        $fields = $metaInformation->getFields();
+        $metaInformation->setFields($fields);
+
+        $actual = $command->createDocument($metaInformation);
+
+        $fields = $actual->getFields();
+
+        $this->assertArrayHasKey('test_field_dt', $fields);
+        $this->assertEquals(array('string3', 'string1', 'string'), $fields['test_field_dt']);
+    }
 }
 
+class TestObject {
+    public function testGetter($para1, $para2, $para3)
+    {
+        return array($para1, $para2, $para3);
+    }
+}

@@ -223,6 +223,22 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(4, count($fields));
     }
+
+    /**
+     * @test
+     */
+    public function readGetterMethodWithParameters()
+    {
+        $reader = new AnnotationReader();
+        /** @var Field[] $fields */
+        $fields = $reader->getFields(new EntityWithObject());
+
+        $this->assertCount(1, $fields);
+        $this->assertEquals('format(\'d.m.Y\')', $fields[0]->getGetterName());
+
+        $this->assertEquals('object_dt', $fields[0]->getNameWithAlias());
+
+    }
 }
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
@@ -264,4 +280,12 @@ class ChildEntity2 extends ChildEntity
      * @Solr\Field(type="integer")
      */
     private $childField2;
+}
+
+class EntityWithObject
+{
+    /**
+     * @Solr\Field(type="datetime", getter="format('d.m.Y')")
+     */
+    private $object;
 }

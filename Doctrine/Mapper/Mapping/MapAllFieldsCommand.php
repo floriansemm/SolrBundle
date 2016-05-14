@@ -59,12 +59,17 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
         return $document;
     }
 
+    /**
+     * @param Field $field
+     *
+     * @return array|string
+     */
     private function mapObject(Field $field)
     {
         $value = $field->getValue();
         $getter = $field->getGetterName();
         if (!empty($getter)) {
-            return $value->{$getter}();
+            return $this->callGetterMethod($value, $getter);
         }
 
         $metaInformation = $this->metaInformationFactory->loadInformation($value);
@@ -76,6 +81,32 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
         }
 
         return $field;
+    }
+
+    /**
+     * @param object $object
+     * @param string $getter
+     *
+     * @return mixed
+     */
+    private function callGetterMethod($object, $getter)
+    {
+        $methodName = $getter;
+        if (strpos($getter, '(') !== false) {
+            $methodName = substr($getter, 0, strpos($getter, '('));
+        }
+
+        $method = new \ReflectionMethod($object, $methodName);
+        if (strpos($getter, ')') !== false) {
+            $parameters = explode(',', substr($getter, strpos($getter, '(') + 1, -1));
+            $parameters = array_map(function ($parameter) {
+                return trim(preg_replace('#[\'"]#', '', $parameter));
+            }, $parameters);
+
+            return $method->invokeArgs($object, $parameters);
+        }
+
+        return $method->invoke($object);
     }
 
     /**

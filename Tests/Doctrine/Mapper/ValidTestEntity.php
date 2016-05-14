@@ -30,7 +30,7 @@ class ValidTestEntity
     private $title;
 
     /**
-     * @Solr\Field(type="date")
+     * @Solr\Field(type="date", getter="format('d.m.Y')")
      *
      * @var date
      */
