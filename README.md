@@ -27,7 +27,7 @@ $ composer require floriansemm/solr-bundle
 
 ### Step 2: Enable the bundle
 
-Finally, enable the bundle in the kernel
+Next, enable the bundle in the kernel:
 
 ``` php
 <?php
@@ -44,6 +44,8 @@ public function registerBundles()
 
 ### Step 3: Configure the SolrBundle
 
+Finally, configure the bundle:
+
 ``` yaml
 # app/config/config.yml
 fs_solr:
@@ -58,8 +60,8 @@ fs_solr:
 
 ### Step 4: Configure your entities
 
-To put an entity to the index, you must add some annotations to your entity. Basic configuration requires two annoations: 
-`@Solr\Document()`, `@Solr\Id()`. This two annotations makes a entity indexable. To index data add `@Solr\Field()` to your properties.
+To make an entity indexed, you must add some annotations to your entity. Basic configuration requires two annotations: 
+`@Solr\Document()`, `@Solr\Id()`. To index data add `@Solr\Field()` to your properties.
 
 ```php
 // ....
@@ -107,11 +109,15 @@ class Post
 
 ## `@Solr\Document` annotation
 
-Entities must have this annotation to mark them as document. It has two optional properties: `repository`, `index`, `indexHandler`
+This annotation denotes that an entity should be indexed as a document. It has several optional properties: 
 
-### Setup custom repository class with `repository` option
+* `repository`
+* `index`
+* `indexHandler`
 
-If you specify your own repository you must extend the `FS\SolrBundle\Repository\Repository` class.
+### Setting custom repository class with `repository` option
+
+If you specify your own repository, the repository must extend the `FS\SolrBundle\Repository\Repository` class.
 
 ```php
 /**
@@ -125,7 +131,7 @@ class SomeEntity
 
 ### `index` property
 
-It is possible to specify a core dedicated to a document
+It is possible to specify a core the document will be indexed in:
 
 ```php
 /**
@@ -139,8 +145,8 @@ class SomeEntity
 
 ### `indexHandler` property
 
-All documents will be indexed in the core `core0`. If your entities/document have different languages then you can setup
-a callback method, which returns the preferred core for the entity.
+By default, all documents will be indexed in the core `core0`. If your entities/documents have different languages, then you can setup
+a callback method, which should return the core the entity will be indexed in.
 
 ```php
 /**
@@ -157,12 +163,13 @@ class SomeEntity
 }
 ```
 
-Each core must setup up in the config.yml under `endpoints`. If you leave the `index` or `indexHandler` property empty,
-then a default core will be used (first in the `endpoints` list). To index a document in all cores use `*` as index value:
+Each core must be set up in `config.yml` under `endpoints`. If you leave the `index` or `indexHandler` property empty,
+then the default core will be used (first one in the `endpoints` list). To index a document in all cores, use `*` as index value.
 
 ## `@Solr\Id` annotation
 
-This is required for entites to index them. The annotation has no futher properties.
+This annotation is required to index an entity. The annotation has no properties. You should add this annotation to the field that will be
+used as the primary identifier for the entity/document.
 
 ```php
 class Post
@@ -181,11 +188,11 @@ class Post
 
 ## `@Solr\Field` annotation
 
-Add this annotation with a type to a property an the value will be indexed. 
+This annotation should be added to properties that should be indexed. You should specify the `type` option for the annotation.
 
 ### Supported simple field types
 
-Currently is a basic set of types implemented.
+Currently, a basic set of types is implemented:
 
 - string(s)
 - text(s)
@@ -198,8 +205,8 @@ Currently is a basic set of types implemented.
 
 ### Object relations
 
-Indexing of relations works in simplified way. Related entities will not indexed as a new document only a searchable value.
-Related entity do not need a `@Solr\Document` annotation.
+Indexing relations works in simplified way. Related entities will not be indexed as a new document, but only as a searchable value.
+Related entities do not need a `@Solr\Document` annotation.
 
 #### ManyToOne relation
 
@@ -262,34 +269,35 @@ class Tag
 
 [For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
 
-### `@Solr\SynchronizationFilter(callback="shouldBeIndex")` annotation
+### `@Solr\SynchronizationFilter(callback="shouldBeIndexed")` annotation
 
-In some cases a entity should not be index. For this you have the `SynchronizationFilter` annotation to run a filter-callback.
+In some cases, an entity should not be indexed. For this, you have the `SynchronizationFilter` annotation to run a filter-callback.
 
 ```php
 /**
  * // ....
- * @Solr\SynchronizationFilter(callback="shouldBeIndex")
+ * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  */
 class SomeEntity
 {
     /**
      * @return boolean
     */
-    public function shouldBeIndex()
+    public function shouldBeIndexed()
     {
         // put your logic here
     }
 }
 ```
 
-The callback property specifies an callable function, which decides whether the should index or not.    
+The callback property specifies an callable function, which should return a boolean value, specifying whether a concrete 
+entity should be indexed.
 
 ## Queries
 
 ### Query a field of a document
 
-To query the index you have to call some services.
+Querying the index is done via the `solr.client` service:
 
 ```php
 $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
@@ -308,7 +316,7 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
 
 ### Query all fields of a document
 
-The pervious examples have queried only the field 'title'. You can also query all fields with a string.
+The previous examples were only querying the `title` field. You can also query all fields with a string.
 
 ```php
 $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
@@ -330,10 +338,10 @@ $query->addField('text');
 $result = $query->getResult();
 ```
 
-In this case only the fields id and text will be mapped (addField()), so title and created_at will be
+In this case, only the `id` and `text` fields will be mapped (addField()), `title` and created_at` fields will be
 empty. If nothing was found $result is empty.
 
-The result contains by default 10 rows. You can increase this value:
+By default, the result set contains 10 rows. You can increase this value:
 
 ```php
 $query->setRows(1000000);
@@ -341,7 +349,7 @@ $query->setRows(1000000);
 
 ### Configure HydrationModes
 
-HydrationMode tells the Bundle how to create an entity from a document.
+HydrationMode tells the bundle how to create an entity from a document.
 
 1. `FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_INDEX` - use only the data from solr
 2. `FS\SolrBundle\Doctrine\Hydration\HydrationModes::HYDRATE_DOCTRINE` - merge the data from solr with the entire doctrine-entity
@@ -366,7 +374,7 @@ public function find($id)
 
 ## Commands
 
-There are two commands with this bundle:
+Here's all the commands provided by this bundle:
 
 * `solr:index:clear` - delete all documents in the index
 * `solr:index:populate` - synchronize the db with the index
