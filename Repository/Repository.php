@@ -109,6 +109,7 @@ class Repository implements RepositoryInterface
         $query->setRows(100000);
         $query->setUseAndOperator(true);
         $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
+        $query->setQueryDefaultField('id');
 
         foreach ($args as $fieldName => $fieldValue) {
             $query->addSearchTerm($fieldName, $fieldValue);
