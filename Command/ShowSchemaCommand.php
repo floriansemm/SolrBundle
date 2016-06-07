@@ -15,7 +15,7 @@ class ShowSchemaCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this->setName('solr:schema:show')
-            ->setDescription('Index all entities');
+            ->setDescription('Show configured entities and their fields');
     }
 
     /**
