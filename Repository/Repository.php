@@ -102,8 +102,13 @@ class Repository implements RepositoryInterface
      */
     public function findBy(array $args)
     {
+        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
+
         $query = $this->solr->createQuery($this->entity);
         $query->setHydrationMode($this->hydrationMode);
+        $query->setRows(100000);
+        $query->setUseAndOperator(true);
+        $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
 
         foreach ($args as $fieldName => $fieldValue) {
             $query->addSearchTerm($fieldName, $fieldValue);

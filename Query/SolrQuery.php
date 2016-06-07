@@ -2,7 +2,6 @@
 
 namespace FS\SolrBundle\Query;
 
-use Solarium\Core\Query\Query;
 use FS\SolrBundle\Query\Exception\UnknownFieldException;
 
 class SolrQuery extends AbstractQuery
