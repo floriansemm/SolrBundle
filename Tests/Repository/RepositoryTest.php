@@ -115,9 +115,20 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
+        $metaFactory = $this->getMock(
+            'FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory',
+            array(),
+            array(),
+            '',
+            false
+        );
+        $metaFactory->expects($this->once())
+            ->method('loadInformation')
+            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
         $query = $this->getMock('FS\SolrBundle\Query\SolrQuery', array(), array(), '', false);
-        $query->expects($this->exactly(2))
+        $query->expects($this->exactly(3))
             ->method('addSearchTerm');
 
         $solr->expects($this->once())
@@ -128,6 +139,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('query')
             ->with($query)
             ->will($this->returnValue(array()));
+
+        $solr->expects($this->once())
+            ->method('getMetaFactory')
+            ->will($this->returnValue($metaFactory));
 
         $entity = new ValidTestEntity();
         $repo = new Repository($solr, $entity);
