@@ -201,11 +201,11 @@ class SolrQuery extends AbstractQuery
         if (is_array($fieldValue) && count($fieldValue) > 1) {
             sort($fieldValue);
 
-            $qutoed = array_map(function($value) {
+            $quoted = array_map(function($value) {
                 return '"'. $value .'"';
             }, $fieldValue);
 
-            $fieldValue = implode(' TO ', $qutoed);
+            $fieldValue = implode(' TO ', $quoted);
             $fieldValue = '['. $fieldValue . ']';
 
             return $fieldValue;
