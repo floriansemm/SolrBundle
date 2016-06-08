@@ -302,6 +302,7 @@ Querying the index is done via the `solr.client` service:
 ```php
 $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->addSearchTerm('title', 'my title');
+$query->addSearchTerm('collection_field', array('value1', 'value2'));
 
 $result = $query->getResult();
 ```
