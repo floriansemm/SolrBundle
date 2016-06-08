@@ -310,7 +310,8 @@ or
 
 ```php
 $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
-    'title' => 'my title'
+    'title' => 'my title',
+    'collection_field' => array('value1', 'value2')
 ));
 ```
 
@@ -321,6 +322,17 @@ The previous examples were only querying the `title` field. You can also query a
 ```php
 $query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
 $query->queryAllFields('my title');
+
+$result = $query->getResult();
+```
+
+### Define a custom query string
+
+If you need more flexiblity in your queries you can define your own query strings:
+
+```php
+$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
+$query->setCustomQuery('id:post_* AND (author_s:Name1 OR author_s:Name2)');
 
 $result = $query->getResult();
 ```
@@ -369,6 +381,27 @@ public function find($id)
     $this->hydrationMode = HydrationModes::HYDRATE_INDEX;
     
     return parent::find($id);
+}
+```
+
+## Repositories
+
+Your should define your own repository-class to make your custom queries reuseable. How to configure a repository for a document have a look at [the annotation section](https://github.com/floriansemm/SolrBundle#setting-custom-repository-class-with-repository-option)
+
+```php
+namespace AppBundle\Search;
+
+use FS\SolrBundle\Repository\Repository;
+
+class ProviderRepository extends Repository
+{
+    public function findPost($what)
+    {
+        $query = $this->solr->createQuery('AcmeDemoBundle:Post');
+        // some query-magic here
+
+        return $query->getResult();
+    }
 }
 ```
 
