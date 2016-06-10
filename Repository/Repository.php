@@ -111,7 +111,10 @@ class Repository implements RepositoryInterface
         $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
         $query->setQueryDefaultField('id');
 
+        $helper = $query->getHelper();
         foreach ($args as $fieldName => $fieldValue) {
+            $fieldValue = $helper->escapeTerm($fieldValue);
+
             $query->addSearchTerm($fieldName, $fieldValue);
         }
 
