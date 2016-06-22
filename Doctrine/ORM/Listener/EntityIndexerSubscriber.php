@@ -65,7 +65,7 @@ class EntityIndexerSubscriber implements EventSubscriber
 
             $this->solr->updateDocument($entity);
         } catch (\RuntimeException $e) {
-            $this->logger->critical($e->getMessage());
+            $this->logger->debug($e->getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ class EntityIndexerSubscriber implements EventSubscriber
         try {
             $this->solr->addDocument($entity);
         } catch (\RuntimeException $e) {
-            $this->logger->critical($e->getMessage());
+            $this->logger->debug($e->getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ class EntityIndexerSubscriber implements EventSubscriber
         try {
             $this->solr->removeDocument($entity);
         } catch (\RuntimeException $e) {
-            $this->logger->critical($e->getMessage());
+            $this->logger->debug($e->getMessage());
         }
     }
 }
