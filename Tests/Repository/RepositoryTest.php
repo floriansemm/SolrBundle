@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests\Solr\Repository;
 
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
+use Solarium\Core\Query\Helper;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Repository\Repository;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
@@ -130,6 +131,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $query = $this->getMock('FS\SolrBundle\Query\SolrQuery', array(), array(), '', false);
         $query->expects($this->exactly(3))
             ->method('addSearchTerm');
+
+        $query->expects($this->once())
+            ->method('getHelper')
+            ->will($this->returnValue(new Helper()));
 
         $solr->expects($this->once())
             ->method('createQuery')
