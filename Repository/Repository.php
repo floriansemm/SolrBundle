@@ -126,7 +126,23 @@ class Repository implements RepositoryInterface
      */
     public function findOneBy(array $args)
     {
-        $found = $this->findBy($args);
+        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
+
+        $query = $this->solr->createQuery($this->entity);
+        $query->setHydrationMode($this->hydrationMode);
+        $query->setRows(1);
+        $query->setUseAndOperator(true);
+        $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
+        $query->setQueryDefaultField('id');
+
+        $helper = $query->getHelper();
+        foreach ($args as $fieldName => $fieldValue) {
+            $fieldValue = $helper->escapeTerm($fieldValue);
+
+            $query->addSearchTerm($fieldName, $fieldValue);
+        }
+
+        $found = $this->solr->query($query);
 
         return array_pop($found);
     }
