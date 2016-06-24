@@ -33,20 +33,9 @@ class ClearIndexCommand extends ContainerAwareCommand
         try {
             $solr->clearIndex();
         } catch (\Exception $e) {
+            $output->writeln(sprintf('A error occurs: %s', $e->getMessage()));
         }
 
-        $results = $this->getContainer()->get('solr.console.command.results');
-        if ($results->hasErrors()) {
-            $output->writeln('<info>Clear index finished with errors!</info>');
-        } else {
-            $output->writeln('<info>Index successful cleared successful</info>');
-        }
-
-        if ($results->hasErrors()) {
-            $output->writeln('');
-            $error = array_shift($results->getErrors());
-
-            $output->writeln(sprintf('<comment>Error: %s</comment>', $error->getMessage()));
-        }
+        $output->writeln('<info>Index successful cleared.</info>');
     }
 }

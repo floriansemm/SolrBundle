@@ -4,6 +4,7 @@ namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumClient;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
@@ -332,11 +333,27 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param object $entity
+     * @param array $entities
      */
-    public function synchronizeIndex($entity)
+    public function synchronizeIndex($entities)
     {
-        $this->updateDocument($entity);
+        /** @var BufferedAdd $buffer */
+        $buffer = $this->solrClientCore->getPlugin('bufferedadd');
+        $buffer->setBufferSize(500);
+
+        foreach ($entities as $entity) {
+            $metaInformations = $this->metaInformationFactory->loadInformation($entity);
+
+            if (!$this->addToIndex($metaInformations, $entity)) {
+                continue;
+            }
+
+            $doc = $this->toDocument($metaInformations);
+
+            $buffer->addDocument($doc);
+        }
+
+        $buffer->flush();
     }
 
     /**

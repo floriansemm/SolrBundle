@@ -3,11 +3,10 @@
 namespace FS\SolrBundle\Doctrine\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\AnnotationReader as Reader;
+use Doctrine\Common\Annotations\Reader;
 
 class AnnotationReader
 {
-
     /**
      * @var Reader
      */
@@ -19,9 +18,12 @@ class AnnotationReader
     const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const SYNCHRONIZATION_FILTER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
 
-    public function __construct()
+    /**
+     * @param Reader $reader
+     */
+    public function __construct(Reader $reader)
     {
-        $this->reader = new Reader();
+        $this->reader = $reader;
     }
 
     /**

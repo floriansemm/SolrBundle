@@ -19,10 +19,6 @@
         <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
         <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
 
-        <parameter key="solr.console.command.result.class">FS\SolrBundle\Console\ConsoleCommandResults</parameter>
-        <parameter key="solr.synchronize.error.listener.class">FS\SolrBundle\Event\Listener\SynchronizationSummaryListener</parameter>
-        <parameter key="solr.console.result.factory.class">FS\SolrBundle\Console\ConsoleResultFactory</parameter>
-
         <parameter key="solr.client.plugin.logger.class">FS\SolrBundle\Client\Solarium\LoggerPlugin</parameter>
         <parameter key="solr.client.logger.chain.class">FS\SolrBundle\Logging\LoggerChain</parameter>
         <parameter key="solr.client.logger.debug.class">FS\SolrBundle\Logging\DebugLogger</parameter>
@@ -75,7 +71,9 @@
             <tag name="monolog.logger" channel="solr" />
         </service>
 
-        <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%" />
+        <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%">
+            <argument type="service" id="solr.doctrine.annotation.annotation_reader" />
+        </service>
 
         <service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false"/>
 
@@ -94,21 +92,6 @@
             <tag name="solr.document.command" command="identifier"/>
         </service>
 
-        <service id="solr.console.command.results" class="%solr.console.command.result.class%">
-        </service>
-
-        <service id="solr.console.result.factory" class="%solr.console.result.factory.class%">
-        </service>
-
-        <service id="solr.synchronize.error.listener" class="%solr.synchronize.error.listener.class%">
-            <argument type="service" id="solr.console.command.results"/>
-            <argument type="service" id="solr.console.result.factory"/>
-
-            <tag name="kernel.event_listener" event="error" method="onSolrError"/>
-            <tag name="kernel.event_listener" event="solr.post_insert" method="onSolrSuccess"/>
-            <tag name="kernel.event_listener" event="solr.post_update" method="onSolrSuccess"/>
-        </service>
-
         <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">
             <argument id="solr.doctrine.hydration.doctrine_hydrator" type="service"/>
             <argument id="solr.doctrine.hydration.index_hydrator" type="service"/>
@@ -125,5 +108,10 @@
         <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
             <argument id="solr.doctrine.hydration.value_hydrator" type="service"/>
         </service>
+
+        <service class="FS\SolrBundle\Doctrine\Annotation\AnnotationReader" id="solr.doctrine.annotation.annotation_reader">
+            <argument id="annotation_reader" type="service"/>
+        </service>
+
     </services>
 </container>

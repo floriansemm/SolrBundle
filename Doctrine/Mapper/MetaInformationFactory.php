@@ -3,7 +3,6 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
-use FS\SolrBundle\Doctrine\Configuration;
 
 /**
  * instantiates a new MetaInformation object by a given entity
@@ -20,9 +19,12 @@ class MetaInformationFactory
      */
     private $classnameResolver = null;
 
-    public function __construct()
+    /**
+     * @param AnnotationReader $reader
+     */
+    public function __construct(AnnotationReader $reader)
     {
-        $this->annotationReader = new AnnotationReader();
+        $this->annotationReader = $reader;
     }
 
     /**

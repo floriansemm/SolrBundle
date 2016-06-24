@@ -70,48 +70,21 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                 continue;
             }
 
-            $metaInformation = $solr->getMetaFactory()->loadInformation($entityCollection);
-
             $output->writeln(sprintf('Synchronize <info>%s</info> entities', $totalSize));
-            $output->writeln(sprintf('Use index <info>%s</info>', $metaInformation->getIndex()));
-            $output->writeln('');
-
-            $progress = new ProgressBar($output, $totalSize);
-            $progress->start();
 
             $batchLoops = ceil($totalSize / $batchSize);
 
             for ($i = 0; $i <= $batchLoops; $i++) {
                 $entities = $repository->findBy(array(), null, $batchSize, $i * $batchSize);
-                foreach ($entities as $entity) {
-                    try {
-                        $solr->synchronizeIndex($entity);
-                        $progress->advance();
-                    } catch (\Exception $e) {
-                    }
+                try {
+                    $solr->synchronizeIndex($entities);
+                } catch (\Exception $e) {
+                    $output->writeln(sprintf('A error occurs: %s', $e->getMessage()));
                 }
             }
 
-            $progress->finish();
+            $output->writeln('<info>Synchronization finished</info>');
             $output->writeln('');
-            $output->writeln('');
-
-            $results = $this->getContainer()->get('solr.console.command.results');
-            if ($results->hasErrors()) {
-                $output->writeln('<info>Synchronization finished with errors!</info>');
-            } else {
-                $output->writeln('<info>Synchronization successful</info>');
-            }
-
-            $output->writeln('');
-            $output->writeln(sprintf('Synchronized Documents: <info>%s</info>', $results->getSucceed()));
-            $output->writeln(sprintf('Not Synchronized Documents: <info>%s</info>', $results->getErrored()));
-            $output->writeln('');
-
-            if ($results->hasErrors()) {
-                $errorList = new ConsoleErrorListOutput($output, $this->getHelper('table'), $results->getErrors());
-                $errorList->render();
-            }
         }
     }
 
