@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
@@ -15,6 +16,16 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
  */
 class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var AnnotationReader
+     */
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+    }
 
     /**
      * @test
@@ -32,7 +43,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $entity = new ValidTestEntity();
         $entity->setId(1);
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
@@ -66,7 +77,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $entity = new ValidTestEntity();
         $entity->setId(1);
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);

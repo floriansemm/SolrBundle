@@ -95,6 +95,7 @@
         <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">
             <argument id="solr.doctrine.hydration.doctrine_hydrator" type="service"/>
             <argument id="solr.doctrine.hydration.index_hydrator" type="service"/>
+            <argument type="service" id="solr.meta.information.factory"/>
         </service>
 
         <service id="solr.doctrine.hydration.doctrine_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">

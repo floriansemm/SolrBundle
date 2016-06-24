@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Doctrine\Mapper\Mapping;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
@@ -20,9 +21,19 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
 
     public static $MAPPED_FIELDS = array('title_s', 'text_t', 'created_at_dt');
 
+    /**
+     * @var AnnotationReader
+     */
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+    }
+
     public function testMapEntity_DocumentShouldContainThreeFields()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $actual = $command->createDocument(MetaTestInformationFactory::getMetaInformation());
 
@@ -42,7 +53,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function mapRelationFieldByGetter()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity1 = new ValidTestEntity();
         $entity1->setTitle('title 1');
@@ -72,7 +83,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function mapRelationFieldAllFields()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity1 = new ValidTestEntity();
         $entity1->setTitle('title 1');
@@ -105,7 +116,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function mapRelationField_AllFields()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity2 = new ValidTestEntity();
         $entity2->setTitle('embbeded object');
@@ -133,7 +144,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function mapRelationField_Getter()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity2 = new ValidTestEntity();
         $entity2->setTitle('embedded object');
@@ -161,7 +172,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function callGetterWithParameter()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity1 = new ValidTestEntity();
         $date = new \DateTime();
@@ -187,7 +198,7 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
      */
     public function callGetterWithParameters()
     {
-        $command = new MapAllFieldsCommand(new MetaInformationFactory());
+        $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
         $entity1 = new ValidTestEntity();
 

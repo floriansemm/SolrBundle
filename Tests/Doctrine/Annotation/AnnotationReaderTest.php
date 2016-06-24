@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapping\Mapper;
 
+use Doctrine\Common\Annotations\Reader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexHandler;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexProperty;
@@ -22,30 +23,33 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity;
  */
 class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var AnnotationReader
+     */
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+    }
 
     public function testGetFields_NoFieldsDected()
     {
-        $reader = new AnnotationReader();
-
-        $fields = $reader->getFields(new NotIndexedEntity());
+        $fields = $this->reader->getFields(new NotIndexedEntity());
 
         $this->assertEquals(0, count($fields));
     }
 
     public function testGetFields_ThreeFieldsDetected()
     {
-        $reader = new AnnotationReader();
-
-        $fields = $reader->getFields(new ValidTestEntity());
+        $fields = $this->reader->getFields(new ValidTestEntity());
 
         $this->assertEquals(4, count($fields), '4 fields are mapped');
     }
 
     public function testGetFields_OneFieldsOneTypes()
     {
-        $reader = new AnnotationReader();
-
-        $fields = $reader->getFields(new ValidTestEntityNoTypes());
+        $fields = $this->reader->getFields(new ValidTestEntityNoTypes());
 
         $this->assertEquals(1, count($fields), '1 fields are mapped');
 
@@ -59,25 +63,19 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIdentifier_ShouldThrowException()
     {
-        $reader = new AnnotationReader();
-
-        $reader->getIdentifier(new NotIndexedEntity());
+        $this->reader->getIdentifier(new NotIndexedEntity());
     }
 
     public function testGetIdentifier()
     {
-        $reader = new AnnotationReader();
-
-        $id = $reader->getIdentifier(new ValidTestEntity());
+        $id = $this->reader->getIdentifier(new ValidTestEntity());
 
         $this->assertEquals('id', $id->name);
     }
 
     public function testGetFieldMapping_ThreeMappingsAndId()
     {
-        $reader = new AnnotationReader();
-
-        $fields = $reader->getFieldMapping(new ValidTestEntity());
+        $fields = $this->reader->getFieldMapping(new ValidTestEntity());
 
         $this->assertEquals(5, count($fields), 'five fields are mapped');
         $this->assertTrue(array_key_exists('title', $fields));
@@ -86,8 +84,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRepository_ValidRepositoryDeclared()
     {
-        $reader = new AnnotationReader();
-        $repository = $reader->getRepository(new EntityWithRepository());
+        $repository = $this->reader->getRepository(new EntityWithRepository());
 
         $expected = 'FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository';
         $actual = $repository;
@@ -96,8 +93,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRepository_NoRepositoryAttributSet()
     {
-        $reader = new AnnotationReader();
-        $repository = $reader->getRepository(new ValidTestEntity());
+        $repository = $this->reader->getRepository(new ValidTestEntity());
 
         $expected = '';
         $actual = $repository;
@@ -106,18 +102,16 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBoost()
     {
-        $reader = new AnnotationReader();
-        $boost = $reader->getEntityBoost(new ValidTestEntity());
+        $boost = $this->reader->getEntityBoost(new ValidTestEntity());
 
         $this->assertEquals(1, $boost);
     }
 
     public function testGetBoost_BoostNotNumeric()
     {
-        $reader = new AnnotationReader();
 
         try {
-            $boost = $reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
+            $boost = $this->reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
 
             $this->fail();
         } catch (\InvalidArgumentException $e) {
@@ -130,32 +124,28 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBoost_BoostIsNumberic()
     {
-        $reader = new AnnotationReader();
-        $boost = $reader->getEntityBoost(new ValidTestEntityFloatBoost());
+        $boost = $this->reader->getEntityBoost(new ValidTestEntityFloatBoost());
 
         $this->assertEquals(1.4, $boost);
     }
 
     public function testGetBoost_BoostIsNull()
     {
-        $reader = new AnnotationReader();
-        $boost = $reader->getEntityBoost(new ValidTestEntityNoBoost());
+        $boost = $this->reader->getEntityBoost(new ValidTestEntityNoBoost());
 
         $this->assertEquals(null, $boost);
     }
 
     public function testGetCallback_CallbackDefined()
     {
-        $reader = new AnnotationReader();
-        $callback = $reader->getSynchronizationCallback(new ValidTestEntityFiltered());
+        $callback = $this->reader->getSynchronizationCallback(new ValidTestEntityFiltered());
 
         $this->assertEquals('shouldBeIndex', $callback);
     }
 
     public function testGetCallback_NoCallbackDefined()
     {
-        $reader = new AnnotationReader();
-        $callback = $reader->getSynchronizationCallback(new ValidTestEntity());
+        $callback = $this->reader->getSynchronizationCallback(new ValidTestEntity());
 
         $this->assertEquals('', $callback);
     }
@@ -165,8 +155,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function numericFieldTypeAreSupported()
     {
-        $reader = new AnnotationReader();
-        $fields = $reader->getFields(new ValidTestEntityNumericFields());
+        $fields = $this->reader->getFields(new ValidTestEntityNumericFields());
 
         $this->assertEquals(4, count($fields));
 
@@ -184,8 +173,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function getIndexFromAnnotationProperty()
     {
-        $reader = new AnnotationReader();
-        $index = $reader->getDocumentIndex(new ValidTestEntityIndexProperty());
+        $index = $this->reader->getDocumentIndex(new ValidTestEntityIndexProperty());
 
         $this->assertEquals('my_core', $index);
     }
@@ -195,8 +183,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function getIndexFromIndexHandler()
     {
-        $reader = new AnnotationReader();
-        $index = $reader->getDocumentIndex(new ValidTestEntityIndexHandler());
+        $index = $this->reader->getDocumentIndex(new ValidTestEntityIndexHandler());
 
         $this->assertEquals('my_core', $index);
     }
@@ -206,11 +193,10 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readAnnotationsFromBaseClass()
     {
-        $reader = new AnnotationReader();
-        $fields = $reader->getFields(new ChildEntity());
+        $fields = $this->reader->getFields(new ChildEntity());
 
         $this->assertEquals(3, count($fields));
-        $this->assertTrue($reader->hasDocumentDeclaration(new ChildEntity()));
+        $this->assertTrue($this->reader->hasDocumentDeclaration(new ChildEntity()));
     }
 
     /**
@@ -218,8 +204,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readAnnotationsFromMultipleClassHierarchy()
     {
-        $reader = new AnnotationReader();
-        $fields = $reader->getFields(new ChildEntity2());
+        $fields = $this->reader->getFields(new ChildEntity2());
 
         $this->assertEquals(4, count($fields));
     }
@@ -229,9 +214,8 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readGetterMethodWithParameters()
     {
-        $reader = new AnnotationReader();
         /** @var Field[] $fields */
-        $fields = $reader->getFields(new EntityWithObject());
+        $fields = $this->reader->getFields(new EntityWithObject());
 
         $this->assertCount(1, $fields);
         $this->assertEquals('format(\'d.m.Y\')', $fields[0]->getGetterName());

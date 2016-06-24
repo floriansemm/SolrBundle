@@ -30,13 +30,20 @@ class EntityMapper
     private $hydrationMode = '';
 
     /**
-     * @param HydratorInterface $doctrineHydrator
-     * @param HydratorInterface $indexHydrator
+     * @var MetaInformationFactory
      */
-    public function __construct(HydratorInterface $doctrineHydrator, HydratorInterface $indexHydrator)
+    private $metaInformationFactory;
+
+    /**
+     * @param HydratorInterface      $doctrineHydrator
+     * @param HydratorInterface      $indexHydrator
+     * @param MetaInformationFactory $metaInformationFactory
+     */
+    public function __construct(HydratorInterface $doctrineHydrator, HydratorInterface $indexHydrator, MetaInformationFactory $metaInformationFactory)
     {
         $this->doctrineHydrator = $doctrineHydrator;
         $this->indexHydrator = $indexHydrator;
+        $this->metaInformationFactory = $metaInformationFactory;
 
         $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
@@ -77,8 +84,7 @@ class EntityMapper
             throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
         }
 
-        $metaInformationFactory = new MetaInformationFactory();
-        $metaInformation = $metaInformationFactory->loadInformation($sourceTargetEntity);
+        $metaInformation = $this->metaInformationFactory->loadInformation($sourceTargetEntity);
 
         $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
         if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {

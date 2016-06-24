@@ -1,6 +1,7 @@
 <?php
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
@@ -12,6 +13,16 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
  */
 class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var AnnotationReader
+     */
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+    }
+
     private function getClassnameResolver($namespace)
     {
         $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver', array(), array(), '', false);
@@ -32,6 +43,8 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         return $doctrineConfiguration;
     }
 
+
+
     public function testLoadInformation_ShouldLoadAll()
     {
         $testEntity = new ValidTestEntity();
@@ -41,7 +54,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $classnameResolver = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($classnameResolver);
         $actual = $factory->loadInformation('FSBlogBundle:ValidTestEntity');
 
@@ -61,7 +74,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
         $actual = $factory->loadInformation($testEntity);
 
@@ -84,7 +97,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity');
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
         $factory->loadInformation('FSBlogBundle:NotIndexedEntity');
     }
@@ -97,7 +110,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $doctrineConfiguration = $this->getClassnameResolverCouldNotResolveClassname();
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
         $factory->loadInformation('FSBlogBundle:UnknownEntity');
     }
@@ -106,7 +119,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
 
         $testEntity = new ValidTestEntity();
@@ -120,7 +133,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
 
-        $factory = new MetaInformationFactory();
+        $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
 
         $entityClassname = get_class(new ValidTestEntity());

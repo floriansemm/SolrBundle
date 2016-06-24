@@ -19,16 +19,18 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     private $doctrineHydrator = null;
     private $indexHydrator = null;
+    private $metaInformationFactory;
 
     public function setUp()
     {
         $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
         $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
+        $this->metaInformationFactory = new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
     }
 
     public function testToDocument_EntityMayNotIndexed()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertNull($actual);
@@ -36,8 +38,10 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testToDocument_DocumentIsUpdated()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
-        $mapper->setMappingCommand(new MapAllFieldsCommand(new MetaInformationFactory()));
+        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper->setMappingCommand(new MapAllFieldsCommand(new MetaInformationFactory($reader)));
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertTrue($actual instanceof Document);
@@ -56,7 +60,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator->expects($this->never())
             ->method('hydrate');
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setHydrationMode(HydrationModes::HYDRATE_INDEX);
         $entity = $mapper->toEntity(new SolrDocumentStub(), $targetEntity);
 
@@ -75,7 +79,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
             ->method('hydrate')
             ->will($this->returnValue($targetEntity));
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
         $entity = $mapper->toEntity(new Document(array()), $targetEntity);
 
@@ -84,7 +88,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function ToCamelCase()
     {
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
 
         $meta = new \ReflectionClass($mapper);
         $method = $meta->getMethod('toCamelCase');

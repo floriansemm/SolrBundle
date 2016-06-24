@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 
 class SolrSetupFeatureContext implements Context
@@ -77,6 +78,10 @@ class SolrSetupFeatureContext implements Context
     {
         $registry = new \FS\SolrBundle\Tests\Integration\DoctrineRegistryFake();
 
+        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
+        $metaFactory = new MetaInformationFactory($reader);
+
         $entityMapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper(
             new \FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator(
                 $registry,
@@ -84,7 +89,8 @@ class SolrSetupFeatureContext implements Context
             ),
             new \FS\SolrBundle\Doctrine\Hydration\IndexHydrator(
                 new \FS\SolrBundle\Doctrine\Hydration\ValueHydrator()
-            )
+            ),
+            $metaFactory
         );
 
         return $entityMapper;
@@ -95,8 +101,10 @@ class SolrSetupFeatureContext implements Context
      */
     private function setupCommandFactory()
     {
+        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
         $factory = new \FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory();
-        $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand(new MetaInformationFactory()), 'all');
+        $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand(new MetaInformationFactory($reader)), 'all');
         $factory->add(new \FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand(), 'identifier');
 
         return $factory;
@@ -117,7 +125,9 @@ class SolrSetupFeatureContext implements Context
 
         $classnameResolver = new \FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver($knowNamespaces);
 
-        $metaFactory = new \FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory();
+        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
+        $metaFactory = new \FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory($reader);
         $metaFactory->setClassnameResolver(
             $classnameResolver
         );

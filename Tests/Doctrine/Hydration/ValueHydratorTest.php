@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
@@ -18,6 +19,16 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithRelation;
 class ValueHydratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var AnnotationReader
+     */
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+    }
+
+    /**
      * @test
      */
     public function documentShouldMapToEntity()
@@ -29,7 +40,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
 
         $entity = new ValidTestEntity();
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $hydrator = new ValueHydrator();
@@ -52,7 +63,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
 
         $entity = new ValidTestEntity();
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $hydrator = new ValueHydrator();
@@ -83,7 +94,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $entity = new ValidTestEntityWithCollection();
         $entity->setCollection(new ArrayCollection(array($entity1, $entity2)));
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $hydrator = new ValueHydrator();
@@ -113,7 +124,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $entity = new ValidTestEntityWithRelation();
         $entity->setRelation($entity1);
 
-        $metainformations = new MetaInformationFactory();
+        $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
         $hydrator = new ValueHydrator();

@@ -15,8 +15,10 @@ class CommandFactoryStub
      */
     public static function getFactoryWithAllMappingCommand()
     {
+        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
         $commandFactory = new CommandFactory();
-        $commandFactory->add(new MapAllFieldsCommand(new MetaInformationFactory()), 'all');
+        $commandFactory->add(new MapAllFieldsCommand(new MetaInformationFactory($reader)), 'all');
         $commandFactory->add(new MapIdentifierCommand(), 'identifier');
 
         return $commandFactory;
