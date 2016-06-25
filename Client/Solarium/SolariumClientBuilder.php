@@ -7,6 +7,8 @@ use Solarium\Client;
 use Solarium\Core\Plugin\AbstractPlugin;
 
 /**
+ * TODO remove builder, construct solarium client in extension
+ *
  * Creates an instance of the Solarium Client
  */
 class SolariumClientBuilder implements Builder
@@ -41,6 +43,8 @@ class SolariumClientBuilder implements Builder
 
     /**
      * {@inheritdoc}
+     *
+     * TODO tag existing plugins, add plugins with compiler-pass
      *
      * @return Client
      */

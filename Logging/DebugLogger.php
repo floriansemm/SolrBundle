@@ -2,6 +2,9 @@
 
 namespace FS\SolrBundle\Logging;
 
+/**
+ * Logs the current request and information about this request
+ */
 class DebugLogger implements SolrLoggerInterface
 {
     /**

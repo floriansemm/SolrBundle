@@ -3,10 +3,14 @@
 namespace FS\SolrBundle\Client\Solarium;
 
 use FS\SolrBundle\Logging\SolrLoggerInterface;
+use Solarium\Core\Client\Client;
 use Solarium\Core\Event\Events;
 use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\Core\Plugin\AbstractPlugin;
 
+/**
+ * Registers a logger to collection data about request
+ */
 class LoggerPlugin extends AbstractPlugin
 {
     /**
@@ -46,7 +50,7 @@ class LoggerPlugin extends AbstractPlugin
     }
 
     /**
-     * @return \Solarium\Core\Client\Client
+     * @return Client
      */
     public function getClient()
     {
