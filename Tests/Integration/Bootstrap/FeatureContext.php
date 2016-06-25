@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use FS\SolrBundle\Event\Events;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
@@ -18,8 +19,8 @@ class FeatureContext extends SolrSetupFeatureContext
      */
     public function assertInsertSuccessful($entityId, $documentName)
     {
-        if (!$this->getEventDispatcher()->eventOccurred(\FS\SolrBundle\Event\Events::POST_INSERT) ||
-            !$this->getEventDispatcher()->eventOccurred(\FS\SolrBundle\Event\Events::PRE_INSERT)
+        if (!$this->getEventDispatcher()->eventOccurred(Events::POST_INSERT) ||
+            !$this->getEventDispatcher()->eventOccurred(Events::PRE_INSERT)
         ) {
             throw new \RuntimeException('Insert was not successful');
         }

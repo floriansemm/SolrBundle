@@ -3,17 +3,20 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use FS\SolrBundle\Solr;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Util\EntityIdentifier;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 class CrudFeatureContext extends FeatureContext
 {
     /**
-     * @var \FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity()
+     * @var ValidTestEntity
      */
     private $entity;
 
     /**
-     * @var \FS\SolrBundle\Solr
+     * @var Solr
      */
     private $solr;
 
@@ -26,8 +29,8 @@ class CrudFeatureContext extends FeatureContext
     {
         $this->solr = $this->getSolrInstance();
 
-        $this->entity = new \FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity();
-        $this->entity->setId(\FS\SolrBundle\Tests\Util\EntityIdentifier::generate());
+        $this->entity = new ValidTestEntity();
+        $this->entity->setId(EntityIdentifier::generate());
         $this->entity->setText('a Text');
     }
 

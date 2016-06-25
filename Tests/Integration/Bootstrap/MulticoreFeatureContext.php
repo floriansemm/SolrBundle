@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore0;
 use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore1;
+use FS\SolrBundle\Tests\Util\EntityIdentifier;
 
 class MulticoreFeatureContext extends FeatureContext
 {
@@ -34,7 +35,7 @@ class MulticoreFeatureContext extends FeatureContext
     {
         $entity = $this->entities[$core];
 
-        $entity->setId(\FS\SolrBundle\Tests\Util\EntityIdentifier::generate());
+        $entity->setId(EntityIdentifier::generate());
         $entity->setText('a Text');
 
         $this->entities[$core] = $entity;
