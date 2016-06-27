@@ -353,7 +353,7 @@ class Solr implements SolrInterface
             $buffer->addDocument($doc);
         }
 
-        $buffer->flush();
+        $buffer->commit();
     }
 
     /**
