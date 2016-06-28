@@ -5,22 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-
         <parameter key="solr.class">FS\SolrBundle\Solr</parameter>
-        <parameter key="solr.client.adapter.class">Solarium\Client</parameter>
-
-        <parameter key="solr.mapping.factory.class">FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory</parameter>
-        <parameter key="solr.meta.information.factory.class">FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory</parameter>
-
-        <parameter key="solr.doctrine.classnameresolver.class">FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver</parameter>
-        <parameter key="solr.doctrine.classnameresolver.known_entity_namespaces.class">FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases</parameter>
-
-        <parameter key="solr.mapping.all.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand</parameter>
-        <parameter key="solr.mapping.identifier.class">FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand</parameter>
-
-        <parameter key="solr.client.logger.chain.class"></parameter>
-        <parameter key="solr.client.logger.debug.class"></parameter>
-        <parameter key="solr.data_collector.class"></parameter>
     </parameters>
 
     <services>
@@ -32,7 +17,7 @@
             <argument type="service" id="solr.doctrine.entity_mapper"/>
         </service>
 
-        <service id="solr.client.adapter" class="%solr.client.adapter.class%">
+        <service id="solr.client.adapter" class="Solarium\Client">
             <factory service="solr.client.adapter.builder" method="build" />
         </service>
 
@@ -55,31 +40,31 @@
             <tag name="data_collector" template="FSSolrBundle:Profiler:solr" id="solr" />
         </service>
 
-        <service class="FS\SolrBundle\Client\Solarium\Plugin\RequestDebugger" id="solr.debug.client_debugger">
+        <service id="solr.debug.client_debugger" class="FS\SolrBundle\Client\Solarium\Plugin\RequestDebugger">
             <argument type="service" id="logger"/>
 
             <tag name="monolog.logger" channel="solr" />
             <tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
         </service>
 
-        <service id="solr.meta.information.factory" class="%solr.meta.information.factory.class%">
+        <service id="solr.meta.information.factory" class="FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory">
             <argument type="service" id="solr.doctrine.annotation.annotation_reader" />
         </service>
 
-        <service id="solr.mapping.factory" class="%solr.mapping.factory.class%" public="false"/>
+        <service id="solr.mapping.factory" class="FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory" public="false"/>
 
-        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="%solr.doctrine.classnameresolver.known_entity_namespaces.class%"/>
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases"/>
 
-        <service id="solr.doctrine.classnameresolver" class="%solr.doctrine.classnameresolver.class%" public="false">
+        <service id="solr.doctrine.classnameresolver" class="FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces"/>
         </service>
 
-        <service id="solr.mapping.all" class="%solr.mapping.all.class%" public="false">
+        <service id="solr.mapping.all" class="FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand" public="false">
             <argument type="service" id="solr.meta.information.factory"/>
             <tag name="solr.document.command" command="all"/>
         </service>
 
-        <service id="solr.mapping.identifier" class="%solr.mapping.identifier.class%" public="false">
+        <service id="solr.mapping.identifier" class="FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand" public="false">
             <tag name="solr.document.command" command="identifier"/>
         </service>
 
@@ -101,7 +86,7 @@
             <argument id="solr.doctrine.hydration.value_hydrator" type="service"/>
         </service>
 
-        <service class="FS\SolrBundle\Doctrine\Annotation\AnnotationReader" id="solr.doctrine.annotation.annotation_reader">
+        <service id="solr.doctrine.annotation.annotation_reader" class="FS\SolrBundle\Doctrine\Annotation\AnnotationReader">
             <argument id="annotation_reader" type="service"/>
         </service>
 
