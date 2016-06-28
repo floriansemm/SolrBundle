@@ -5,10 +5,9 @@ namespace FS\SolrBundle\Client\Solarium;
 use FS\SolrBundle\Client\Builder;
 use Solarium\Client;
 use Solarium\Core\Plugin\AbstractPlugin;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * TODO remove builder, construct solarium client in extension
- *
  * Creates an instance of the Solarium Client
  */
 class SolariumClientBuilder implements Builder
@@ -19,17 +18,23 @@ class SolariumClientBuilder implements Builder
     private $settings = array();
 
     /**
-     * @var AbstractPlugin
+     * @var AbstractPlugin[]
      */
-    private $plugins;
+    private $plugins = array();
 
     /**
-     * @param array $settings
+     * @var EventDispatcherInterface
      */
-    public function __construct(array $settings)
+    private $eventDispatcher;
+
+    /**
+     * @param array                    $settings
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(array $settings, EventDispatcherInterface $eventDispatcher)
     {
         $this->settings = $settings;
-        $this->plugins = array();
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -44,13 +49,11 @@ class SolariumClientBuilder implements Builder
     /**
      * {@inheritdoc}
      *
-     * TODO tag existing plugins, add plugins with compiler-pass
-     *
      * @return Client
      */
     public function build()
     {
-        $solariumClient = new Client(array('endpoint' => $this->settings));
+        $solariumClient = new Client(array('endpoint' => $this->settings), $this->eventDispatcher);
         foreach ($this->plugins as $pluginName => $plugin) {
             $solariumClient->registerPlugin($pluginName, $plugin);
         }

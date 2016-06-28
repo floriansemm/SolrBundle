@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Debug;
+namespace FS\SolrBundle\Client\Solarium\Plugin;
 
 use Psr\Log\LoggerInterface;
 use Solarium\Core\Event\Events;
@@ -25,18 +25,7 @@ class RequestDebugger extends AbstractPlugin
     {
         $this->logger = $logger;
 
-        return parent::__construct();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function initPluginType()
-    {
-        $this->start = microtime(true);
-
-        $dispatcher = $this->client->getEventDispatcher();
-        $dispatcher->addListener(Events::PRE_EXECUTE_REQUEST, array($this, 'preExecuteRequest'));
+        parent::__construct();
     }
 
     /**

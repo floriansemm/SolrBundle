@@ -11,7 +11,7 @@ use \Solarium\Client;
 /**
  * Wrapper class for \Solarium\Client to perform actions on multiple cores
  */
-class SolariumClient
+class SolariumMulticoreClient
 {
     /**
      * @var Client

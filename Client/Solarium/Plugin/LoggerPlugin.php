@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Client\Solarium;
+namespace FS\SolrBundle\Client\Solarium\Plugin;
 
 use FS\SolrBundle\Logging\SolrLoggerInterface;
 use Solarium\Core\Client\Client;
@@ -17,6 +17,14 @@ class LoggerPlugin extends AbstractPlugin
      * @var SolrLoggerInterface
      */
     protected $logger;
+
+    /**
+     * @param SolrLoggerInterface $logger
+     */
+    public function __construct(SolrLoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * {@inheritdoc}
@@ -38,7 +46,7 @@ class LoggerPlugin extends AbstractPlugin
 
         $path = sprintf('%s://%s:%s%s/%s', $endpoint->getScheme(), $endpoint->getHost(), $endpoint->getPort(), $endpoint->getPath(), urldecode($uri));
 
-        $this->getLogger()->startRequest($path);
+        $this->logger->startRequest($path);
     }
 
     /**
@@ -46,7 +54,7 @@ class LoggerPlugin extends AbstractPlugin
      */
     public function postExecuteRequest()
     {
-        $this->getLogger()->stopRequest();
+        $this->logger->stopRequest();
     }
 
     /**
@@ -55,21 +63,5 @@ class LoggerPlugin extends AbstractPlugin
     public function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * @param SolrLoggerInterface $logger
-     */
-    public function setLogger(SolrLoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return SolrLoggerInterface
-     */
-    public function getLogger()
-    {
-        return $this->logger;
     }
 }

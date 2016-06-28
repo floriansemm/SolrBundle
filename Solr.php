@@ -2,7 +2,7 @@
 
 namespace FS\SolrBundle;
 
-use FS\SolrBundle\Client\Solarium\SolariumClient;
+use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -174,7 +174,7 @@ class Solr implements SolrInterface
             try {
                 $indexName = $metaInformations->getIndex();
 
-                $client = new SolariumClient($this->solrClientCore);
+                $client = new SolariumMulticoreClient($this->solrClientCore);
 
                 $client->delete($document, $indexName);
             } catch (\Exception $e) {
@@ -320,7 +320,7 @@ class Solr implements SolrInterface
         $this->eventManager->dispatch(Events::PRE_CLEAR_INDEX, new Event($this->solrClientCore));
 
         try {
-            $client = new SolariumClient($this->solrClientCore);
+            $client = new SolariumMulticoreClient($this->solrClientCore);
             $client->clearCores();
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'clear-index');
@@ -406,7 +406,7 @@ class Solr implements SolrInterface
         try {
             $indexName = $metaInformation->getIndex();
 
-            $client = new SolariumClient($this->solrClientCore);
+            $client = new SolariumMulticoreClient($this->solrClientCore);
             $client->update($doc, $indexName);
 
         } catch (\Exception $e) {

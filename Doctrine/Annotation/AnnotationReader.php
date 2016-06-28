@@ -106,7 +106,7 @@ class AnnotationReader
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      *
      * @return string
      */
