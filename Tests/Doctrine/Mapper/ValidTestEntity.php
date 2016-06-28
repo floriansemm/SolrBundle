@@ -2,9 +2,10 @@
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- *
+ * @ORM\Entity()
  * @Solr\Document(boost="1")
  */
 class ValidTestEntity

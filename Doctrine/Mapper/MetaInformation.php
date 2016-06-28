@@ -65,6 +65,11 @@ class MetaInformation implements MetaInformationInterface
     private $entityId;
 
     /**
+     * @var bool
+     */
+    private $isDoctrineEntity;
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityId()
@@ -312,5 +317,21 @@ class MetaInformation implements MetaInformationInterface
     public function getDocumentKey()
     {
         return $this->documentName . '_' . $this->getEntityId();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDoctrineEntity()
+    {
+        return $this->isDoctrineEntity;
+    }
+
+    /**
+     * @param boolean $isDoctrineEntity
+     */
+    public function setIsDoctrineEntity($isDoctrineEntity)
+    {
+        $this->isDoctrineEntity = $isDoctrineEntity;
     }
 }

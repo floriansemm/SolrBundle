@@ -223,6 +223,22 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('object_dt', $fields[0]->getNameWithAlias());
 
     }
+
+    /**
+     * @test
+     */
+    public function checkIfPlainObjectIsNotDoctrineEntity()
+    {
+        $this->assertFalse($this->reader->isDoctrineEntity(new ChildEntity()), 'is not a doctrine entity');
+    }
+
+    /**
+     * @test
+     */
+    public function checkIfPlainObjectIsDoctrineEntity()
+    {
+        $this->assertTrue($this->reader->isDoctrineEntity(new ValidTestEntity()), 'is a doctrine entity');
+    }
 }
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;

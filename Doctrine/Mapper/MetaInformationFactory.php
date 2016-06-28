@@ -70,6 +70,7 @@ class MetaInformationFactory
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
         $metaInformation->setSynchronizationCallback($this->annotationReader->getSynchronizationCallback($entity));
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
+        $metaInformation->setIsDoctrineEntity($this->annotationReader->isDoctrineEntity($entity));
 
         return $metaInformation;
     }

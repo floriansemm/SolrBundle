@@ -212,10 +212,26 @@ class AnnotationReader
     }
 
     /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isDoctrineEntity($entity)
+    {
+        $annotation = $this->getClassAnnotation($entity, 'Doctrine\ORM\Mapping\Entity');
+
+        if ($annotation === null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param string $entity
      * @param string $annotationName
      *
-     * @return SynchronizationFilter
+     * @return Annotation|null
      */
     private function getClassAnnotation($entity, $annotationName)
     {

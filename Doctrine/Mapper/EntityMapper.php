@@ -86,6 +86,10 @@ class EntityMapper
 
         $metaInformation = $this->metaInformationFactory->loadInformation($sourceTargetEntity);
 
+        if ($metaInformation->isDoctrineEntity() === false && $this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
+            throw new \RuntimeException(sprintf('Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.'));
+        }
+
         $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
         if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {
             return $hydratedDocument;
