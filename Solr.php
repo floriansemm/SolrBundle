@@ -305,6 +305,8 @@ class Solr implements SolrInterface
     /**
      * Number of results found by query
      *
+     * @deprecated
+     *
      * @return integer
      */
     public function getNumFound()
