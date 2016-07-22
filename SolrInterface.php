@@ -3,6 +3,7 @@
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Query\AbstractQuery;
+use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Repository\Repository;
 
 interface SolrInterface
@@ -50,4 +51,11 @@ interface SolrInterface
      * @return array
      */
     public function computeChangeSet(array $doctrineChangeSet, $entity);
+
+    /**
+     * @param string $entityAlias
+     *
+     * @return QueryBuilderInterface
+     */
+    public function createQueryBuilder($entityAlias);
 }

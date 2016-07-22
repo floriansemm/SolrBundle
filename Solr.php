@@ -4,6 +4,7 @@ namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Query\QueryBuilder;
 use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
@@ -154,6 +155,19 @@ class Solr implements SolrInterface
         }
 
         return new Repository($this, $entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createQueryBuilder($entityAlias)
+    {
+        $metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
+        $class = $metaInformation->getClassName();
+
+        $entity = new $class;
+
+        return new QueryBuilder($this, $metaInformation, $entity);
     }
 
     /**

@@ -3,6 +3,7 @@ namespace FS\SolrBundle\Query;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Solr;
+use FS\SolrBundle\SolrInterface;
 use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Update\Query\Document\Document;
 
@@ -15,7 +16,7 @@ abstract class AbstractQuery extends Query
 
     /**
      *
-     * @var Solr
+     * @var SolrInterface
      */
     protected $solr = null;
 
@@ -86,15 +87,15 @@ abstract class AbstractQuery extends Query
     }
 
     /**
-     * @param Solr $solr
+     * @param SolrInterface $solr
      */
-    public function setSolr($solr)
+    public function setSolr(SolrInterface $solr)
     {
         $this->solr = $solr;
     }
 
     /**
-     * @return \FS\SolrBundle\Solr
+     * @return SolrInterface
      */
     public function getSolr()
     {
