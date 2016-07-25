@@ -286,6 +286,8 @@ class Solr implements SolrInterface
         try {
             $response = $this->solrClientCore->select($selectQuery, $runQueryInIndex);
 
+            $this->numberOfFoundDocuments = $response->getNumFound();
+
             $entities = array();
             foreach ($response as $document) {
                 $entities[] = $this->entityMapper->toEntity($document, $entity);
@@ -303,9 +305,7 @@ class Solr implements SolrInterface
     }
 
     /**
-     * Number of results found by query
-     *
-     * @deprecated
+     * Number of overall found documents for a given query
      *
      * @return integer
      */
