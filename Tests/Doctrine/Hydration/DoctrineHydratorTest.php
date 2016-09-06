@@ -6,10 +6,13 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface;
+use FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator;
+use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * @group hydration
@@ -61,6 +64,47 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $hydratedDocument = $doctrine->hydrate($obj, $metainformations);
 
         $this->assertEntityFromDBReplcesTargetEntity($metainformations, $fetchedFromDoctrine, $hydratedDocument);
+    }
+
+    /**
+     * @test
+     */
+    public function hydrationShouldOverwriteComplexTypes()
+    {
+        $entity1 = new ValidTestEntity();
+        $entity1->setTitle('title 1');
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+
+        $relations = array($entity1, $entity2);
+
+        $targetEntity = new ValidTestEntity();
+        $targetEntity->setId(1);
+        $targetEntity->setPosts($relations);
+
+        $metainformations = new MetaInformationFactory($this->reader);
+        $metainformations = $metainformations->loadInformation($targetEntity);
+
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->will($this->returnValue($targetEntity));
+
+        $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
+
+        $obj = new SolrDocumentStub(array(
+            'posts_ss' => array('title 1', 'title 2')
+        ));
+        $obj->id = 'document_1';
+
+        $doctrineHydrator = new DoctrineHydrator($doctrineRegistry, new DoctrineValueHydrator());
+
+        /** @var ValidTestEntity $hydratedEntity */
+        $hydratedEntity = $doctrineHydrator->hydrate($obj, $metainformations);
+
+        $this->assertEquals($relations, $hydratedEntity->getPosts());
     }
 
     /**

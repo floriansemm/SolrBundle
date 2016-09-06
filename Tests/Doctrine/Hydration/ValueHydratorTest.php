@@ -82,17 +82,10 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $obj = new SolrDocumentStub(array(
             'id' => 'document_1',
             'title_t' => 'foo',
-            'posts_ss' => array('title 1', 'title 2')
+            'collection_ss' => array('title 1', 'title 2')
         ));
 
-        $entity1 = new ValidTestEntity();
-        $entity1->setTitle('title 1');
-
-        $entity2 = new ValidTestEntity();
-        $entity2->setTitle('title 2');
-
         $entity = new ValidTestEntityWithCollection();
-        $entity->setCollection(new ArrayCollection(array($entity1, $entity2)));
 
         $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
@@ -103,8 +96,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($hydratedDocument instanceof $entity);
         $this->assertEquals(1, $entity->getId());
         $this->assertEquals('foo', $entity->getTitle());
-
-        $this->assertTrue($hydratedDocument->getCollection()[0] === $entity1);
+        $this->assertEquals(array('title 1', 'title 2'), $entity->getCollection());
     }
 
     /**
@@ -115,7 +107,7 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $obj = new SolrDocumentStub(array(
             'id' => 'document_1',
             'title_t' => 'foo',
-            'posts_ss' => 'title 1'
+            'posts_ss' => array('title 1', 'title2')
         ));
 
         $entity1 = new ValidTestEntity();
