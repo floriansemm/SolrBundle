@@ -97,7 +97,7 @@ class Post
     private $text = '';
 
    /**
-    * @Solr\Field(type="date")
+    * @Solr\Field(type="date", getter="format('Y-m-d\TH:i:s.z\Z')")
     *
     * @ORM\Column(name="created_at", type="datetime")
     */
