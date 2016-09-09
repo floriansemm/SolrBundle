@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Query;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\Annotation\Id;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Query\Exception\UnknownFieldException;
 use FS\SolrBundle\Query\SolrQuery;
@@ -32,8 +33,12 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
     {
         $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
 
+        $idField = new Id(array());
+        $idField->name = 'id';
+
         $metaInformation = new MetaInformation();
         $metaInformation->setDocumentName('post');
+        $metaInformation->setIdentifier($idField);
 
         $solrQuery = new SolrQuery();
         $solrQuery->setSolr($solr);

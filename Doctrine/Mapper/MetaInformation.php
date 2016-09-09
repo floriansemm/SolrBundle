@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\Id;
 
 /**
  * Holds meta-information about an entity
@@ -10,7 +11,7 @@ class MetaInformation implements MetaInformationInterface
 {
 
     /**
-     * @var string
+     * @var Id
      */
     private $identifier = '';
 
@@ -138,7 +139,7 @@ class MetaInformation implements MetaInformationInterface
     }
 
     /**
-     * @param string $identifier
+     * @param Id $identifier
      */
     public function setIdentifier($identifier)
     {
@@ -333,5 +334,13 @@ class MetaInformation implements MetaInformationInterface
     public function setIsDoctrineEntity($isDoctrineEntity)
     {
         $this->isDoctrineEntity = $isDoctrineEntity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdentifierFieldName()
+    {
+        return $this->identifier->name;
     }
 }

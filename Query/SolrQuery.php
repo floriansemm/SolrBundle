@@ -104,6 +104,10 @@ class SolrQuery extends AbstractQuery
         $this->setUseAndOperator(false);
 
         foreach ($this->mappedFields as $documentField => $entityField) {
+            if ($documentField == $this->getMetaInformation()->getIdentifierFieldName()) {
+                continue;
+            }
+
             $this->searchTerms[$documentField] = $value;
         }
     }

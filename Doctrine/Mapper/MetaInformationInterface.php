@@ -83,4 +83,9 @@ interface MetaInformationInterface
      * @return string
      */
     public function getDocumentKey();
+
+    /**
+     * @return string
+     */
+    public function getIdentifierFieldName();
 }
