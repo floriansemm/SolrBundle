@@ -39,9 +39,14 @@ class QueryBuilder implements QueryBuilderInterface
      */
     public function where($field)
     {
-        $field = $this->metaInformation->getField($field)->getNameWithAlias();
+        $solrField = $this->metaInformation->getField($field);
+        if ($solrField === null) {
+            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+        }
 
-        $this->criteria = Criteria::where($field);
+        $fieldName = $solrField->getNameWithAlias();
+
+        $this->criteria = Criteria::where($fieldName);
 
         return $this;
     }
@@ -51,9 +56,20 @@ class QueryBuilder implements QueryBuilderInterface
      */
     public function andWhere($field)
     {
-        $field = $this->metaInformation->getField($field)->getNameWithAlias();
+        if ($field instanceof QueryBuilder) {
+            $this->criteria = $this->criteria->andWhere($field->getCriteria());
 
-        $this->criteria = $this->criteria->andWhere($field);
+            return $this;
+        }
+
+        $solrField = $this->metaInformation->getField($field);
+        if ($solrField === null) {
+            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+        }
+
+        $fieldName = $solrField->getNameWithAlias();
+
+        $this->criteria = $this->criteria->andWhere($fieldName);
 
         return $this;
     }
@@ -63,9 +79,20 @@ class QueryBuilder implements QueryBuilderInterface
      */
     public function orWhere($field)
     {
-        $field = $this->metaInformation->getField($field)->getNameWithAlias();
+        if ($field instanceof QueryBuilder) {
+            $this->criteria = $this->criteria->orWhere($field->getCriteria());
 
-        $this->criteria = $this->criteria->orWhere($field);
+            return $this;
+        }
+
+        $solrField = $this->metaInformation->getField($field);
+        if ($solrField === null) {
+            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+        }
+
+        $fieldName = $solrField->getNameWithAlias();
+
+        $this->criteria = $this->criteria->orWhere($fieldName);
 
         return $this;
     }
@@ -233,6 +260,36 @@ class QueryBuilder implements QueryBuilderInterface
     /**
      * {@inheritdoc}
      */
+    public function greaterThanEqual($value)
+    {
+        $this->criteria = $this->criteria->greaterThanEqual($value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function lessThanEqual($value)
+    {
+        $this->criteria = $this->criteria->lessThanEqual($value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boost($value)
+    {
+        $this->criteria = $this->criteria->boost($value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getQuery()
     {
         $query = new SolrQuery();
@@ -241,7 +298,16 @@ class QueryBuilder implements QueryBuilderInterface
         $query->setCustomQuery($this->criteria->getQuery());
         $query->setIndex($this->metaInformation->getIndex());
         $query->setEntity($this->metaInformation->getEntity());
+        $query->setMetaInformation($this->metaInformation);
 
         return $query;
+    }
+
+    /**
+     * @return Criteria
+     */
+    public function getCriteria()
+    {
+        return $this->criteria;
     }
 }

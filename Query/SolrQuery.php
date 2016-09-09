@@ -151,7 +151,13 @@ class SolrQuery extends AbstractQuery
      */
     public function getQuery()
     {
+        $keyField = $this->getMetaInformation()->getDocumentKey();
+        $documentLimitation = 'id:'.$keyField.'*';
         if ($this->customQuery) {
+            if (preg_match('#id:#', $this->customQuery) == 0) {
+                $this->customQuery = $documentLimitation . ' AND ' . $this->customQuery;
+            }
+
             parent::setQuery($this->customQuery);
 
             return $this->customQuery;
@@ -159,7 +165,7 @@ class SolrQuery extends AbstractQuery
 
         $term = '';
         if (count($this->searchTerms) == 0) {
-            $query = '*:*';
+            $query = $documentLimitation;
             parent::setQuery($query);
 
             return $query;
@@ -182,6 +188,10 @@ class SolrQuery extends AbstractQuery
             }
 
             $termCount++;
+        }
+
+        if (isset($this->searchTerms['id']) == false) {
+            $term = $documentLimitation . ' AND ' . $term;
         }
 
         $this->setQuery($term);

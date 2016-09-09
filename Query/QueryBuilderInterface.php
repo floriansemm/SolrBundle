@@ -145,4 +145,25 @@ interface QueryBuilderInterface
      * @return SolrQuery
      */
     public function getQuery();
+
+    /**
+     * @param string $value
+     *
+     * @return QueryBuilderInterface
+     */
+    public function greaterThanEqual($value);
+
+    /**
+     * @param string $value
+     *
+     * @return QueryBuilderInterface
+     */
+    public function lessThanEqual($value);
+
+    /**
+     * @param float $value
+     *
+     * @return QueryBuilderInterface
+     */
+    public function boost($value);
 }
