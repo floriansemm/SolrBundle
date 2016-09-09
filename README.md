@@ -338,6 +338,23 @@ $query->setCustomQuery('id:post_* AND (author_s:Name1 OR author_s:Name2)');
 $result = $query->getResult();
 ```
 
+### The QueryBuilder
+
+The query-builder based on (https://github.com/minimalcode-org/search)[minimalcode-org/search] Criteria API. 
+
+```php
+$queryBuilder = $this->get('solr.client')->getQueryBuilder('AcmeDemoBundle:Post');
+$result = $queryBuilder
+    ->where('author')
+        ->is('Name1')
+    ->orWhere('author')
+        ->is('Name2')
+    ->getQuery()
+    ->getResult();
+
+```
+
+
 ### Define Result-Mapping
 
 To narrow the mapping, you can use the `addField()` method.
