@@ -21,7 +21,7 @@ class ValueHydrator implements HydratorInterface
         $reflectionClass = new \ReflectionClass($targetEntity);
         foreach ($document as $property => $value) {
             if ($property === MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME) {
-                $value = $this->removePrefixedKeyFieldName($value);
+                $value = $this->removePrefixedKeyValues($value);
             }
 
             // skip field if value is array or "flat" object
@@ -34,9 +34,8 @@ class ValueHydrator implements HydratorInterface
                 $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
             } catch (\ReflectionException $e) {
                 try {
-                    $classProperty = $reflectionClass->getProperty(
-                        $this->toCamelCase($this->removeFieldSuffix($property))
-                    );
+                    $propertyName = $this->toCamelCase($this->removeFieldSuffix($property));
+                    $classProperty = $reflectionClass->getProperty($propertyName);
                 } catch (\ReflectionException $e) {
                     continue;
                 }
@@ -74,7 +73,7 @@ class ValueHydrator implements HydratorInterface
      *
      * @return string
      */
-    protected function removePrefixedKeyFieldName($value)
+    protected function removePrefixedKeyValues($value)
     {
         if (($pos = strrpos($value, '_')) !== false) {
             return substr($value, ($pos+1));

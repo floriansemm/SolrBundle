@@ -20,7 +20,7 @@ class DoctrineValueHydrator extends ValueHydrator
             return false;
         }
 
-        $fieldSuffix = $this->removePrefixedKeyFieldName($fieldName);
+        $fieldSuffix = $this->removePrefixedKeyValues($fieldName);
         if ($fieldSuffix === false) {
             return false;
         }
