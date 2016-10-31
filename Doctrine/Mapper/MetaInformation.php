@@ -209,6 +209,10 @@ class MetaInformation implements MetaInformationInterface
      */
     public function getField($fieldName)
     {
+        if ($fieldName == '') {
+            throw new \InvalidArgumentException('$fieldName must not be empty');
+        }
+
         if (!$this->hasField($fieldName)) {
             return null;
         }

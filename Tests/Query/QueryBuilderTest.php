@@ -87,6 +87,19 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $fieldName must not be empty
+     */
+    public function setEmpty()
+    {
+        $builder = new QueryBuilder($this->solr, $this->setupMetainformation());
+        $query = $builder
+            ->where('')
+            ->getQuery()->getQuery();
+    }
+
+    /**
      * @return MetaInformation
      */
     private function setupMetainformation()
