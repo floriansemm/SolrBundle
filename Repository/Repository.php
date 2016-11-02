@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Repository;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
+use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Solr;
 
 /**
@@ -145,5 +146,15 @@ class Repository implements RepositoryInterface
         $found = $this->solr->query($query);
 
         return array_pop($found);
+    }
+
+    /**
+     * @param string $entity
+     *
+     * @return QueryBuilderInterface
+     */
+    public function getQueryBuilder($entity)
+    {
+        return $this->solr->getQueryBuilder($entity);
     }
 }
