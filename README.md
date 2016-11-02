@@ -354,6 +354,26 @@ $result = $queryBuilder
 
 ```
 
+To keep your code clean you should move the select-criteria in a repository-class:
+
+```php
+
+class YourRepository extends Repository
+{
+    public function findAuthor($name1, $name2)
+    {
+        return $this->getQueryBuilder()
+            ->where('author')
+                ->is($name1)
+            ->orWhere('author')
+                ->is($name2)
+            ->getQuery()
+            ->getResult();
+    }
+}
+
+```
+
 
 ### Define Result-Mapping
 
@@ -422,6 +442,8 @@ class ProviderRepository extends Repository
     }
 }
 ```
+
+In your repository you have full access to the querybuilder.
 
 ## Commands
 
