@@ -362,7 +362,7 @@ class YourRepository extends Repository
 {
     public function findAuthor($name1, $name2)
     {
-        return $this->getQueryBuilder()
+        return $this->getQueryBuilder('AcmeDemoBundle:Post')
             ->where('author')
                 ->is($name1)
             ->orWhere('author')
