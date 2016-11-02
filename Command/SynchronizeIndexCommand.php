@@ -156,13 +156,13 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         $repository = $objectManager->getRepository($entity);
         $dataStoreMetadata = $objectManager->getManager()->getClassMetadata($entity);
 
-        $identifierColumns = $dataStoreMetadata->getIdentifierColumnNames();
+        $identifierFieldNames = $dataStoreMetadata->getIdentifierFieldNames();
 
-        if (!count($identifierColumns)) {
+        if (!count($identifierFieldNames)) {
             throw new \Exception(sprintf('No primary key found for entity %s', $entity));
         }
 
-        $countableColumn = reset($identifierColumns);
+        $countableColumn = reset($identifierFieldNames);
 
         $totalSize = $repository->createQueryBuilder('size')
             ->select(sprintf('count(size.%s)', $countableColumn))

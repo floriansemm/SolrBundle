@@ -97,7 +97,7 @@ class Post
     private $text = '';
 
    /**
-    * @Solr\Field(type="date")
+    * @Solr\Field(type="date", getter="format('Y-m-d\TH:i:s.z\Z')")
     *
     * @ORM\Column(name="created_at", type="datetime")
     */
@@ -430,3 +430,17 @@ Here's all the commands provided by this bundle:
 * `solr:index:clear` - delete all documents in the index
 * `solr:index:populate` - synchronize the db with the index
 * `solr:schema:show` - shows your configured documents
+
+## Extend Solarium
+
+To extend Solarium with your own plugins, create a tagged service:
+
+```xml
+<tag name="solarium.client.plugin" plugin-name="yourPluginName"/>
+```
+
+To hook into the [Solarium events](http://solarium.readthedocs.io/en/stable/customizing-solarium/#plugin-system) create a common Symfony event-listener:
+
+```xml
+<tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
+```

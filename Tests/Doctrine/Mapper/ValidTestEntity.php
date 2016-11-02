@@ -44,6 +44,11 @@ class ValidTestEntity
      */
     private $costomField;
 
+    /**
+     * @var ValidTestEntity[]
+     */
+    private $posts;
+
     public function getId()
     {
         return $this->id;
@@ -116,6 +121,22 @@ class ValidTestEntity
     public function setCreatedAt($created_at)
     {
         $this->created_at = $created_at;
+    }
+
+    /**
+     * @return ValidTestEntity[]
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    /**
+     * @param ValidTestEntity[] $posts
+     */
+    public function setPosts($posts)
+    {
+        $this->posts = $posts;
     }
 }
 

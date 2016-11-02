@@ -50,6 +50,13 @@ class ValidTestEntityWithRelation
      */
     private $relation;
 
+    /**
+     * @var object
+     *
+     * @Solr\Field(type="strings")
+     */
+    private $posts;
+
     public function getId()
     {
         return $this->id;
@@ -140,6 +147,21 @@ class ValidTestEntityWithRelation
         $this->relation = $relation;
     }
 
+    /**
+     * @return object
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    /**
+     * @param object $posts
+     */
+    public function setPosts($posts)
+    {
+        $this->posts = $posts;
+    }
 
 }
 

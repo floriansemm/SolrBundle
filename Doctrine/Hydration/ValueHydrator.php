@@ -21,12 +21,12 @@ class ValueHydrator implements HydratorInterface
         $reflectionClass = new \ReflectionClass($targetEntity);
         foreach ($document as $property => $value) {
             if ($property === MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME) {
-                $value = $this->removePrefixedKeyFieldName($value);
+                $value = $this->removePrefixedKeyValues($value);
             }
 
             // skip field if value is array or "flat" object
             // hydrated object should contain a list of real entities / entity
-            if ($this->isComplexValue($property, $value, $metaInformation)) {
+            if ($this->mapValue($property, $value, $metaInformation) == false) {
                 continue;
             }
 
@@ -34,9 +34,8 @@ class ValueHydrator implements HydratorInterface
                 $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
             } catch (\ReflectionException $e) {
                 try {
-                    $classProperty = $reflectionClass->getProperty(
-                        $this->toCamelCase($this->removeFieldSuffix($property))
-                    );
+                    $propertyName = $this->toCamelCase($this->removeFieldSuffix($property));
+                    $classProperty = $reflectionClass->getProperty($propertyName);
                 } catch (\ReflectionException $e) {
                     continue;
                 }
@@ -58,7 +57,7 @@ class ValueHydrator implements HydratorInterface
      *
      * @return string
      */
-    private function removeFieldSuffix($property)
+    protected function removeFieldSuffix($property)
     {
         if (($pos = strrpos($property, '_')) !== false) {
             return substr($property, 0, $pos);
@@ -74,7 +73,7 @@ class ValueHydrator implements HydratorInterface
      *
      * @return string
      */
-    private function removePrefixedKeyFieldName($value)
+    protected function removePrefixedKeyValues($value)
     {
         if (($pos = strrpos($value, '_')) !== false) {
             return substr($value, ($pos+1));
@@ -104,25 +103,8 @@ class ValueHydrator implements HydratorInterface
     /**
      * @return bool
      */
-    public function isComplexValue($fieldName, $value, MetaInformationInterface $metaInformation)
+    public function mapValue($fieldName, $value, MetaInformationInterface $metaInformation)
     {
-        if (is_array($value)) {
-            return true;
-        }
-
-        if ($metaInformation->getField($fieldName) && $metaInformation->getField($fieldName)->getter) {
-            return true;
-        }
-
-        $fieldSuffix = $this->removePrefixedKeyFieldName($fieldName);
-        if ($fieldSuffix === false) {
-            return false;
-        }
-
-        if (array_key_exists($fieldSuffix, Field::getComplexFieldMapping())) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 } 
