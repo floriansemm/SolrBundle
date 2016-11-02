@@ -30,7 +30,6 @@ class Repository implements RepositoryInterface
 
     /**
      * @param Solr   $solr
-     *
      * @param object $entity
      */
     public function __construct(Solr $solr, $entity)
@@ -109,7 +108,7 @@ class Repository implements RepositoryInterface
         $query->setHydrationMode($this->hydrationMode);
         $query->setRows(100000);
         $query->setUseAndOperator(true);
-        $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
+        $query->addSearchTerm('id', $metaInformation->getDocumentName() . '_*');
         $query->setQueryDefaultField('id');
 
         $helper = $query->getHelper();
@@ -133,7 +132,7 @@ class Repository implements RepositoryInterface
         $query->setHydrationMode($this->hydrationMode);
         $query->setRows(1);
         $query->setUseAndOperator(true);
-        $query->addSearchTerm('id', $metaInformation->getDocumentName(). '_*');
+        $query->addSearchTerm('id', $metaInformation->getDocumentName() . '_*');
         $query->setQueryDefaultField('id');
 
         $helper = $query->getHelper();
