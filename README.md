@@ -340,7 +340,7 @@ $result = $query->getResult();
 
 ### The QueryBuilder
 
-The query-builder based on (https://github.com/minimalcode-org/search)[minimalcode-org/search] Criteria API. 
+The query-builder based on [https://github.com/minimalcode-org/search](minimalcode-org/search) Criteria API. 
 
 ```php
 $queryBuilder = $this->get('solr.client')->getQueryBuilder('AcmeDemoBundle:Post');
