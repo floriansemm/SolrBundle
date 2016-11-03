@@ -25,7 +25,7 @@ class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException FS\SolrBundle\Query\Exception\QueryException
      * @expectedExceptionMessage id should not be null
      */
     public function testGetQuery_IdMissing()

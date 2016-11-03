@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Query\Exception\QueryException;
+
 /**
  * Builds a wildcard query to find all documents
  *
@@ -25,14 +27,14 @@ class FindByDocumentNameQuery extends AbstractQuery
     /**
      * @return string
      *
-     * @throws \RuntimeException if documentName is null
+     * @throws QueryException if documentName is null
      */
     public function getQuery()
     {
         $documentName = $this->documentName;
 
         if ($documentName == null) {
-            throw new \RuntimeException('documentName should not be null');
+            throw new QueryException('documentName should not be null');
         }
 
         $documentLimitation = $this->createFilterQuery('id')->setQuery(sprintf('id:%s_*', $documentName));

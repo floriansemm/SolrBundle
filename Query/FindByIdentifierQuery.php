@@ -2,6 +2,8 @@
 
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Query\Exception\QueryException;
+
 class FindByIdentifierQuery extends AbstractQuery
 {
     /**
@@ -20,14 +22,14 @@ class FindByIdentifierQuery extends AbstractQuery
     /**
      * @return string
      *
-     * @throws \RuntimeException when id or document_name is null
+     * @throws QueryException when id or document_name is null
      */
     public function getQuery()
     {
         $idField = $this->documentKey;
 
         if ($idField == null) {
-            throw new \RuntimeException('id should not be null');
+            throw new QueryException('id should not be null');
         }
 
         $documentLimitation = $this->createFilterQuery('id')->setQuery(sprintf('id:%s', $idField));

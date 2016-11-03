@@ -2,12 +2,16 @@
 
 namespace FS\SolrBundle\Query;
 
+use FS\SolrBundle\Query\Exception\UnknownFieldException;
+
 interface QueryBuilderInterface
 {
     /**
      * @param string $field
      *
      * @return QueryBuilderInterface
+     *
+     * @throws UnknownFieldException if $field does not exists
      */
     public function where($field);
 
@@ -15,6 +19,8 @@ interface QueryBuilderInterface
      * @param string $field
      *
      * @return QueryBuilderInterface
+     *
+     * @throws UnknownFieldException if $field does not exists
      */
     public function andWhere($field);
 
@@ -22,6 +28,8 @@ interface QueryBuilderInterface
      * @param string $field
      *
      * @return QueryBuilderInterface
+     *
+     * @throws UnknownFieldException if $field does not exists
      */
     public function orWhere($field);
 

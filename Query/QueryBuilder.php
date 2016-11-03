@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Query;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Query\Exception\UnknownFieldException;
 use FS\SolrBundle\SolrInterface;
 use Minimalcode\Search\Criteria;
 
@@ -41,7 +42,7 @@ class QueryBuilder implements QueryBuilderInterface
     {
         $solrField = $this->metaInformation->getField($field);
         if ($solrField === null) {
-            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+            throw new UnknownFieldException(sprintf('Field %s does not exists', $field));
         }
 
         $fieldName = $solrField->getNameWithAlias();
@@ -64,7 +65,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         $solrField = $this->metaInformation->getField($field);
         if ($solrField === null) {
-            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+            throw new UnknownFieldException(sprintf('Field %s does not exists', $field));
         }
 
         $fieldName = $solrField->getNameWithAlias();
@@ -87,7 +88,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         $solrField = $this->metaInformation->getField($field);
         if ($solrField === null) {
-            throw new \RuntimeException(sprintf('Field %s does not exists', $field));
+            throw new UnknownFieldException(sprintf('Field %s does not exists', $field));
         }
 
         $fieldName = $solrField->getNameWithAlias();
