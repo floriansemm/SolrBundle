@@ -16,14 +16,12 @@ class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
         $document = new Document();
         $document->setKey('id', 'validtestentity_1');
 
-        $expectedQuery = 'id:validtestentity_1';
         $query = new FindByIdentifierQuery();
         $query->setDocumentKey('validtestentity_1');
         $query->setDocument($document);
 
-        $queryString = $query->getQuery();
-
-        $this->assertEquals($expectedQuery, $queryString);
+        $this->assertEquals('*:*', $query->getQuery());
+        $this->assertEquals('id:validtestentity_1', $query->getFilterQuery('id')->getQuery());
     }
 
     /**

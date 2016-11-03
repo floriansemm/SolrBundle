@@ -156,20 +156,20 @@ class SolrQuery extends AbstractQuery
     public function getQuery()
     {
         $keyField = $this->getMetaInformation()->getDocumentKey();
-        $documentLimitation = 'id:'.$keyField.'*';
-        if ($this->customQuery) {
-            if (preg_match('#id:#', $this->customQuery) == 0) {
-                $this->customQuery = $documentLimitation . ' AND ' . $this->customQuery;
-            }
 
+        $documentLimitation = $this->createFilterQuery('id')->setQuery('id:'.$keyField.'*');
+
+        $this->addFilterQuery($documentLimitation);
+        if ($this->customQuery) {
             parent::setQuery($this->customQuery);
 
             return $this->customQuery;
         }
 
         $term = '';
+        // query all documents if no terms exists
         if (count($this->searchTerms) == 0) {
-            $query = $documentLimitation;
+            $query = '*:*';
             parent::setQuery($query);
 
             return $query;
@@ -183,6 +183,12 @@ class SolrQuery extends AbstractQuery
         $termCount = 1;
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
+            if ($fieldName == 'id') {
+                $this->getFilterQuery('id')->setQuery('id:' . $fieldValue);
+
+                continue;
+            }
+
             $fieldValue = $this->querifyFieldValue($fieldValue);
 
             $term .= $fieldName . ':' . $fieldValue;
@@ -194,8 +200,8 @@ class SolrQuery extends AbstractQuery
             $termCount++;
         }
 
-        if (isset($this->searchTerms['id']) == false) {
-            $term = $documentLimitation . ' AND ' . $term;
+        if (strlen($term) == 0) {
+            $term = '*:*';
         }
 
         $this->setQuery($term);

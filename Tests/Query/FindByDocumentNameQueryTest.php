@@ -22,13 +22,13 @@ class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase
         $query->setDocumentName('validtestentity');
         $query->setDocument($document);
 
-        $queryString = $query->getQuery();
-
-        $this->assertEquals('id:validtestentity_*', $queryString, 'filter query');
+        $this->assertEquals('*:*', $query->getQuery(), 'filter query');
+        $this->assertEquals('id:validtestentity_*', $query->getFilterQuery('id')->getQuery());
     }
 
     /**
      * @expectedException \RuntimeException
+     * @expectedExceptionMessage documentName should not be null
      */
     public function testGetQuery_DocumentnameMissing()
     {

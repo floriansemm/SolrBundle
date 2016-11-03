@@ -90,11 +90,12 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSolrQuery_QueryTermShouldCorrect()
     {
-        $expected = 'id:post_* AND title_s:foo OR text_t:bar';
+        $expected = 'title_s:foo OR text_t:bar';
 
         $query = $this->createQueryWithSearchTerms();
 
         $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
 
     }
 
@@ -123,82 +124,90 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery_TermsConcatWithOr()
     {
-        $expected = 'id:post_* AND title_s:foo OR text_t:bar';
+        $expected = 'title_s:foo OR text_t:bar';
 
         $query = $this->createQueryWithSearchTerms();
 
         $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_TermsConcatWithAnd()
     {
-        $expected = 'id:post_* AND title_s:foo AND text_t:bar';
+        $expected = 'title_s:foo AND text_t:bar';
 
         $query = $this->createQueryWithSearchTerms();
         $query->setUseAndOperator(true);
 
         $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_SearchInAllFields()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->queryAllFields('foo');
+        $query = $this->createQueryWithFieldMapping();
+        $query->queryAllFields('foo');
 
-        $expected = 'id:post_* AND title_s:foo OR text_t:foo OR created_at_dt:foo';
+        $expected = 'title_s:foo OR text_t:foo OR created_at_dt:foo';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_SurroundTermWithDoubleQuotes()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->queryAllFields('foo 12');
+        $query = $this->createQueryWithFieldMapping();
+        $query->queryAllFields('foo 12');
 
-        $expected = 'id:post_* AND title_s:"foo 12" OR text_t:"foo 12" OR created_at_dt:"foo 12"';
+        $expected = 'title_s:"foo 12" OR text_t:"foo 12" OR created_at_dt:"foo 12"';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_SurroundWildcardTermWithDoubleQuotes()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->queryAllFields('foo 12');
-        $solrQuery->setUseWildcard(true);
+        $query = $this->createQueryWithFieldMapping();
+        $query->queryAllFields('foo 12');
+        $query->setUseWildcard(true);
 
-        $expected = 'id:post_* AND title_s:"*foo 12*" OR text_t:"*foo 12*" OR created_at_dt:"*foo 12*"';
+        $expected = 'title_s:"*foo 12*" OR text_t:"*foo 12*" OR created_at_dt:"*foo 12*"';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_NoWildcard_Word()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->setUseWildcard(false);
-        $solrQuery->addSearchTerm('title', 'a_word');
+        $query = $this->createQueryWithFieldMapping();
+        $query->setUseWildcard(false);
+        $query->addSearchTerm('title', 'a_word');
 
-        $expected = 'id:post_* AND title_s:a_word';
+        $expected = 'title_s:a_word';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_NoSearchTerm()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
+        $query = $this->createQueryWithFieldMapping();
 
-        $expected = 'id:post_*';
+        $expected = '*:*';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     public function testGetQuery_CustomQuery()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->setCustomQuery('title_s:[*:*]');
+        $query = $this->createQueryWithFieldMapping();
+        $query->setCustomQuery('title_s:[*:*]');
 
-        $expected = 'id:post_* AND title_s:[*:*]';
+        $expected = 'title_s:[*:*]';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     /**
@@ -206,12 +215,13 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function searchInSetMultipleValues()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->addSearchTerm('title', array('value2', 'value1'));
+        $query = $this->createQueryWithFieldMapping();
+        $query->addSearchTerm('title', array('value2', 'value1'));
 
-        $expected = 'id:post_* AND title_s:["value1" TO "value2"]';
+        $expected = 'title_s:["value1" TO "value2"]';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     /**
@@ -219,12 +229,13 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function searchInSetSingleValues()
     {
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->addSearchTerm('title', array('value #1'));
+        $query = $this->createQueryWithFieldMapping();
+        $query->addSearchTerm('title', array('value #1'));
 
-        $expected = 'id:post_* AND title_s:"value #1"';
+        $expected = 'title_s:"value #1"';
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_*', $query->getFilterQuery('id')->getQuery());
     }
 
     /**
@@ -232,11 +243,12 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function doNotAddIdFieldTwice()
     {
-        $expected = 'id:post_1';
+        $expected = '*:*';
 
-        $solrQuery = $this->createQueryWithFieldMapping();
-        $solrQuery->addSearchTerm('id', array('post_1'));
+        $query = $this->createQueryWithFieldMapping();
+        $query->addSearchTerm('id', 'post_1');
 
-        $this->assertEquals($expected, $solrQuery->getQuery());
+        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals('id:post_1', $query->getFilterQuery('id')->getQuery());
     }
 }

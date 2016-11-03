@@ -30,8 +30,10 @@ class FindByIdentifierQuery extends AbstractQuery
             throw new \RuntimeException('id should not be null');
         }
 
-        $query = sprintf('id:%s', $idField);
-        $this->setQuery($query);
+        $documentLimitation = $this->createFilterQuery('id')->setQuery(sprintf('id:%s', $idField));
+        $this->addFilterQuery($documentLimitation);
+
+        $this->setQuery('*:*');
 
         return parent::getQuery();
     }

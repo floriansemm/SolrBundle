@@ -35,9 +35,10 @@ class FindByDocumentNameQuery extends AbstractQuery
             throw new \RuntimeException('documentName should not be null');
         }
 
-        $query = sprintf('id:%s_*', $documentName);
+        $documentLimitation = $this->createFilterQuery('id')->setQuery(sprintf('id:%s_*', $documentName));
+        $this->addFilterQuery($documentLimitation);
 
-        $this->setQuery($query);
+        $this->setQuery('*:*');
 
         return parent::getQuery();
     }
