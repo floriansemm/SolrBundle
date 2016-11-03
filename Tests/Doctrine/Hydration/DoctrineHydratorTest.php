@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorInterface;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator;

@@ -16,16 +16,8 @@ class DoctrineValueHydrator extends ValueHydrator
             return false;
         }
 
+        // is object with getter
         if ($metaInformation->getField($fieldName) && $metaInformation->getField($fieldName)->getter) {
-            return false;
-        }
-
-        $fieldSuffix = $this->removePrefixedKeyValues($fieldName);
-        if ($fieldSuffix === false) {
-            return false;
-        }
-
-        if (array_key_exists($fieldSuffix, Field::getComplexFieldMapping())) {
             return false;
         }
 

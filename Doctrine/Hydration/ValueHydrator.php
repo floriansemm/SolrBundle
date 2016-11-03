@@ -76,7 +76,7 @@ class ValueHydrator implements HydratorInterface
     protected function removePrefixedKeyValues($value)
     {
         if (($pos = strrpos($value, '_')) !== false) {
-            return substr($value, ($pos+1));
+            return substr($value, ($pos + 1));
         }
 
         return $value;
@@ -101,6 +101,12 @@ class ValueHydrator implements HydratorInterface
     }
 
     /**
+     * Check if given field and value can be mapped
+     *
+     * @param string                   $fieldName
+     * @param string                   $value
+     * @param MetaInformationInterface $metaInformation
+     *
      * @return bool
      */
     public function mapValue($fieldName, $value, MetaInformationInterface $metaInformation)
