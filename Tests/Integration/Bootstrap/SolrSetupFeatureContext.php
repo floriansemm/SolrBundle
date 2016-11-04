@@ -70,13 +70,11 @@ class SolrSetupFeatureContext implements Context
         \Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
 
         $this->solrClient = $this->setupSolrClient();
-        $factory = $this->setupCommandFactory();
         $metaFactory = $this->setupMetaInformationFactory();
         $entityMapper = $this->setupEntityMapper();
 
         $solr = new Solr(
             $this->solrClient,
-            $factory,
             $this->eventDispatcher,
             $metaFactory,
             $entityMapper
