@@ -4,10 +4,10 @@ namespace FS\SolrBundle\Query;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Solr;
 use FS\SolrBundle\SolrInterface;
-use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Select\Query\Query as SolariumQuery;
 use Solarium\QueryType\Update\Query\Document\Document;
 
-abstract class AbstractQuery extends Query
+abstract class AbstractQuery extends SolariumQuery
 {
     /**
      * @var Document
@@ -71,7 +71,7 @@ abstract class AbstractQuery extends Query
     }
 
     /**
-     * @param \Solarium\QueryType\Update\Query\Document\Document $document
+     * @param Document $document
      */
     public function setDocument($document)
     {
@@ -79,7 +79,7 @@ abstract class AbstractQuery extends Query
     }
 
     /**
-     * @return \Solarium\QueryType\Update\Query\Document\Document
+     * @return Document
      */
     public function getDocument()
     {

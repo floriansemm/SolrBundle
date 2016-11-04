@@ -186,6 +186,8 @@ class SolrQuery extends AbstractQuery
             if ($fieldName == 'id') {
                 $this->getFilterQuery('id')->setQuery('id:' . $fieldValue);
 
+                $termCount++;
+
                 continue;
             }
 

@@ -6,6 +6,7 @@ use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Solr;
+use FS\SolrBundle\SolrInterface;
 
 /**
  * Common repository class to find documents in the index
@@ -29,10 +30,10 @@ class Repository implements RepositoryInterface
     protected $hydrationMode = '';
 
     /**
-     * @param Solr   $solr
-     * @param object $entity
+     * @param SolrInterface $solr
+     * @param object        $entity
      */
-    public function __construct(Solr $solr, $entity)
+    public function __construct(SolrInterface $solr, $entity)
     {
         $this->solr = $solr;
         $this->entity = $entity;
@@ -45,17 +46,12 @@ class Repository implements RepositoryInterface
      */
     public function find($id)
     {
-        $mapper = $this->solr->getMapper();
-        $mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
         $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
         $metaInformation->setEntityId($id);
-
-        $document = $mapper->toDocument($metaInformation);
 
         $query = new FindByIdentifierQuery();
         $query->setIndex($metaInformation->getIndex());
         $query->setDocumentKey($metaInformation->getDocumentKey());
-        $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
         $query->setHydrationMode($this->hydrationMode);
@@ -73,23 +69,12 @@ class Repository implements RepositoryInterface
      */
     public function findAll()
     {
-        $mapper = $this->solr->getMapper();
-        $mapper->setMappingCommand($this->solr->getCommandFactory()->get('all'));
         $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
-
-        $document = $mapper->toDocument($metaInformation);
-
-        if (null === $document) {
-            return null;
-        }
-
-        $document->removeField('id');
 
         $query = new FindByDocumentNameQuery();
         $query->setRows(1000000);
         $query->setDocumentName($metaInformation->getDocumentName());
         $query->setIndex($metaInformation->getIndex());
-        $query->setDocument($document);
         $query->setEntity($this->entity);
         $query->setSolr($this->solr);
         $query->setHydrationMode($this->hydrationMode);

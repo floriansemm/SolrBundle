@@ -2,6 +2,12 @@
 
 namespace FS\SolrBundle\Tests\Solr\Repository;
 
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
+use FS\SolrBundle\Query\AbstractQuery;
+use FS\SolrBundle\Query\FindByDocumentNameQuery;
+use FS\SolrBundle\Query\FindByIdentifierQuery;
+use FS\SolrBundle\Tests\SolrClientFake;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use Solarium\Core\Query\Helper;
@@ -21,92 +27,60 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
-        $metaFactory = $this->getMock(
-            'FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory',
-            array(),
-            array(),
-            '',
-            false
-        );
+        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
         $metaFactory->expects($this->once())
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
         $mapper->expects($this->once())
-            ->method('toDocument')
-            ->will($this->returnValue($document));
-
-        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
-        $solr->expects($this->exactly(2))
-            ->method('getMapper')
-            ->will($this->returnValue($mapper));
-
-        $solr->expects($this->once())
-            ->method('getCommandFactory')
-            ->will($this->returnValue(CommandFactoryStub::getFactoryWithAllMappingCommand()));
-
-        $solr->expects($this->once())
-            ->method('getMetaFactory')
-            ->will($this->returnValue($metaFactory));
+            ->method('setHydrationMode')
+            ->with(HydrationModes::HYDRATE_DOCTRINE);
 
         $entity = new ValidTestEntity();
-        $solr->expects($this->once())
-            ->method('query')
-            ->will($this->returnValue(array($entity)));
+
+        $solr = new SolrClientFake();
+        $solr->mapper = $mapper;
+        $solr->metaFactory = $metaFactory;
+        $solr->response = array($entity);
 
         $repo = new Repository($solr, $entity);
         $actual = $repo->find(2);
 
         $this->assertTrue($actual instanceof ValidTestEntity, 'find return no entity');
+
+        $this->assertTrue($solr->query instanceof FindByIdentifierQuery);
+        $this->assertEquals('*:*', $solr->query->getQuery());
+        $this->assertEquals('id:validtestentity_2', $solr->query->getFilterQuery('id')->getQuery());
     }
 
     public function testFindAll()
     {
-        $document = new Document();
-        $document->addField('id', 2);
-        $document->addField('document_name_s', 'post');
-
-        $metaFactory = $this->getMock(
-            'FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory',
-            array(),
-            array(),
-            '',
-            false
-        );
+        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
         $metaFactory->expects($this->once())
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
         $mapper->expects($this->once())
-            ->method('toDocument')
-            ->will($this->returnValue($document));
-
-        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
-        $solr->expects($this->exactly(2))
-            ->method('getMapper')
-            ->will($this->returnValue($mapper));
-
-        $solr->expects($this->once())
-            ->method('getCommandFactory')
-            ->will($this->returnValue(CommandFactoryStub::getFactoryWithAllMappingCommand()));
-
-        $solr->expects($this->once())
-            ->method('getMetaFactory')
-            ->will($this->returnValue($metaFactory));
+            ->method('setHydrationMode')
+            ->with(HydrationModes::HYDRATE_DOCTRINE);
 
         $entity = new ValidTestEntity();
-        $solr->expects($this->once())
-            ->method('query')
-            ->will($this->returnValue(array($entity)));
+
+        $solr = new SolrClientFake();
+        $solr->mapper = $mapper;
+        $solr->metaFactory = $metaFactory;
+        $solr->response = array($entity);
 
         $repo = new Repository($solr, $entity);
         $actual = $repo->findAll();
 
         $this->assertTrue(is_array($actual));
 
-        $this->assertNull($document->id, 'id was removed');
+        $this->assertTrue($solr->query instanceof FindByDocumentNameQuery);
+        $this->assertEquals('*:*', $solr->query->getQuery());
+        $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
     }
 
     public function testFindBy()
@@ -116,45 +90,67 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $metaFactory = $this->getMock(
-            'FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory',
-            array(),
-            array(),
-            '',
-            false
-        );
-        $metaFactory->expects($this->once())
+        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory->expects($this->exactly(2))
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
-        $query = $this->getMock('FS\SolrBundle\Query\SolrQuery', array(), array(), '', false);
-        $query->expects($this->exactly(3))
-            ->method('addSearchTerm');
-
-        $query->expects($this->once())
-            ->method('getHelper')
-            ->will($this->returnValue(new Helper()));
-
-        $solr->expects($this->once())
-            ->method('createQuery')
-            ->will($this->returnValue($query));
-
-        $solr->expects($this->once())
-            ->method('query')
-            ->with($query)
-            ->will($this->returnValue(array()));
-
-        $solr->expects($this->once())
-            ->method('getMetaFactory')
-            ->will($this->returnValue($metaFactory));
+        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper->expects($this->once())
+            ->method('setHydrationMode')
+            ->with(HydrationModes::HYDRATE_DOCTRINE);
 
         $entity = new ValidTestEntity();
+
+        $solr = new SolrClientFake();
+        $solr->mapper = $mapper;
+        $solr->metaFactory = $metaFactory;
+        $solr->response = array($entity);
+
         $repo = new Repository($solr, $entity);
 
         $found = $repo->findBy($fields);
 
         $this->assertTrue(is_array($found));
+
+        $this->assertTrue($solr->query instanceof AbstractQuery);
+        $this->assertEquals('title_s:foo AND text_t:bar', $solr->query->getQuery());
+        $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
+    }
+
+    public function testFindOneBy()
+    {
+        $fields = array(
+            'title' => 'foo',
+            'text' => 'bar'
+        );
+
+        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory->expects($this->exactly(2))
+            ->method('loadInformation')
+            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+
+        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper->expects($this->once())
+            ->method('setHydrationMode')
+            ->with(HydrationModes::HYDRATE_DOCTRINE);
+
+        $entity = new ValidTestEntity();
+
+        $solr = new SolrClientFake();
+        $solr->mapper = $mapper;
+        $solr->metaFactory = $metaFactory;
+        $solr->response = array($entity);
+
+        $repo = new Repository($solr, $entity);
+
+        $found = $repo->findOneBy($fields);
+
+        $this->assertEquals($entity, $found);
+
+        $this->assertTrue($solr->query instanceof AbstractQuery);
+        $this->assertEquals('title_s:foo AND text_t:bar', $solr->query->getQuery());
+        $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
     }
 
 }
