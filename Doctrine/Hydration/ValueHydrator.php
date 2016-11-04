@@ -4,6 +4,9 @@ namespace FS\SolrBundle\Doctrine\Hydration;
 
 use Doctrine\Common\Collections\Collection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Hydration\PropertyAccessor\MethodCallPropertyAccessor;
+use FS\SolrBundle\Doctrine\Hydration\PropertyAccessor\PrivatePropertyAccessor;
+use FS\SolrBundle\Doctrine\Hydration\PropertyAccessor\PropertyAccessorInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
@@ -12,10 +15,19 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 class ValueHydrator implements HydratorInterface
 {
     /**
+     * @var PropertyAccessorInterface[]
+     */
+    private $cache;
+
+    /**
      * {@inheritdoc}
      */
     public function hydrate($document, MetaInformationInterface $metaInformation)
     {
+        if (!isset($this->cache[$metaInformation->getDocumentName()])) {
+            $this->cache[$metaInformation->getDocumentName()] = array();
+        }
+
         $targetEntity = $metaInformation->getEntity();
 
         $reflectionClass = new \ReflectionClass($targetEntity);
@@ -30,12 +42,24 @@ class ValueHydrator implements HydratorInterface
                 continue;
             }
 
+            if (isset($this->cache[$metaInformation->getDocumentName()][$property])) {
+                $this->cache[$metaInformation->getDocumentName()][$property]->setValue($targetEntity, $value);
+
+                continue;
+            }
+
             // find setter method
             $camelCasePropertyName = $this->toCamelCase($this->removeFieldSuffix($property));
             $setterMethodName = 'set'.ucfirst($camelCasePropertyName);
-            if ($reflectionClass->hasMethod($setterMethodName)) {
-                $reflectionClass->getMethod($setterMethodName)->invokeArgs($targetEntity, array($value));
+            if (method_exists($targetEntity, $setterMethodName)) {
+                $accessor = new MethodCallPropertyAccessor($setterMethodName);
+                $accessor->setValue($targetEntity, $value);
+
+                $this->cache[$metaInformation->getDocumentName()][$property] = $accessor;
+
+                continue;
             }
+
 
             if ($reflectionClass->hasProperty($this->removeFieldSuffix($property))) {
                 $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
@@ -49,8 +73,10 @@ class ValueHydrator implements HydratorInterface
                 $classProperty = $reflectionClass->getProperty($camelCasePropertyName);
             }
 
-            $classProperty->setAccessible(true);
-            $classProperty->setValue($targetEntity, $value);
+            $accessor = new PrivatePropertyAccessor($classProperty);
+            $accessor->setValue($targetEntity, $value);
+
+            $this->cache[$metaInformation->getDocumentName()][$property] = $accessor;
         }
 
         return $targetEntity;

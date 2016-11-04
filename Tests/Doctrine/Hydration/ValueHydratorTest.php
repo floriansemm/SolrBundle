@@ -56,8 +56,6 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('value 1234', $entity->getField());
     }
 
-
-
     /**
      * @test
      */
