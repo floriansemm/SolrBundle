@@ -11,7 +11,6 @@
     <services>
         <service id="solr.client" class="%solr.class%">
             <argument type="service" id="solr.client.adapter"/>
-            <argument type="service" id="solr.mapping.factory"/>
             <argument type="service" id="event_dispatcher"/>
             <argument type="service" id="solr.meta.information.factory"/>
             <argument type="service" id="solr.doctrine.entity_mapper"/>
@@ -51,21 +50,10 @@
             <argument type="service" id="solr.doctrine.annotation.annotation_reader" />
         </service>
 
-        <service id="solr.mapping.factory" class="FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory" public="false"/>
-
         <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases"/>
 
         <service id="solr.doctrine.classnameresolver" class="FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces"/>
-        </service>
-
-        <service id="solr.mapping.all" class="FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand" public="false">
-            <argument type="service" id="solr.meta.information.factory"/>
-            <tag name="solr.document.command" command="all"/>
-        </service>
-
-        <service id="solr.mapping.identifier" class="FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand" public="false">
-            <tag name="solr.document.command" command="identifier"/>
         </service>
 
         <service id="solr.doctrine.entity_mapper" class="FS\SolrBundle\Doctrine\Mapper\EntityMapper">

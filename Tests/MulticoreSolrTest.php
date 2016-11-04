@@ -65,7 +65,7 @@ class MulticoreSolrTest extends AbstractSolrTest
         $metaInformation->setIndex('*');
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument(new ValidTestEntity());
     }
 
@@ -101,7 +101,7 @@ class MulticoreSolrTest extends AbstractSolrTest
         $metaInformation->setIndex('*');
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->updateDocument(new ValidTestEntity());
     }
 
@@ -142,7 +142,7 @@ class MulticoreSolrTest extends AbstractSolrTest
         $this->solrClientFake->expects($this->exactly(2))
             ->method('update');
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->removeDocument(new ValidTestEntity());
     }
 }

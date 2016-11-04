@@ -3,6 +3,8 @@
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
+use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
+use FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Query\QueryBuilder;
 use FS\SolrBundle\Query\QueryBuilderInterface;
@@ -36,11 +38,6 @@ class Solr implements SolrInterface
     protected $entityMapper = null;
 
     /**
-     * @var CommandFactory
-     */
-    protected $commandFactory = null;
-
-    /**
      * @var EventDispatcherInterface
      */
     protected $eventManager = null;
@@ -57,21 +54,18 @@ class Solr implements SolrInterface
 
     /**
      * @param Client                   $client
-     * @param CommandFactory           $commandFactory
      * @param EventDispatcherInterface $manager
      * @param MetaInformationFactory   $metaInformationFactory
      * @param EntityMapper             $entityMapper
      */
     public function __construct(
         Client $client,
-        CommandFactory $commandFactory,
         EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory,
         EntityMapper $entityMapper
     )
     {
         $this->solrClientCore = $client;
-        $this->commandFactory = $commandFactory;
         $this->eventManager = $manager;
         $this->metaInformationFactory = $metaInformationFactory;
 
@@ -188,9 +182,7 @@ class Solr implements SolrInterface
      */
     public function removeDocument($entity)
     {
-        $command = $this->commandFactory->get('identifier');
-
-        $this->entityMapper->setMappingCommand($command);
+        $this->entityMapper->setMappingCommand(new MapIdentifierCommand());
 
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
@@ -417,9 +409,7 @@ class Solr implements SolrInterface
      */
     private function toDocument(MetaInformationInterface $metaInformation)
     {
-        $command = $this->commandFactory->get('all');
-
-        $this->entityMapper->setMappingCommand($command);
+        $this->entityMapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
         $doc = $this->entityMapper->toDocument($metaInformation);
 
         return $doc;

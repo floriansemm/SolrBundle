@@ -14,7 +14,6 @@ class FSSolrBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new AddCreateDocumentCommandPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
         $container->addCompilerPass(new AddSolariumPluginsPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
     }
 }

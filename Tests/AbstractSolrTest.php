@@ -13,7 +13,6 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
 
     protected $metaFactory = null;
     protected $config = null;
-    protected $commandFactory = null;
     protected $eventDispatcher = null;
     protected $mapper = null;
     protected $solrClientFake = null;
@@ -28,7 +27,6 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             false
         );
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
-        $this->commandFactory = CommandFactoryStub::getFactoryWithAllMappingCommand();
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcher', array(), array(), '', false);
         $this->mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
 

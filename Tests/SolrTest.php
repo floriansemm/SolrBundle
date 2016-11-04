@@ -31,7 +31,7 @@ class SolrTest extends AbstractSolrTest
     {
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
 
         $this->assertTrue($query instanceof SolrQuery);
@@ -47,7 +47,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $actual = $solr->getRepository('Tests:EntityWithRepository');
 
         $this->assertTrue($actual instanceof ValidEntityRepository);
@@ -64,7 +64,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->getRepository('Tests:EntityWithInvalidRepository');
     }
 
@@ -79,7 +79,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument(new ValidTestEntity());
     }
 
@@ -94,7 +94,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->setupMetaFactoryLoadOneCompleteInformation();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->updateDocument(new ValidTestEntity());
     }
 
@@ -112,7 +112,7 @@ class SolrTest extends AbstractSolrTest
         $filteredEntity = new ValidTestEntityFiltered();
         $filteredEntity->shouldIndex = false;
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->updateDocument($filteredEntity);
     }
 
@@ -129,7 +129,7 @@ class SolrTest extends AbstractSolrTest
             ->method('toDocument')
             ->will($this->returnValue(new DocumentStub()));
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->removeDocument(new ValidTestEntity());
     }
 
@@ -144,7 +144,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertDeleteQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->clearIndex();
     }
 
@@ -160,7 +160,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertQueryWasExecuted(array(), 'index0');
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $entities = $solr->query($query);
         $this->assertEquals(0, count($entities));
@@ -181,7 +181,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertQueryWasExecuted(array($arrayObj), 'index0');
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
 
         $entities = $solr->query($query);
         $this->assertEquals(1, count($entities));
@@ -200,7 +200,7 @@ class SolrTest extends AbstractSolrTest
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -223,7 +223,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->mapOneDocument();
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
@@ -243,7 +243,7 @@ class SolrTest extends AbstractSolrTest
         $information->setSynchronizationCallback('shouldBeIndex');
         $this->setupMetaFactoryLoadOneCompleteInformation($information);
 
-        $solr = new Solr($this->solrClientFake, $this->commandFactory, $this->eventDispatcher, $this->metaFactory, $this->mapper);
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
         $solr->addDocument(new InvalidTestEntityFiltered());
     }
 
