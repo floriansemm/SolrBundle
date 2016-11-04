@@ -49,6 +49,16 @@ class ValidTestEntity
      */
     private $posts;
 
+    /**
+     * @var string
+     */
+    private $publishDate;
+
+    /**
+     * @var string
+     */
+    private $privateField;
+
     public function getId()
     {
         return $this->id;
@@ -137,6 +147,32 @@ class ValidTestEntity
     public function setPosts($posts)
     {
         $this->posts = $posts;
+    }
+
+    public function setField($field)
+    {
+        $this->privateField = $field;
+    }
+
+    public function getField()
+    {
+        return $this->privateField;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublishDate()
+    {
+        return $this->publishDate;
+    }
+
+    /**
+     * @param string $publishDate
+     */
+    public function setPublishDate($publishDate)
+    {
+        $this->publishDate = $publishDate;
     }
 }
 

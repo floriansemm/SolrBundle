@@ -33,10 +33,19 @@ class ValueHydrator implements HydratorInterface
             try {
                 $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
             } catch (\ReflectionException $e) {
+                // could no found document-field in underscore notation, transform them to camel-case notation
                 try {
-                    $propertyName = $this->toCamelCase($this->removeFieldSuffix($property));
-                    $classProperty = $reflectionClass->getProperty($propertyName);
+                    $camelCasePropertyName = $this->toCamelCase($this->removeFieldSuffix($property));
+                    $classProperty = $reflectionClass->getProperty($camelCasePropertyName);
                 } catch (\ReflectionException $e) {
+                    // target entity has no matching field, use setter
+                    $setterMethodName = 'set'.ucfirst($camelCasePropertyName);
+                    if ($reflectionClass->hasMethod($setterMethodName) == false) {
+                        continue;
+                    }
+
+                    $reflectionClass->getMethod($setterMethodName)->invokeArgs($targetEntity, array($value));
+
                     continue;
                 }
             }

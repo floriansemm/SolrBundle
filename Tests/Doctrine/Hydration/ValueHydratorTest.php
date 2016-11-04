@@ -35,7 +35,10 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
     {
         $obj = new SolrDocumentStub(array(
             'id' => 'document_1',
-            'title_t' => 'foo'
+            'title_t' => 'foo',
+            'publish_date_s' => '10.10.2016',
+            'field_s' => 'value 1234',
+            'unknown_field_s' => 'value'
         ));
 
         $entity = new ValidTestEntity();
@@ -49,6 +52,8 @@ class ValueHydratorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($hydratedDocument instanceof $entity);
         $this->assertEquals(1, $entity->getId());
         $this->assertEquals('foo', $entity->getTitle());
+        $this->assertEquals('10.10.2016', $entity->getPublishDate());
+        $this->assertEquals('value 1234', $entity->getField());
     }
 
 
