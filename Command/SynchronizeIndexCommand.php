@@ -22,20 +22,8 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     {
         $this->setName('solr:index:populate')
             ->addArgument('entity', InputArgument::OPTIONAL, 'The entity you want to index', null)
-            ->addOption(
-                'flushsize',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Number of items to handle before flushing data',
-                500
-            )
-            ->addOption(
-                'source',
-                null,
-                InputArgument::OPTIONAL,
-                'specify a source from where to load entities [relational, mongodb]',
-                'relational'
-            )
+            ->addOption('flushsize', null, InputOption::VALUE_OPTIONAL, 'Number of items to handle before flushing data', 500)
+            ->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', 'relational')
             ->setDescription('Index all entities');
     }
 
