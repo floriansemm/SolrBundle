@@ -3,6 +3,7 @@
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
+use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
@@ -56,13 +57,13 @@ class Solr implements SolrInterface
      * @param Client                   $client
      * @param EventDispatcherInterface $manager
      * @param MetaInformationFactory   $metaInformationFactory
-     * @param EntityMapper             $entityMapper
+     * @param EntityMapperInterface    $entityMapper
      */
     public function __construct(
         Client $client,
         EventDispatcherInterface $manager,
         MetaInformationFactory $metaInformationFactory,
-        EntityMapper $entityMapper
+        EntityMapperInterface $entityMapper
     )
     {
         $this->solrClientCore = $client;

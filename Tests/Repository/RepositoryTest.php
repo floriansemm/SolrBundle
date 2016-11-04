@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests\Solr\Repository;
 
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
+use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
@@ -32,7 +33,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -61,7 +62,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -95,7 +96,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -130,7 +131,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapper::class, array(), array(), '', false);
+        $mapper = $this->getMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);

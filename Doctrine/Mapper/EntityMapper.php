@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
 
-class EntityMapper
+class EntityMapper implements EntityMapperInterface
 {
     /**
      * @var AbstractDocumentCommand

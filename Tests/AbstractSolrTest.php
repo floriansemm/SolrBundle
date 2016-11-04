@@ -4,6 +4,7 @@
 namespace FS\SolrBundle\Tests;
 
 
+use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Select\Result\Result;
@@ -28,7 +29,7 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
         );
         $this->config = $this->getMock('FS\SolrBundle\SolrConnection', array(), array(), '', false);
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcher', array(), array(), '', false);
-        $this->mapper = $this->getMock('FS\SolrBundle\Doctrine\Mapper\EntityMapper', array(), array(), '', false);
+        $this->mapper = $this->getMock(EntityMapperInterface::class, array('setMappingCommand', 'toDocument', 'toEntity', 'setHydrationMode'));
 
         $this->solrClientFake = $this->getMock('Solarium\Client', array(), array(), '', false);
     }
