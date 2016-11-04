@@ -30,24 +30,23 @@ class ValueHydrator implements HydratorInterface
                 continue;
             }
 
-            try {
+            // find setter method
+            $camelCasePropertyName = $this->toCamelCase($this->removeFieldSuffix($property));
+            $setterMethodName = 'set'.ucfirst($camelCasePropertyName);
+            if ($reflectionClass->hasMethod($setterMethodName)) {
+                $reflectionClass->getMethod($setterMethodName)->invokeArgs($targetEntity, array($value));
+            }
+
+            if ($reflectionClass->hasProperty($this->removeFieldSuffix($property))) {
                 $classProperty = $reflectionClass->getProperty($this->removeFieldSuffix($property));
-            } catch (\ReflectionException $e) {
+            } else {
                 // could no found document-field in underscore notation, transform them to camel-case notation
-                try {
-                    $camelCasePropertyName = $this->toCamelCase($this->removeFieldSuffix($property));
-                    $classProperty = $reflectionClass->getProperty($camelCasePropertyName);
-                } catch (\ReflectionException $e) {
-                    // target entity has no matching field, use setter
-                    $setterMethodName = 'set'.ucfirst($camelCasePropertyName);
-                    if ($reflectionClass->hasMethod($setterMethodName) == false) {
-                        continue;
-                    }
-
-                    $reflectionClass->getMethod($setterMethodName)->invokeArgs($targetEntity, array($value));
-
+                $camelCasePropertyName = $this->toCamelCase($this->removeFieldSuffix($property));
+                if ($reflectionClass->hasProperty($camelCasePropertyName) == false) {
                     continue;
                 }
+
+                $classProperty = $reflectionClass->getProperty($camelCasePropertyName);
             }
 
             $classProperty->setAccessible(true);
