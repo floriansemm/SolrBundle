@@ -363,6 +363,7 @@ class Solr implements SolrInterface
         $buffer = $this->solrClientCore->getPlugin('bufferedadd');
         $buffer->setBufferSize(500);
 
+        $allDocuments = array();
         foreach ($entities as $entity) {
             $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
@@ -372,10 +373,15 @@ class Solr implements SolrInterface
 
             $doc = $this->toDocument($metaInformations);
 
-            $buffer->addDocument($doc);
+            $allDocuments[$metaInformations->getIndex()][] = $doc;
         }
 
-        $buffer->commit();
+        foreach ($allDocuments as $core => $documents) {
+            $buffer->addDocuments($documents);
+            $buffer->setEndpoint($core);
+
+            $buffer->commit();
+        }
     }
 
     /**
