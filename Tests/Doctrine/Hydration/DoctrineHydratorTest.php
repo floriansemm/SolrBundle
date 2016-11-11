@@ -52,16 +52,9 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
 
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
 
-        $obj = new SolrDocumentStub(array());
-        $obj->id = 'document_1';
+        $obj = new SolrDocumentStub(array('id' => 'document_1'));
 
-        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
-        $hydrator->expects($this->once())
-            ->method('hydrate')
-            ->with($obj, $metainformations)
-            ->will($this->returnValue($fetchedFromDoctrine));
-
-        $doctrine = new DoctrineHydrator($doctrineRegistry, $hydrator);
+        $doctrine = new DoctrineHydrator($doctrineRegistry, new ValueHydrator());
         $hydratedDocument = $doctrine->hydrate($obj, $metainformations);
 
         $this->assertEntityFromDBReplcesTargetEntity($metainformations, $fetchedFromDoctrine, $hydratedDocument);
@@ -96,9 +89,9 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
 
         $obj = new SolrDocumentStub(array(
+            'id' => 'document_1',
             'posts_ss' => array('title 1', 'title 2')
         ));
-        $obj->id = 'document_1';
 
         $doctrineHydrator = new DoctrineHydrator($doctrineRegistry, new DoctrineValueHydrator());
 
@@ -127,14 +120,9 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
 
         $doctrineRegistry = $this->setupDoctrineRegistry($metainformations, $repository);
 
-        $obj = new SolrDocumentStub(array());
-        $obj->id = 'document_1';
+        $obj = new SolrDocumentStub(array('id' => 'document_1'));
 
-        $hydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
-        $hydrator->expects($this->once())
-            ->method('hydrate')
-            ->with($obj, $metainformations)
-            ->will($this->returnValue($entity));
+        $hydrator = new ValueHydrator();
 
         $doctrine = new DoctrineHydrator($doctrineRegistry, $hydrator);
         $hydratedDocument = $doctrine->hydrate($obj, $metainformations);

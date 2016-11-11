@@ -12,7 +12,7 @@ class NoDatabaseValueHydrator extends ValueHydrator
      *
      * {@inheritdoc}
      */
-    protected function removePrefixedKeyValues($property)
+    public function removePrefixedKeyValues($property)
     {
         return $property;
     }

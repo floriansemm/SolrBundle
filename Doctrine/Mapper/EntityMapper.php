@@ -90,12 +90,9 @@ class EntityMapper implements EntityMapperInterface
             throw new \RuntimeException(sprintf('Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.'));
         }
 
-        $hydratedDocument = $this->indexHydrator->hydrate($document, $metaInformation);
         if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {
-            return $hydratedDocument;
+            return $this->indexHydrator->hydrate($document, $metaInformation);
         }
-
-        $metaInformation->setEntity($hydratedDocument);
 
         if ($this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
             return $this->doctrineHydrator->hydrate($document, $metaInformation);

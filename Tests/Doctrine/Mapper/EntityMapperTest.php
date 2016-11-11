@@ -2,13 +2,20 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Hydration\IndexHydrator;
+use FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator;
+use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  *
@@ -60,7 +67,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator->expects($this->never())
             ->method('hydrate');
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setHydrationMode(HydrationModes::HYDRATE_INDEX);
         $entity = $mapper->toEntity(new SolrDocumentStub(), $targetEntity);
 
@@ -70,31 +77,41 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
     public function testToEntity_ConcreteDocumentClass_WithDoctrine()
     {
         $targetEntity = new ValidTestEntity();
+        $targetEntity->setField('a value');
 
-        $this->indexHydrator->expects($this->once())
-            ->method('hydrate')
-            ->will($this->returnValue($targetEntity));
+        $this->indexHydrator = new IndexHydrator(new NoDatabaseValueHydrator());
 
-        $this->doctrineHydrator->expects($this->once())
-            ->method('hydrate')
-            ->will($this->returnValue($targetEntity));
+        $this->doctrineHydrator = new DoctrineHydrator($this->setupDoctrineRegistry($targetEntity, 1), new ValueHydrator());
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
-        $entity = $mapper->toEntity(new Document(array()), $targetEntity);
+        $entity = $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
+
+        $this->assertEquals('a value', $entity->getField());
+        $this->assertEquals('value from index', $entity->getTitle());
     }
 
-    public function ToCamelCase()
+    private function setupDoctrineRegistry($entity, $expectedEntityId)
     {
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $repository = $this->getMock(ObjectRepository::class);
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($expectedEntityId)
+            ->will($this->returnValue($entity));
 
-        $meta = new \ReflectionClass($mapper);
-        $method = $meta->getMethod('toCamelCase');
-        $method->setAccessible(true);
-        $calmelCased = $method->invoke($mapper, 'test_underline');
-        $this->assertEquals('testUnderline', $calmelCased);
+        $manager = $this->getMock(ObjectManager::class);
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->will($this->returnValue($repository));
+
+        $registry = $this->getMock(RegistryInterface::class);
+        $registry->expects($this->once())
+            ->method('getManager')
+            ->will($this->returnValue($manager));
+
+        return $registry;
     }
 }
 

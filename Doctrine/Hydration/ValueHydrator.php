@@ -107,7 +107,7 @@ class ValueHydrator implements HydratorInterface
      *
      * @return string
      */
-    protected function removePrefixedKeyValues($value)
+    public function removePrefixedKeyValues($value)
     {
         if (($pos = strrpos($value, '_')) !== false) {
             return substr($value, ($pos + 1));
