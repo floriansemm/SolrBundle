@@ -43,7 +43,7 @@ class CrudFeatureContext extends FeatureContext
     }
 
     /**
-     * @Then /^should no error occurre$/
+     * @Then /^should no error occur$/
      */
     public function shouldNoErrorOccurre()
     {
