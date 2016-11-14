@@ -19,21 +19,21 @@ class ValidTestEntity
     /**
      * @Solr\Field(type="text")
      *
-     * @var text
+     * @var string
      */
     private $text;
 
     /**
      * @Solr\Field()
      *
-     * @var text
+     * @var string
      */
     private $title;
 
     /**
      * @Solr\Field(type="date", getter="format('d.m.Y')")
      *
-     * @var date
+     * @var \DateTime
      */
     private $created_at;
 
@@ -59,18 +59,24 @@ class ValidTestEntity
      */
     private $privateField;
 
+    /**
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     */
     public function setId($id)
     {
         $this->id = $id;
     }
 
     /**
-     * @return the $text
+     * @return string $text
      */
     public function getText()
     {
@@ -78,7 +84,7 @@ class ValidTestEntity
     }
 
     /**
-     * @return the $title
+     * @return string $title
      */
     public function getTitle()
     {
@@ -86,7 +92,7 @@ class ValidTestEntity
     }
 
     /**
-     * @param \FS\BlogBundle\Tests\Solr\Doctrine\Mapper\text $text
+     * @param string $text
      */
     public function setText($text)
     {
@@ -94,7 +100,7 @@ class ValidTestEntity
     }
 
     /**
-     * @param \FS\BlogBundle\Tests\Solr\Doctrine\Mapper\text $title
+     * @param string $title
      */
     public function setTitle($title)
     {
@@ -118,7 +124,7 @@ class ValidTestEntity
     }
 
     /**
-     * @return \FS\SolrBundle\Tests\Doctrine\Mapper\date
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -126,7 +132,7 @@ class ValidTestEntity
     }
 
     /**
-     * @param \FS\SolrBundle\Tests\Doctrine\Mapper\date $created_at
+     * @param \DateTime $created_at
      */
     public function setCreatedAt($created_at)
     {
@@ -149,11 +155,17 @@ class ValidTestEntity
         $this->posts = $posts;
     }
 
+    /**
+     * @param string $field
+     */
     public function setField($field)
     {
         $this->privateField = $field;
     }
 
+    /**
+     * @return string
+     */
     public function getField()
     {
         return $this->privateField;
