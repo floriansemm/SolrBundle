@@ -33,6 +33,11 @@ class Field extends Annotation
     public $getter;
 
     /**
+     * @var string
+     */
+    public $fieldModifier;
+
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array();
@@ -108,6 +113,14 @@ class Field extends Annotation
     public function getGetterName()
     {
         return $this->getter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldModifier()
+    {
+        return $this->fieldModifier;
     }
 
     /**

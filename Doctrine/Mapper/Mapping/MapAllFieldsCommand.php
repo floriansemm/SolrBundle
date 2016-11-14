@@ -54,6 +54,10 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
             } else {
                 $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
             }
+
+            if ($field->getFieldModifier()) {
+                $document->setFieldModifier($field->getNameWithAlias(), $field->getFieldModifier());
+            }
         }
 
         return $document;
