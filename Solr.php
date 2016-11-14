@@ -378,6 +378,10 @@ class Solr implements SolrInterface
 
         foreach ($allDocuments as $core => $documents) {
             $buffer->addDocuments($documents);
+
+            if ($core == '') {
+                $core = null;
+            }
             $buffer->setEndpoint($core);
 
             $buffer->commit();
