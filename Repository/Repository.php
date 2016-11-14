@@ -133,12 +133,10 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param string $entity
-     *
      * @return QueryBuilderInterface
      */
-    public function getQueryBuilder($entity)
+    public function getQueryBuilder()
     {
-        return $this->solr->getQueryBuilder($entity);
+        return $this->solr->getQueryBuilder($this->entity);
     }
 }
