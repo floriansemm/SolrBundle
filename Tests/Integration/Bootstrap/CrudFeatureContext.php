@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Tests\Util\EntityIdentifier;
@@ -23,6 +24,16 @@ class CrudFeatureContext extends FeatureContext
     const DOCUMENT_NAME = 'validtestentity';
 
     /**
+     * @Given /^the index is empty$/
+     */
+    public function theIndexIsEmpty()
+    {
+        $this->solr = $this->getSolrInstance();
+
+        $this->solr->clearIndex();
+    }
+
+    /**
      * @Given /^I have a Doctrine entity$/
      */
     public function iHaveADoctrineEntity()
@@ -40,6 +51,33 @@ class CrudFeatureContext extends FeatureContext
     public function iAddThisEntityToSolr()
     {
         $this->solr->addDocument($this->entity);
+    }
+
+    /**
+     * @When /^I add another entity to Solr$/
+     */
+    public function iAddAnotherEntityToSolr()
+    {
+        $entity = new ValidTestEntity();
+        $entity->setId(EntityIdentifier::generate());
+        $entity->setText('a Text 123');
+
+        $this->solr->addDocument($entity);
+    }
+
+    /**
+     * @When /^the index should not be empty$/
+     */
+    public function andTheIndexShouldNotBeEmpty()
+    {
+        $query = $this->solr->createQuery(ValidTestEntity::class);
+        $query->setHydrationMode(HydrationModes::HYDRATE_INDEX);
+
+        $documents = $query->getResult();
+
+        if (count($documents) == 0) {
+            throw new \RuntimeException('The index should not be empty');
+        }
     }
 
     /**
