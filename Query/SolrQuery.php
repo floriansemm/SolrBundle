@@ -151,6 +151,18 @@ class SolrQuery extends AbstractQuery
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function addFilterQuery($filterQuery)
+    {
+        if ($this->getFilterQuery('id')) {
+            return $this;
+        }
+
+        return parent::addFilterQuery($filterQuery);
+    }
+
+    /**
      * @return string
      */
     public function getQuery()
