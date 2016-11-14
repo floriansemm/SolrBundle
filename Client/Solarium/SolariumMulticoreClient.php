@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Client\Solarium;
 
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Query\DeleteDocumentQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use Solarium\Core\Query\QueryInterface;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
@@ -48,7 +49,7 @@ class SolariumMulticoreClient
         $documentFields = $document->getFields();
         $documentKey = $documentFields[MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME];
 
-        $deleteQuery = new FindByIdentifierQuery();
+        $deleteQuery = new DeleteDocumentQuery();
         $deleteQuery->setDocument($document);
         $deleteQuery->setDocumentKey($documentKey);
 
