@@ -26,6 +26,10 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     private $doctrineHydrator = null;
     private $indexHydrator = null;
+
+    /**
+     * @var MetaInformationFactory
+     */
     private $metaInformationFactory;
 
     public function setUp()
@@ -37,7 +41,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testToDocument_EntityMayNotIndexed()
     {
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertNull($actual);
@@ -47,13 +51,29 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
 
-        $mapper = new \FS\SolrBundle\Doctrine\Mapper\EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setMappingCommand(new MapAllFieldsCommand(new MetaInformationFactory($reader)));
 
         $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertTrue($actual instanceof Document);
 
         $this->assertNotNull($actual->id);
+    }
+
+    /**
+     * @test
+     */
+    public function setFieldModifier()
+    {
+        $annotationReader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
+
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
+
+        $actualDocument = $mapper->toDocument($this->metaInformationFactory->loadInformation(new PartialUpdateEntity()));
+
+        $this->assertEquals('set', $actualDocument->getFieldModifier('subtitle'));
+        $this->assertNull($actualDocument->getFieldModifier('title'));
     }
 
     public function testToEntity_WithDocumentStub_HydrateIndexOnly()
