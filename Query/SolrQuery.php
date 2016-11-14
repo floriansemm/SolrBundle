@@ -97,7 +97,7 @@ class SolrQuery extends AbstractQuery
     }
 
     /**
-     * @param array $value
+     * @param string $value
      */
     public function queryAllFields($value)
     {
