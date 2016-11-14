@@ -2,8 +2,12 @@
 
 namespace FS\SolrBundle\Tests;
 
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
+use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore0;
+use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore1;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Tests\ResultFake;
 use FS\SolrBundle\Tests\SolrResponseFake;
@@ -18,6 +22,7 @@ use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Query\SolrQuery;
+use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 /**
@@ -247,6 +252,64 @@ class SolrTest extends AbstractSolrTest
         $solr->addDocument(new InvalidTestEntityFiltered());
     }
 
+    /**
+     * @test
+     */
+    public function indexDocumentsGroupedByCore()
+    {
+        $entity = new ValidTestEntity();
+        $entity->setTitle('title field');
+
+        $bufferPlugin = $this->getMock(BufferedAdd::class, array(), array(), '', false);
+
+        $bufferPlugin->expects($this->once())
+            ->method('setEndpoint')
+            ->with(null);
+
+        $bufferPlugin->expects($this->once())
+            ->method('commit');
+
+        $this->solrClientFake->expects($this->once())
+            ->method('getPlugin')
+            ->with('bufferedadd')
+            ->will($this->returnValue($bufferPlugin));
+
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader())), $this->mapper);
+        $solr->synchronizeIndex(array($entity));
+    }
+
+    /**
+     * @test
+     */
+    public function setCoreToNullIfNoIndexExists()
+    {
+        $entity1 = new EntityCore0();
+        $entity1->setText('a text');
+
+        $entity2 = new EntityCore1();
+        $entity2->setText('a text');
+
+        $bufferPlugin = $this->getMock(BufferedAdd::class, array(), array(), '', false);
+
+        $bufferPlugin->expects($this->at(2))
+            ->method('setEndpoint')
+            ->with('core0');
+
+        $bufferPlugin->expects($this->at(5))
+            ->method('setEndpoint')
+            ->with('core1');
+
+        $bufferPlugin->expects($this->exactly(2))
+            ->method('commit');
+
+        $this->solrClientFake->expects($this->once())
+            ->method('getPlugin')
+            ->with('bufferedadd')
+            ->will($this->returnValue($bufferPlugin));
+
+        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader())), $this->mapper);
+        $solr->synchronizeIndex(array($entity1, $entity2));
+    }
 }
 
 
