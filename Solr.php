@@ -187,9 +187,10 @@ class Solr implements SolrInterface
 
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
+        $event = new Event($this->solrClientCore, $metaInformations);
+        $this->eventManager->dispatch(Events::PRE_DELETE, $event);
+
         if ($document = $this->entityMapper->toDocument($metaInformations)) {
-            $event = new Event($this->solrClientCore, $metaInformations);
-            $this->eventManager->dispatch(Events::PRE_DELETE, $event);
 
             try {
                 $indexName = $metaInformations->getIndex();
@@ -219,10 +220,10 @@ class Solr implements SolrInterface
             return false;
         }
 
-        $doc = $this->toDocument($metaInformation);
-
         $event = new Event($this->solrClientCore, $metaInformation);
         $this->eventManager->dispatch(Events::PRE_INSERT, $event);
+
+        $doc = $this->toDocument($metaInformation);
 
         $this->addDocumentToIndex($doc, $metaInformation, $event);
 
@@ -401,10 +402,10 @@ class Solr implements SolrInterface
             return false;
         }
 
-        $doc = $this->toDocument($metaInformations);
-
         $event = new Event($this->solrClientCore, $metaInformations);
         $this->eventManager->dispatch(Events::PRE_UPDATE, $event);
+
+        $doc = $this->toDocument($metaInformations);
 
         $this->addDocumentToIndex($doc, $metaInformations, $event);
 
