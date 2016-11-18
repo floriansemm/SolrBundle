@@ -253,30 +253,6 @@ class Solr implements SolrInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function computeChangeSet(array $doctrineChangeSet, $entity)
-    {
-        /* If not set, act the same way as if there are changes */
-        if (empty($doctrineChangeSet)) {
-            return array();
-        }
-
-        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
-
-        $documentChangeSet = array();
-
-        /* Check all Solr fields on this entity and check if this field is in the change set */
-        foreach ($metaInformation->getFields() as $field) {
-            if (array_key_exists($field->name, $doctrineChangeSet)) {
-                $documentChangeSet[] = $field->name;
-            }
-        }
-
-        return $documentChangeSet;
-    }
-
-    /**
      * Get select query
      *
      * @param AbstractQuery $query

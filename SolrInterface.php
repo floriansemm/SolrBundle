@@ -45,14 +45,6 @@ interface SolrInterface
     public function getRepository($entityAlias);
 
     /**
-     * @param array  $doctrineChangeSet
-     * @param object $entity
-     *
-     * @return array
-     */
-    public function computeChangeSet(array $doctrineChangeSet, $entity);
-
-    /**
      * @param string $entityAlias
      *
      * @return QueryBuilderInterface

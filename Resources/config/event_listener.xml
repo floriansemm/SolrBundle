@@ -7,6 +7,7 @@
     <services>
         <service id="solr.document.orm.subscriber" class="FS\SolrBundle\Doctrine\ORM\Listener\EntityIndexerSubscriber" public="false">
             <argument type="service" id="solr.client"/>
+            <argument type="service" id="solr.meta.information.factory"/>
             <argument type="service" id="logger"/>
 
             <tag name="monolog.logger" channel="solr" />
@@ -14,6 +15,7 @@
 
         <service id="solr.document.odm.subscriber" class="FS\SolrBundle\Doctrine\ODM\Listener\DocumentIndexerSubscriber" public="false">
             <argument type="service" id="solr.client"/>
+            <argument type="service" id="solr.meta.information.factory"/>
             <argument type="service" id="logger"/>
 
             <tag name="monolog.logger" channel="solr" />

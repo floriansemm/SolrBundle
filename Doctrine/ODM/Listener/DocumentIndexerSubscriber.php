@@ -4,31 +4,12 @@ namespace FS\SolrBundle\Doctrine\ODM\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use FS\SolrBundle\Doctrine\AbstractIndexingListener;
 use FS\SolrBundle\SolrInterface;
 use Psr\Log\LoggerInterface;
 
-class DocumentIndexerSubscriber implements EventSubscriber
+class DocumentIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
-    /**
-     * @var SolrInterface
-     */
-    private $solr = null;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param SolrInterface   $solr
-     * @param LoggerInterface $logger
-     */
-    public function __construct(SolrInterface $solr, LoggerInterface $logger)
-    {
-        $this->solr = $solr;
-        $this->logger = $logger;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -47,7 +28,7 @@ class DocumentIndexerSubscriber implements EventSubscriber
         try {
             $doctrineChangeSet = $args->getDocumentManager()->getUnitOfWork()->getDocumentChangeSet($document);
 
-            if (count($this->solr->computeChangeSet($doctrineChangeSet, $document)) === 0) {
+            if ($this->hasChanged($doctrineChangeSet, $document) == false) {
                 return;
             }
 
