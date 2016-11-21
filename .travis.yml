@@ -8,7 +8,7 @@ php:
   - 7.0
 before_script:
     - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev
+    - php composer.phar update
     - curl -sSL https://raw.githubusercontent.com/floriansemm/travis-solr/master/travis-solr.sh | SOLR_CORE=core0 DEBUG=1 SOLR_VERSION=4.8.0 SOLR_CONFS="Tests/Resources/config/schema.xml" bash
 
 script:
