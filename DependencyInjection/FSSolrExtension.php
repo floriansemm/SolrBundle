@@ -113,6 +113,7 @@ class FSSolrExtension extends Extension
 
     /**
      * @param ContainerBuilder $container
+     *
      * @return boolean
      */
     private function isODMConfigured(ContainerBuilder $container)
@@ -122,6 +123,7 @@ class FSSolrExtension extends Extension
 
     /**
      * @param ContainerBuilder $container
+     *
      * @return boolean
      */
     private function isOrmConfigured(ContainerBuilder $container)

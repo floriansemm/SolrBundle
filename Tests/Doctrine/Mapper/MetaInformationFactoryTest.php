@@ -6,6 +6,7 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
  *
@@ -141,6 +142,28 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expected = $entityClassname;
         $this->assertEquals($expected, $informations->getClassName(), 'class from fullclassname not discovered');
+    }
+
+    /**
+     * @test
+     */
+    public function determineDoctrineMapperTypeFromEntity()
+    {
+        $factory = new MetaInformationFactory($this->reader);
+        $metainformation = $factory->loadInformation(new ValidTestEntity());
+
+        $this->assertEquals(MetaInformationInterface::DOCTRINE_MAPPER_TYPE_RELATIONAL, $metainformation->getDoctrineMapperType());
+    }
+
+    /**
+     * @test
+     */
+    public function determineDoctrineMapperTypeFromDocument()
+    {
+        $factory = new MetaInformationFactory($this->reader);
+        $metainformation = $factory->loadInformation(new ValidOdmTestDocument());
+
+        $this->assertEquals(MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT, $metainformation->getDoctrineMapperType());
     }
 }
 

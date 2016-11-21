@@ -71,6 +71,11 @@ class MetaInformation implements MetaInformationInterface
     private $isDoctrineEntity;
 
     /**
+     * @var string
+     */
+    private $doctrineMapperType;
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityId()
@@ -346,5 +351,21 @@ class MetaInformation implements MetaInformationInterface
     public function getIdentifierFieldName()
     {
         return $this->identifier->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDoctrineMapperType()
+    {
+        return $this->doctrineMapperType;
+    }
+
+    /**
+     * @param string $doctrineMapperType
+     */
+    public function setDoctrineMapperType($doctrineMapperType)
+    {
+        $this->doctrineMapperType = $doctrineMapperType;
     }
 }

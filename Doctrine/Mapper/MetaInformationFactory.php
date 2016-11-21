@@ -70,9 +70,44 @@ class MetaInformationFactory
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
         $metaInformation->setSynchronizationCallback($this->annotationReader->getSynchronizationCallback($entity));
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
-        $metaInformation->setIsDoctrineEntity($this->annotationReader->isDoctrineEntity($entity));
+        $metaInformation->setIsDoctrineEntity($this->isDoctrineEntity($entity));
+        $metaInformation->setDoctrineMapperType($this->getDoctrineMapperType($entity));
 
         return $metaInformation;
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    private function isDoctrineEntity($entity)
+    {
+        if ($this->annotationReader->isOrm($entity) || $this->annotationReader->isOdm($entity)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return string
+     */
+    private function getDoctrineMapperType($entity)
+    {
+        if ($this->isDoctrineEntity($entity) == false) {
+            return '';
+        }
+
+        if ($this->annotationReader->isOdm($entity)) {
+            return MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT;
+        }
+
+        if ($this->annotationReader->isOrm($entity)) {
+            return MetaInformationInterface::DOCTRINE_MAPPER_TYPE_RELATIONAL;
+        }
     }
 
     /**

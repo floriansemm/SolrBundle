@@ -216,9 +216,25 @@ class AnnotationReader
      *
      * @return bool
      */
-    public function isDoctrineEntity($entity)
+    public function isOrm($entity)
     {
         $annotation = $this->getClassAnnotation($entity, 'Doctrine\ORM\Mapping\Entity');
+
+        if ($annotation === null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isOdm($entity)
+    {
+        $annotation = $this->getClassAnnotation($entity, 'Doctrine\ODM\MongoDB\Mapping\Annotations\Document');
 
         if ($annotation === null) {
             return false;

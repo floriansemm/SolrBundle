@@ -61,7 +61,7 @@ class Solr implements SolrInterface
      */
     public function __construct(
         Client $client,
-        EventDispatcherInterface $manager,
+        EventDispatcherInterface $manager = null,
         MetaInformationFactory $metaInformationFactory,
         EntityMapperInterface $entityMapper
     )
@@ -87,14 +87,6 @@ class Solr implements SolrInterface
     public function getMapper()
     {
         return $this->entityMapper;
-    }
-
-    /**
-     * @return CommandFactory
-     */
-    public function getCommandFactory()
-    {
-        return $this->commandFactory;
     }
 
     /**
