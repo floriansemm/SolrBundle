@@ -21,9 +21,8 @@
   },
   "require-dev": {
     "behat/behat": "^3.1",
-    "alcaeus/mongo-php-adapter": "^1.0",
     "doctrine/mongodb-odm-bundle": "*",
-    "doctrine/orm": "^2.3"
+    "doctrine/doctrine-bundle": "^2.3"
   },
   "minimum-stability": "beta",
   "autoload": {
@@ -35,7 +34,7 @@
     "bin-dir": "bin"
   },
   "suggest": {
-    "doctrine/orm": "Required if you want to use the Doctrine ORM",
+    "doctrine/doctrine-bundle": "Required if you want to use the Doctrine ORM",
     "doctrine/mongodb-odm-bundle": "Required if you want to use the MongoDB ODM"
   },
   "target-dir": "FS/SolrBundle"
