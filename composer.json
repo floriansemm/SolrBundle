@@ -21,6 +21,7 @@
   },
   "require-dev": {
     "behat/behat": "^3.1",
+    "alcaeus/mongo-php-adapter": "^1.0",
     "doctrine/mongodb": "*",
     "doctrine/mongodb-odm": "*",
     "doctrine/orm": "^2.3"
