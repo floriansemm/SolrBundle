@@ -26,7 +26,7 @@ class DoctrineHydratorFactory
     {
         $valueHydrator = $this->container->get('solr.doctrine.hydration.doctrine_value_hydrator');
 
-        $hydrator = new DoctrineHydrator($valueHydrator, $this->container->get('doctrine'), $this->container->get('doctrine_mongodb'));
+        $hydrator = new DoctrineHydrator($valueHydrator);
         if ($this->container->has('doctrine')) {
             $hydrator->setOrmManager($this->container->get('doctrine'));
         }
