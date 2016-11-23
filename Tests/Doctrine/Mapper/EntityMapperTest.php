@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
 use FS\SolrBundle\Doctrine\Hydration\IndexHydrator;
 use FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
@@ -31,8 +32,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
-        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
+        $this->doctrineHydrator = $this->createMock(HydratorInterface::class);
+        $this->indexHydrator = $this->createMock(HydratorInterface::class);
         $this->metaInformationFactory = new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
     }
 
@@ -134,18 +135,18 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     private function setupOrmManager($entity, $expectedEntityId)
     {
-        $repository = $this->getMock(ObjectRepository::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with($expectedEntityId)
             ->will($this->returnValue($entity));
 
-        $manager = $this->getMock(ObjectManager::class);
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $managerRegistry = $this->getMock(ManagerRegistry::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->once())
             ->method('getManager')
             ->will($this->returnValue($manager));
@@ -155,18 +156,18 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     private function setupOdmManager($entity, $expectedEntityId)
     {
-        $repository = $this->getMock(ObjectRepository::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with($expectedEntityId)
             ->will($this->returnValue($entity));
 
-        $manager = $this->getMock(ObjectManager::class);
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $managerRegistry = $this->getMock(ManagerRegistry::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->once())
             ->method('getManager')
             ->will($this->returnValue($manager));

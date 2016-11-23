@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Tests\Solr\Repository;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
@@ -28,12 +29,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
-        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory = $this->createMock(MetaInformationFactory::class);
         $metaFactory->expects($this->once())
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapperInterface::class);
+        $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -57,12 +58,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFindAll()
     {
-        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory = $this->createMock(MetaInformationFactory::class);
         $metaFactory->expects($this->once())
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapperInterface::class);
+        $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -91,12 +92,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory = $this->createMock(MetaInformationFactory::class);
         $metaFactory->expects($this->exactly(2))
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapperInterface::class);
+        $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);
@@ -126,12 +127,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $metaFactory = $this->getMock('FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory', array(), array(), '', false);
+        $metaFactory = $this->createMock(MetaInformationFactory::class);
         $metaFactory->expects($this->exactly(2))
             ->method('loadInformation')
             ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
 
-        $mapper = $this->getMock(EntityMapperInterface::class);
+        $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
             ->method('setHydrationMode')
             ->with(HydrationModes::HYDRATE_DOCTRINE);

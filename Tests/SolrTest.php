@@ -260,7 +260,7 @@ class SolrTest extends AbstractSolrTest
         $entity = new ValidTestEntity();
         $entity->setTitle('title field');
 
-        $bufferPlugin = $this->getMock(BufferedAdd::class, array(), array(), '', false);
+        $bufferPlugin = $this->createMock(BufferedAdd::class);
 
         $bufferPlugin->expects($this->once())
             ->method('setEndpoint')
@@ -289,7 +289,7 @@ class SolrTest extends AbstractSolrTest
         $entity2 = new EntityCore1();
         $entity2->setText('a text');
 
-        $bufferPlugin = $this->getMock(BufferedAdd::class, array(), array(), '', false);
+        $bufferPlugin = $this->createMock(BufferedAdd::class);
 
         $bufferPlugin->expects($this->at(2))
             ->method('setEndpoint')

@@ -7,6 +7,7 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Tests\DocumentStub;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+use Solarium\QueryType\Update\Query\Query;
 
 class MulticoreSolrTest extends AbstractSolrTest
 {
@@ -19,7 +20,7 @@ class MulticoreSolrTest extends AbstractSolrTest
      */
     protected function assertUpdateQueryExecuted($index = null)
     {
-        $updateQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $updateQuery = $this->createMock(Query::class);
         $updateQuery->expects($this->once())
             ->method('addDocument');
 
@@ -126,7 +127,7 @@ class MulticoreSolrTest extends AbstractSolrTest
                 'core1' => array()
             )));
 
-        $deleteQuery = $this->getMock('Solarium\QueryType\Update\Query\Query', array(), array(), '', false);
+        $deleteQuery = $this->createMock(Query::class);
         $deleteQuery->expects($this->once())
             ->method('addDeleteQuery')
             ->with($this->isType('string'));

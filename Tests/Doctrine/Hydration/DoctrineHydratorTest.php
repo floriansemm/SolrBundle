@@ -4,6 +4,8 @@ namespace FS\SolrBundle\Tests\Doctrine\Hydration;
 
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
@@ -41,7 +43,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
     {
         $fetchedFromDoctrine = new ValidTestEntity();
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with(1)
@@ -71,7 +73,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
     {
         $fetchedFromDoctrine = new ValidOdmTestDocument();
 
-        $odmRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $odmRepository = $this->createMock(ObjectRepository::class);
         $odmRepository->expects($this->once())
             ->method('find')
             ->with(1)
@@ -83,7 +85,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($entity);
 
-        $ormManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $ormManager = $this->createMock(ObjectManager::class);
         $ormManager->expects($this->never())
             ->method('getRepository');
         $odmManager = $this->setupManager($metainformations, $odmRepository);
@@ -118,7 +120,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
         $metainformations = new MetaInformationFactory($this->reader);
         $metainformations = $metainformations->loadInformation($targetEntity);
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with(1)
@@ -145,7 +147,7 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
      */
     public function entityFromDbNotFoundShouldNotModifyMetainformations()
     {
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with(1)
@@ -191,13 +193,13 @@ class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
      */
     private function setupManager($metainformations, $repository)
     {
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->with($metainformations->getClassName())
             ->will($this->returnValue($repository));
 
-        $managerRegistry = $this->getMock(ManagerRegistry::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->once())
             ->method('getManager')
             ->will($this->returnValue($manager));
