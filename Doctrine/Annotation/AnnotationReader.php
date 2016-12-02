@@ -19,6 +19,11 @@ class AnnotationReader
     const SYNCHRONIZATION_FILTER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
 
     /**
+     * @var array
+     */
+    private $cache;
+
+    /**
      * @param Reader $reader
      */
     public function __construct(Reader $reader)
@@ -29,7 +34,7 @@ class AnnotationReader
     /**
      * reads the entity and returns a set of annotations
      *
-     * @param string $entity
+     * @param object $entity
      * @param string $type
      *
      * @return Annotation[]
@@ -269,6 +274,11 @@ class AnnotationReader
      */
     private function readClassProperties($entity)
     {
+        $className = get_class($entity);
+        if (isset($this->cache[$className])) {
+            return $this->cache[$className];
+        }
+
         $reflectionClass = new \ReflectionClass($entity);
         $inheritedProperties = array_merge($this->getParentProperties($reflectionClass), $reflectionClass->getProperties());
 
@@ -276,6 +286,8 @@ class AnnotationReader
         foreach ($inheritedProperties as $property) {
             $properties[$property->getName()] = $property;
         }
+
+        $this->cache[$className] = $properties;
 
         return $properties;
     }
