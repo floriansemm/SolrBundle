@@ -12,16 +12,16 @@ class AnnotationReader
      */
     private $reader;
 
+    /**
+     * @var array
+     */
+    private $entityProperties;
+
     const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';
     const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
     const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const SYNCHRONIZATION_FILTER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
-
-    /**
-     * @var array
-     */
-    private $cache;
 
     /**
      * @param Reader $reader
@@ -275,8 +275,8 @@ class AnnotationReader
     private function readClassProperties($entity)
     {
         $className = get_class($entity);
-        if (isset($this->cache[$className])) {
-            return $this->cache[$className];
+        if (isset($this->entityProperties[$className])) {
+            return $this->entityProperties[$className];
         }
 
         $reflectionClass = new \ReflectionClass($entity);
@@ -287,7 +287,7 @@ class AnnotationReader
             $properties[$property->getName()] = $property;
         }
 
-        $this->cache[$className] = $properties;
+        $this->entityProperties[$className] = $properties;
 
         return $properties;
     }
