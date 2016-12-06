@@ -94,11 +94,11 @@ class SolrSetupFeatureContext implements Context
 
         $metaFactory = new MetaInformationFactory($reader);
 
+        $doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
+        $doctrineHydrator->setOrmManager($registry);
+
         $entityMapper = new EntityMapper(
-            new DoctrineHydrator(
-                $registry,
-                new ValueHydrator()
-            ),
+            $doctrineHydrator,
             new IndexHydrator(
                 new ValueHydrator()
             ),

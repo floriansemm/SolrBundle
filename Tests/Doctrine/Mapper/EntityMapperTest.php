@@ -2,11 +2,13 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
 use FS\SolrBundle\Doctrine\Hydration\IndexHydrator;
 use FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
@@ -34,8 +36,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrineHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
-        $this->indexHydrator = $this->getMock('FS\SolrBundle\Doctrine\Hydration\HydratorInterface');
+        $this->doctrineHydrator = $this->createMock(HydratorInterface::class);
+        $this->indexHydrator = $this->createMock(HydratorInterface::class);
         $this->metaInformationFactory = new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
     }
 
@@ -94,14 +96,15 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity instanceof $targetEntity);
     }
 
-    public function testToEntity_ConcreteDocumentClass_WithDoctrine()
+    public function testToEntity_ConcreteDocumentClass_WithDoctrineOrm()
     {
         $targetEntity = new ValidTestEntity();
         $targetEntity->setField('a value');
 
         $this->indexHydrator = new IndexHydrator(new NoDatabaseValueHydrator());
 
-        $this->doctrineHydrator = new DoctrineHydrator($this->setupDoctrineRegistry($targetEntity, 1), new ValueHydrator());
+        $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
+        $this->doctrineHydrator->setOrmManager($this->setupOrmManager($targetEntity, 1));
 
         $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
@@ -113,25 +116,98 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('value from index', $entity->getTitle());
     }
 
-    private function setupDoctrineRegistry($entity, $expectedEntityId)
+    public function testToEntity_ConcreteDocumentClass_WithDoctrineOdm()
     {
-        $repository = $this->getMock(ObjectRepository::class);
+        $targetEntity = new ValidOdmTestDocument();
+        $targetEntity->setField('a value');
+
+        $this->indexHydrator = new IndexHydrator(new NoDatabaseValueHydrator());
+
+        $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
+        $this->doctrineHydrator->setOdmManager($this->setupOdmManager($targetEntity, 1));
+
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $entity = $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
+
+        $this->assertTrue($entity instanceof $targetEntity);
+
+        $this->assertEquals('a value', $entity->getField());
+        $this->assertEquals('value from index', $entity->getTitle());
+    }
+
+    /**
+     * @test
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.
+     */
+    public function throwExceptionIfGivenObjectIsNotEntityButItShould()
+    {
+        $targetEntity = new PlainObject();
+
+        $this->indexHydrator = new IndexHydrator(new NoDatabaseValueHydrator());
+
+        $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
+
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
+    }
+
+    private function setupOrmManager($entity, $expectedEntityId)
+    {
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('find')
             ->with($expectedEntityId)
             ->will($this->returnValue($entity));
 
-        $manager = $this->getMock(ObjectManager::class);
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $registry = $this->getMock(RegistryInterface::class);
-        $registry->expects($this->once())
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $managerRegistry->expects($this->once())
             ->method('getManager')
             ->will($this->returnValue($manager));
 
-        return $registry;
+        return $managerRegistry;
     }
+
+    private function setupOdmManager($entity, $expectedEntityId)
+    {
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($expectedEntityId)
+            ->will($this->returnValue($entity));
+
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->will($this->returnValue($repository));
+
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $managerRegistry->expects($this->once())
+            ->method('getManager')
+            ->will($this->returnValue($manager));
+
+        return $managerRegistry;
+    }
+}
+
+use FS\SolrBundle\Doctrine\Annotation as Solr;
+
+/**
+ * @Solr\Document(boost="1")
+ */
+class PlainObject
+{
+    /**
+     * @var int
+     *
+     * @Solr\Id
+     */
+    private $id;
 }
 

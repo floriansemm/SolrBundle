@@ -3,9 +3,11 @@ namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 
 /**
  *
@@ -25,7 +27,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
     private function getClassnameResolver($namespace)
     {
-        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver', array(), array(), '', false);
+        $doctrineConfiguration = $this->createMock(ClassnameResolver::class);
         $doctrineConfiguration->expects($this->any())
             ->method('resolveFullQualifiedClassname')
             ->will($this->returnValue($namespace));
@@ -35,7 +37,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
     private function getClassnameResolverCouldNotResolveClassname()
     {
-        $doctrineConfiguration = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver', array(), array(), '', false);
+        $doctrineConfiguration = $this->createMock(ClassnameResolver::class);
         $doctrineConfiguration->expects($this->any())
             ->method('resolveFullQualifiedClassname')
             ->will($this->throwException(new ClassnameResolverException('could not resolve classname for entity')));
@@ -52,7 +54,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expectedDocumentName = 'validtestentity';
 
-        $classnameResolver = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
+        $classnameResolver = $this->getClassnameResolver(ValidTestEntity::class);
 
         $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($classnameResolver);
@@ -72,7 +74,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expectedDocumentName = 'validtestentity';
 
-        $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
+        $doctrineConfiguration = $this->getClassnameResolver(ValidTestEntity::class);
 
         $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
@@ -90,7 +92,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage no declaration for document found in entity
      */
     public function testLoadInformation_EntityHasNoDocumentDeclaration_ShouldThrowException()
@@ -103,7 +105,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException
+     * @expectedException \FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException
      * @expectedExceptionMessage could not resolve classname for entity
      */
     public function testLoadInformation_EntityDoesNoExists()
@@ -117,7 +119,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadInformation_FromObject()
     {
-        $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
+        $doctrineConfiguration = $this->getClassnameResolver(ValidTestEntity::class);
 
         $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
@@ -131,7 +133,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadInformation_FromFullClassname()
     {
-        $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity');
+        $doctrineConfiguration = $this->getClassnameResolver(ValidTestEntity::class);
 
         $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);
@@ -141,6 +143,28 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expected = $entityClassname;
         $this->assertEquals($expected, $informations->getClassName(), 'class from fullclassname not discovered');
+    }
+
+    /**
+     * @test
+     */
+    public function determineDoctrineMapperTypeFromEntity()
+    {
+        $factory = new MetaInformationFactory($this->reader);
+        $metainformation = $factory->loadInformation(new ValidTestEntity());
+
+        $this->assertEquals(MetaInformationInterface::DOCTRINE_MAPPER_TYPE_RELATIONAL, $metainformation->getDoctrineMapperType());
+    }
+
+    /**
+     * @test
+     */
+    public function determineDoctrineMapperTypeFromDocument()
+    {
+        $factory = new MetaInformationFactory($this->reader);
+        $metainformation = $factory->loadInformation(new ValidOdmTestDocument());
+
+        $this->assertEquals(MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT, $metainformation->getDoctrineMapperType());
     }
 }
 

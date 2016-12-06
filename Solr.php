@@ -61,7 +61,7 @@ class Solr implements SolrInterface
      */
     public function __construct(
         Client $client,
-        EventDispatcherInterface $manager,
+        EventDispatcherInterface $manager = null,
         MetaInformationFactory $metaInformationFactory,
         EntityMapperInterface $entityMapper
     )
@@ -87,14 +87,6 @@ class Solr implements SolrInterface
     public function getMapper()
     {
         return $this->entityMapper;
-    }
-
-    /**
-     * @return CommandFactory
-     */
-    public function getCommandFactory()
-    {
-        return $this->commandFactory;
     }
 
     /**
@@ -187,9 +179,10 @@ class Solr implements SolrInterface
 
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
+        $event = new Event($this->solrClientCore, $metaInformations);
+        $this->eventManager->dispatch(Events::PRE_DELETE, $event);
+
         if ($document = $this->entityMapper->toDocument($metaInformations)) {
-            $event = new Event($this->solrClientCore, $metaInformations);
-            $this->eventManager->dispatch(Events::PRE_DELETE, $event);
 
             try {
                 $indexName = $metaInformations->getIndex();
@@ -219,10 +212,10 @@ class Solr implements SolrInterface
             return false;
         }
 
-        $doc = $this->toDocument($metaInformation);
-
         $event = new Event($this->solrClientCore, $metaInformation);
         $this->eventManager->dispatch(Events::PRE_INSERT, $event);
+
+        $doc = $this->toDocument($metaInformation);
 
         $this->addDocumentToIndex($doc, $metaInformation, $event);
 
@@ -249,30 +242,6 @@ class Solr implements SolrInterface
         }
 
         return $entity->$callback();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function computeChangeSet(array $doctrineChangeSet, $entity)
-    {
-        /* If not set, act the same way as if there are changes */
-        if (empty($doctrineChangeSet)) {
-            return array();
-        }
-
-        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
-
-        $documentChangeSet = array();
-
-        /* Check all Solr fields on this entity and check if this field is in the change set */
-        foreach ($metaInformation->getFields() as $field) {
-            if (array_key_exists($field->name, $doctrineChangeSet)) {
-                $documentChangeSet[] = $field->name;
-            }
-        }
-
-        return $documentChangeSet;
     }
 
     /**
@@ -401,10 +370,10 @@ class Solr implements SolrInterface
             return false;
         }
 
-        $doc = $this->toDocument($metaInformations);
-
         $event = new Event($this->solrClientCore, $metaInformations);
         $this->eventManager->dispatch(Events::PRE_UPDATE, $event);
+
+        $doc = $this->toDocument($metaInformations);
 
         $this->addDocumentToIndex($doc, $metaInformations, $event);
 

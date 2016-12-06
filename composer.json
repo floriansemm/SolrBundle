@@ -11,7 +11,7 @@
   "homepage": "https://github.com/floriansemm/SolrBundle",
   "license": "MIT",
   "require": {
-    "php": ">=5.5.9",
+    "php": ">=5.5.9 | ^7.0",
     "solarium/solarium": "^3.6",
     "symfony/dependency-injection": "^2.3|^3.0",
     "symfony/http-kernel": "^2.3|^3.0",
@@ -21,9 +21,9 @@
   },
   "require-dev": {
     "behat/behat": "^3.1",
-    "doctrine/mongodb": "*",
-    "doctrine/mongodb-odm": "*",
-    "doctrine/orm": "^2.3"
+    "doctrine/mongodb-odm-bundle": "*",
+    "doctrine/orm": "^2.3",
+    "phpunit/phpunit": "^5.4"
   },
   "minimum-stability": "beta",
   "autoload": {
@@ -36,8 +36,7 @@
   },
   "suggest": {
     "doctrine/orm": "Required if you want to use the Doctrine ORM",
-    "doctrine/mongodb": "Required if you want to use the MongoDB ODM",
-    "doctrine/mongodb-odm": "Required if you want to use the MongoDB ODM"
+    "doctrine/mongodb-odm-bundle": "Required if you want to use the MongoDB ODM"
   },
   "target-dir": "FS/SolrBundle"
 }

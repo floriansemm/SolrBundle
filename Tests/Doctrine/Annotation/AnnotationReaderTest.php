@@ -12,6 +12,7 @@ use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFloatBoost;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNumericFields;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidOdmTestDocument;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
@@ -59,7 +60,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testGetIdentifier_ShouldThrowException()
     {
@@ -229,15 +230,31 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function checkIfPlainObjectIsNotDoctrineEntity()
     {
-        $this->assertFalse($this->reader->isDoctrineEntity(new ChildEntity()), 'is not a doctrine entity');
+        $this->assertFalse($this->reader->isOrm(new ChildEntity()), 'is not a doctrine entity');
     }
 
     /**
      * @test
      */
-    public function checkIfPlainObjectIsDoctrineEntity()
+    public function checkIfValidEntityIsDoctrineEntity()
     {
-        $this->assertTrue($this->reader->isDoctrineEntity(new ValidTestEntity()), 'is a doctrine entity');
+        $this->assertTrue($this->reader->isOrm(new ValidTestEntity()), 'is a doctrine entity');
+    }
+
+    /**
+     * @test
+     */
+    public function checkIfPlainObjectIsNotDoctrineDocument()
+    {
+        $this->assertFalse($this->reader->isOdm(new ChildEntity()), 'is not a doctrine document');
+    }
+
+    /**
+     * @test
+     */
+    public function checkIfValidDocumentIsDoctrineDocument()
+    {
+        $this->assertTrue($this->reader->isOdm(new ValidOdmTestDocument()), 'is a doctrine document');
     }
 }
 

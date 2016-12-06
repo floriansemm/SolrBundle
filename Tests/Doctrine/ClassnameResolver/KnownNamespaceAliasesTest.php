@@ -3,6 +3,8 @@
 namespace FS\SolrBundle\Tests\Doctrine\ClassnameResolver;
 
 
+use Doctrine\ORM\Configuration as OrmConfiguration;
+use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
 use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
 
 class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
@@ -13,12 +15,12 @@ class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
      */
     public function addAliasFromMultipleOrmConfigurations()
     {
-        $config1 = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
+        $config1 = $this->createMock(OrmConfiguration::class);
         $config1->expects($this->once())
             ->method('getEntityNamespaces')
             ->will($this->returnValue(array('AcmeDemoBundle')));
 
-        $config2 = $this->getMock('Doctrine\ORM\Configuration', array(), array(), '', false);
+        $config2 = $this->createMock(OrmConfiguration::class);
         $config2->expects($this->once())
             ->method('getEntityNamespaces')
             ->will($this->returnValue(array('AcmeBlogBundle')));
@@ -36,12 +38,12 @@ class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
      */
     public function addAliasFromMultipleOdmConfigurations()
     {
-        $config1 = $this->getMock('Doctrine\ODM\MongoDB\Configuration', array(), array(), '', false);
+        $config1 = $this->createMock(OdmConfiguration::class);
         $config1->expects($this->once())
             ->method('getDocumentNamespaces')
             ->will($this->returnValue(array('AcmeDemoBundle')));
 
-        $config2 = $this->getMock('Doctrine\ODM\MongoDB\Configuration', array(), array(), '', false);
+        $config2 = $this->createMock(OdmConfiguration::class);
         $config2->expects($this->once())
             ->method('getDocumentNamespaces')
             ->will($this->returnValue(array('AcmeBlogBundle')));
@@ -59,12 +61,12 @@ class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
      */
     public function knowAliasHasAValidNamespace()
     {
-        $config1 = $this->getMock('Doctrine\ODM\MongoDB\Configuration', array(), array(), '', false);
+        $config1 = $this->createMock(OdmConfiguration::class);
         $config1->expects($this->once())
             ->method('getDocumentNamespaces')
             ->will($this->returnValue(array('AcmeDemoBundle' => 'Acme\DemoBundle\Document')));
 
-        $config2 = $this->getMock('Doctrine\ODM\MongoDB\Configuration', array(), array(), '', false);
+        $config2 = $this->createMock(OdmConfiguration::class);
         $config2->expects($this->once())
             ->method('getDocumentNamespaces')
             ->will($this->returnValue(array('AcmeBlogBundle' => 'Acme\BlogBundle\Document')));

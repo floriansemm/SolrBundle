@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests\Solr\Doctrine;
 
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
+use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
 
 /**
  * @group resolver
@@ -16,7 +17,7 @@ class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->knownAliases = $this->getMock('FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases', array(), array(), '', false);
+        $this->knownAliases = $this->createMock(KnownNamespaceAliases::class);
     }
 
     /**

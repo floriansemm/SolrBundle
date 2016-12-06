@@ -9,8 +9,17 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
  */
 interface MetaInformationInterface
 {
-
     const DOCUMENT_KEY_FIELD_NAME = 'id';
+
+    /**
+     * used when given object is a ORM entity
+     */
+    const DOCTRINE_MAPPER_TYPE_RELATIONAL = 'relational';
+
+    /**
+     * used when given object is a ODM document
+     */
+    const DOCTRINE_MAPPER_TYPE_DOCUMENT = 'document';
 
     /**
      * @return int
@@ -88,4 +97,9 @@ interface MetaInformationInterface
      * @return string
      */
     public function getIdentifierFieldName();
+
+    /**
+     * @return string
+     */
+    public function getDoctrineMapperType();
 }

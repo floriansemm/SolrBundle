@@ -12,6 +12,11 @@ class AnnotationReader
      */
     private $reader;
 
+    /**
+     * @var array
+     */
+    private $entityProperties;
+
     const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';
     const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
@@ -29,7 +34,7 @@ class AnnotationReader
     /**
      * reads the entity and returns a set of annotations
      *
-     * @param string $entity
+     * @param object $entity
      * @param string $type
      *
      * @return Annotation[]
@@ -216,9 +221,25 @@ class AnnotationReader
      *
      * @return bool
      */
-    public function isDoctrineEntity($entity)
+    public function isOrm($entity)
     {
         $annotation = $this->getClassAnnotation($entity, 'Doctrine\ORM\Mapping\Entity');
+
+        if ($annotation === null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isOdm($entity)
+    {
+        $annotation = $this->getClassAnnotation($entity, 'Doctrine\ODM\MongoDB\Mapping\Annotations\Document');
 
         if ($annotation === null) {
             return false;
@@ -253,6 +274,11 @@ class AnnotationReader
      */
     private function readClassProperties($entity)
     {
+        $className = get_class($entity);
+        if (isset($this->entityProperties[$className])) {
+            return $this->entityProperties[$className];
+        }
+
         $reflectionClass = new \ReflectionClass($entity);
         $inheritedProperties = array_merge($this->getParentProperties($reflectionClass), $reflectionClass->getProperties());
 
@@ -260,6 +286,8 @@ class AnnotationReader
         foreach ($inheritedProperties as $property) {
             $properties[$property->getName()] = $property;
         }
+
+        $this->entityProperties[$className] = $properties;
 
         return $properties;
     }

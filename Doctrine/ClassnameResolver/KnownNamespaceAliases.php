@@ -15,6 +15,9 @@ class KnownNamespaceAliases
      */
     private $knownNamespaceAlias = array();
 
+    /**
+     * @var array
+     */
     private $entityClassnames = array();
 
     /**
@@ -23,6 +26,10 @@ class KnownNamespaceAliases
     public function addDocumentNamespaces(OdmConfiguration $configuration)
     {
         $this->knownNamespaceAlias = array_merge($this->knownNamespaceAlias, $configuration->getDocumentNamespaces());
+
+        if ($configuration->getMetadataDriverImpl()) {
+            $this->entityClassnames = array_merge($this->entityClassnames, $configuration->getMetadataDriverImpl()->getAllClassNames());
+        }
     }
 
     /**

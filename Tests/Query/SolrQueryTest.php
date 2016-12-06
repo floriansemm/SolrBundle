@@ -7,6 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation\Id;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Query\Exception\UnknownFieldException;
 use FS\SolrBundle\Query\SolrQuery;
+use FS\SolrBundle\SolrInterface;
 use FS\SolrBundle\SolrQueryFacade;
 
 /**
@@ -31,7 +32,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
      */
     private function createQueryWithFieldMapping()
     {
-        $solr = $this->getMock('FS\SolrBundle\Solr', array(), array(), '', false);
+        $solr = $this->createMock(SolrInterface::class);
 
         $idField = new Id(array());
         $idField->name = 'id';

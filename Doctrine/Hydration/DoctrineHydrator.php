@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Doctrine\Hydration;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -14,9 +15,14 @@ class DoctrineHydrator implements HydratorInterface
 {
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
-    private $doctrine;
+    private $ormManager;
+
+    /**
+     * @var ManagerRegistry
+     */
+    private $odmManager;
 
     /**
      * @var HydratorInterface
@@ -24,13 +30,27 @@ class DoctrineHydrator implements HydratorInterface
     private $valueHydrator;
 
     /**
-     * @param RegistryInterface $doctrine
      * @param HydratorInterface $valueHydrator
      */
-    public function __construct(RegistryInterface $doctrine, HydratorInterface $valueHydrator)
+    public function __construct(HydratorInterface $valueHydrator)
     {
-        $this->doctrine = $doctrine;
         $this->valueHydrator = $valueHydrator;
+    }
+
+    /**
+     * @param ManagerRegistry $ormManager
+     */
+    public function setOrmManager($ormManager)
+    {
+        $this->ormManager = $ormManager;
+    }
+
+    /**
+     * @param ManagerRegistry $odmManager
+     */
+    public function setOdmManager($odmManager)
+    {
+        $this->odmManager = $odmManager;
     }
 
     /**
@@ -39,10 +59,19 @@ class DoctrineHydrator implements HydratorInterface
     public function hydrate($document, MetaInformationInterface $metaInformation)
     {
         $entityId = $this->valueHydrator->removePrefixedKeyValues($document['id']);
-        $doctrineEntity = $this->doctrine
-            ->getManager()
-            ->getRepository($metaInformation->getClassName())
-            ->find($entityId);
+
+        $doctrineEntity = null;
+        if ($metaInformation->getDoctrineMapperType() == MetaInformationInterface::DOCTRINE_MAPPER_TYPE_RELATIONAL) {
+            $doctrineEntity = $this->ormManager
+                ->getManager()
+                ->getRepository($metaInformation->getClassName())
+                ->find($entityId);
+        } elseif ($metaInformation->getDoctrineMapperType() == MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT) {
+            $doctrineEntity = $this->odmManager
+                ->getManager()
+                ->getRepository($metaInformation->getClassName())
+                ->find($entityId);
+        }
 
         if ($doctrineEntity !== null) {
             $metaInformation->setEntity($doctrineEntity);

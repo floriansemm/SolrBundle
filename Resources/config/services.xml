@@ -63,8 +63,13 @@
         </service>
 
         <service id="solr.doctrine.hydration.doctrine_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydrator">
-            <argument id="doctrine" type="service"/>
             <argument id="solr.doctrine.hydration.doctrine_value_hydrator" type="service"/>
+
+            <factory service="fs_solr.doctrine_hydration.doctrine_hydrator_factory" method="factory" />
+        </service>
+
+        <service class="FS\SolrBundle\Doctrine\Hydration\DoctrineHydratorFactory" id="fs_solr.doctrine_hydration.doctrine_hydrator_factory">
+            <argument id="service_container" type="service"/>
         </service>
 
         <service id="solr.doctrine.hydration.value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\ValueHydrator">

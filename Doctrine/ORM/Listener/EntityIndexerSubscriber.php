@@ -4,30 +4,13 @@ namespace FS\SolrBundle\Doctrine\ORM\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use FS\SolrBundle\Doctrine\AbstractIndexingListener;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\SolrInterface;
 use Psr\Log\LoggerInterface;
 
-class EntityIndexerSubscriber implements EventSubscriber
+class EntityIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
-    /**
-     * @var SolrInterface
-     */
-    private $solr;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param SolrInterface   $solr
-     * @param LoggerInterface $logger
-     */
-    public function __construct(SolrInterface $solr, LoggerInterface $logger)
-    {
-        $this->solr = $solr;
-        $this->logger = $logger;
-    }
 
     /**
      * {@inheritdoc}
@@ -39,27 +22,14 @@ class EntityIndexerSubscriber implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
-     *
-     * @return bool
-     */
-    private function hasChanged(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
-
-        $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-
-        return count($this->solr->computeChangeSet($doctrineChangeSet, $entity)) > 0;
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
 
+        $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
         try {
-            if ($this->hasChanged($args) === false) {
+            if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
                 return;
             }
 
