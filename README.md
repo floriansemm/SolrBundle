@@ -190,7 +190,7 @@ class Post
 
 This annotation should be added to properties that should be indexed. You should specify the `type` option for the annotation.
 
-### Supported simple field types
+### `type` property
 
 Currently, a basic set of types is implemented:
 
@@ -202,6 +202,16 @@ Currently, a basic set of types is implemented:
 - double(s)
 - long(s)
 - boolean(s)
+
+### `fieldModifier` property
+
+Solr supports partial updates of fields in an existing document. Supported values are:
+
+- set
+- add (multivalue field only, adds a value(s) to a existing list)
+- remove (multivalue field only, removes a value(s) from existing list)
+- inc (integer field only)
+   
 
 ### Object relations
 
