@@ -16,6 +16,7 @@ Installation is a quick (I promise!) 3 step process:
 1. Download SolrBundle
 2. Enable the Bundle
 3. Configure the SolrBundle
+4. configure your entity
 
 ### Step 1: Download SolrBundle
 
@@ -104,6 +105,8 @@ class Post
     private $created_at = null;
 }
 ```
+
+The bundle handles now updates / inserts / deletions for your configured entity.
 
 # Annotation reference
 
@@ -202,6 +205,8 @@ Currently, a basic set of types is implemented:
 - double(s)
 - long(s)
 - boolean(s)
+
+If you have a customized `schema.xml` than you don't need to setup a field-type. 
 
 ### `fieldModifier` property
 
