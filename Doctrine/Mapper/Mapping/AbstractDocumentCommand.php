@@ -22,7 +22,7 @@ abstract class AbstractDocumentCommand
 
         $documentId = $meta->getDocumentKey();
         if ($meta->generateDocumentId()) {
-            $documentId = $meta->getDocumentName() . '_' . Uuid::uuid5(Uuid::NAMESPACE_DNS, 'solr')->toString();
+            $documentId = $meta->getDocumentName() . '_' . Uuid::uuid1()->toString();
         }
         $document->setKey(MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME, $documentId);
 
