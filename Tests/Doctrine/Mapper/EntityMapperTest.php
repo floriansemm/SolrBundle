@@ -15,6 +15,7 @@ use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithCustomId;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -152,6 +153,30 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
         $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
     }
+
+    /**
+     * @test
+     */
+    public function generatedDocumentIdIfRequired()
+    {
+        $entity = new EntityWithCustomId();
+
+        $this->indexHydrator = new IndexHydrator(new NoDatabaseValueHydrator());
+
+        $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
+
+        $metainformation = $this->metaInformationFactory->loadInformation($entity);
+        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $mapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
+
+
+        $document = $mapper->toDocument($metainformation);
+
+        $fields = $document->getFields();
+        $this->assertArrayHasKey('id', $fields);
+        $this->assertNotNull($fields['id']);
+    }
+
 
     private function setupOrmManager($entity, $expectedEntityId)
     {

@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Tests\Util;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\Id;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
@@ -33,6 +34,7 @@ class MetaTestInformationFactory
             'text_t' => 'text',
             'created_at_dt' => 'created_at'
         );
+        $metaInformation->setIdentifier(new Id(array()));
         $metaInformation->setBoost(1);
         $metaInformation->setFieldMapping($fieldMapping);
         $metaInformation->setEntity($entity);

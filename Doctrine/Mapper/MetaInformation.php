@@ -368,4 +368,16 @@ class MetaInformation implements MetaInformationInterface
     {
         $this->doctrineMapperType = $doctrineMapperType;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateDocumentId()
+    {
+        if ($this->identifier == null) {
+            throw new \RuntimeException('No identifier is set');
+        }
+
+        return $this->identifier->generateId;
+    }
 }

@@ -72,6 +72,7 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $id = $this->reader->getIdentifier(new ValidTestEntity());
 
         $this->assertEquals('id', $id->name);
+        $this->assertFalse($id->generateId);
     }
 
     public function testGetFieldMapping_ThreeMappingsAndId()
