@@ -136,9 +136,6 @@ class Solr implements SolrInterface
     public function getRepository($entityAlias)
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
-        $class = $metaInformation->getClassName();
-
-        $entity = new $class;
 
         $repositoryClass = $metaInformation->getRepository();
         if (class_exists($repositoryClass)) {
