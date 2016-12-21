@@ -35,6 +35,11 @@
   "config": {
     "bin-dir": "bin"
   },
+  "extras": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
+  },
   "suggest": {
     "doctrine/orm": "Required if you want to use the Doctrine ORM",
     "doctrine/mongodb-odm-bundle": "Required if you want to use the MongoDB ODM"
