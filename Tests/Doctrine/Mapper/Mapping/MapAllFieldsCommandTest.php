@@ -19,7 +19,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
 class MapAllFieldsCommandTest extends SolrDocumentTest
 {
 
-    public static $MAPPED_FIELDS = array('title_s', 'text_t', 'created_at_dt');
+    public static $MAPPED_FIELDS = array('title', 'text_t', 'created_at_dt');
 
     /**
      * @var AnnotationReader
@@ -35,17 +35,17 @@ class MapAllFieldsCommandTest extends SolrDocumentTest
     {
         $command = new MapAllFieldsCommand(new MetaInformationFactory($this->reader));
 
-        $actual = $command->createDocument(MetaTestInformationFactory::getMetaInformation());
+        $document = $command->createDocument(MetaTestInformationFactory::getMetaInformation());
 
-        $this->assertTrue($actual instanceof Document, 'is a Document');
-        $this->assertFieldCount(3, $actual, 'three fields are mapped');
+        $this->assertTrue($document instanceof Document, 'is a Document');
+        $this->assertFieldCount(3, $document, 'three fields are mapped');
 
-        $this->assertEquals(1, $actual->getBoost(), 'document boost should be 1');
+        $this->assertEquals(1, $document->getBoost(), 'document boost should be 1');
 
-        $boostTitleField = $actual->getFieldBoost('title_s');
+        $boostTitleField = $document->getFieldBoost('title');
         $this->assertEquals(1.8, $boostTitleField, 'boost value of field title_s should be 1.8');
 
-        $this->assertHasDocumentFields($actual, self::$MAPPED_FIELDS);
+        $this->assertHasDocumentFields($document, self::$MAPPED_FIELDS);
     }
 
     /**

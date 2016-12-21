@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Repository;
 
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
 use FS\SolrBundle\Query\QueryBuilderInterface;
@@ -20,9 +21,9 @@ class Repository implements RepositoryInterface
     protected $solr = null;
 
     /**
-     * @var object
+     * @var MetaInformationInterface
      */
-    protected $entity = null;
+    protected $metaInformation = null;
 
     /**
      * @var string
@@ -30,13 +31,13 @@ class Repository implements RepositoryInterface
     protected $hydrationMode = '';
 
     /**
-     * @param SolrInterface $solr
-     * @param object        $entity
+     * @param SolrInterface            $solr
+     * @param MetaInformationInterface $metaInformation
      */
-    public function __construct(SolrInterface $solr, $entity)
+    public function __construct(SolrInterface $solr, MetaInformationInterface $metaInformation)
     {
         $this->solr = $solr;
-        $this->entity = $entity;
+        $this->metaInformation = $metaInformation;
 
         $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
@@ -46,13 +47,10 @@ class Repository implements RepositoryInterface
      */
     public function find($id)
     {
-        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
-        $metaInformation->setEntityId($id);
-
         $query = new FindByIdentifierQuery();
-        $query->setIndex($metaInformation->getIndex());
-        $query->setDocumentKey($metaInformation->getDocumentKey());
-        $query->setEntity($this->entity);
+        $query->setIndex($this->metaInformation->getIndex());
+        $query->setDocumentKey($this->metaInformation->getDocumentKey());
+        $query->setEntity($this->metaInformation->getEntity());
         $query->setSolr($this->solr);
         $query->setHydrationMode($this->hydrationMode);
         $found = $this->solr->query($query);
@@ -69,13 +67,11 @@ class Repository implements RepositoryInterface
      */
     public function findAll()
     {
-        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
-
         $query = new FindByDocumentNameQuery();
         $query->setRows(1000000);
-        $query->setDocumentName($metaInformation->getDocumentName());
-        $query->setIndex($metaInformation->getIndex());
-        $query->setEntity($this->entity);
+        $query->setDocumentName($this->metaInformation->getDocumentName());
+        $query->setIndex($this->metaInformation->getIndex());
+        $query->setEntity($this->metaInformation->getEntity());
         $query->setSolr($this->solr);
         $query->setHydrationMode($this->hydrationMode);
 
@@ -87,13 +83,11 @@ class Repository implements RepositoryInterface
      */
     public function findBy(array $args)
     {
-        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
-
-        $query = $this->solr->createQuery($this->entity);
+        $query = $this->solr->createQuery($this->metaInformation->getEntity());
         $query->setHydrationMode($this->hydrationMode);
         $query->setRows(100000);
         $query->setUseAndOperator(true);
-        $query->addSearchTerm('id', $metaInformation->getDocumentName() . '_*');
+        $query->addSearchTerm('id', $this->metaInformation->getDocumentName() . '_*');
         $query->setQueryDefaultField('id');
 
         $helper = $query->getHelper();
@@ -111,13 +105,11 @@ class Repository implements RepositoryInterface
      */
     public function findOneBy(array $args)
     {
-        $metaInformation = $this->solr->getMetaFactory()->loadInformation($this->entity);
-
-        $query = $this->solr->createQuery($this->entity);
+        $query = $this->solr->createQuery($this->metaInformation->getEntity());
         $query->setHydrationMode($this->hydrationMode);
         $query->setRows(1);
         $query->setUseAndOperator(true);
-        $query->addSearchTerm('id', $metaInformation->getDocumentName() . '_*');
+        $query->addSearchTerm('id', $this->metaInformation->getDocumentName() . '_*');
         $query->setQueryDefaultField('id');
 
         $helper = $query->getHelper();
@@ -137,6 +129,6 @@ class Repository implements RepositoryInterface
      */
     public function getQueryBuilder()
     {
-        return $this->solr->getQueryBuilder($this->entity);
+        return $this->solr->getQueryBuilder($this->metaInformation->getEntity());
     }
 }

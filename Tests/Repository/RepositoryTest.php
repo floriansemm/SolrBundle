@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Tests\Solr\Repository;
 
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
@@ -22,6 +23,15 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
  */
 class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var MetaTestInformationFactory
+     */
+    private $metaInformationFactory;
+
+    protected function setUp()
+    {
+        $this->metaInformationFactory = new MetaInformationFactory($reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
+    }
 
     public function testFind_DocumentIsKnown()
     {
@@ -29,10 +39,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $document->addField('id', 2);
         $document->addField('document_name_s', 'post');
 
-        $metaFactory = $this->createMock(MetaInformationFactory::class);
-        $metaFactory->expects($this->once())
-            ->method('loadInformation')
-            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+        $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
         $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
@@ -43,10 +50,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $solr = new SolrClientFake();
         $solr->mapper = $mapper;
-        $solr->metaFactory = $metaFactory;
         $solr->response = array($entity);
 
-        $repo = new Repository($solr, $entity);
+        $repo = new Repository($solr, $metaInformation);
         $actual = $repo->find(2);
 
         $this->assertTrue($actual instanceof ValidTestEntity, 'find return no entity');
@@ -58,10 +64,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testFindAll()
     {
-        $metaFactory = $this->createMock(MetaInformationFactory::class);
-        $metaFactory->expects($this->once())
-            ->method('loadInformation')
-            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+        $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
         $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
@@ -72,10 +75,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $solr = new SolrClientFake();
         $solr->mapper = $mapper;
-        $solr->metaFactory = $metaFactory;
         $solr->response = array($entity);
 
-        $repo = new Repository($solr, $entity);
+        $repo = new Repository($solr, $metaInformation);
         $actual = $repo->findAll();
 
         $this->assertTrue(is_array($actual));
@@ -92,10 +94,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $metaFactory = $this->createMock(MetaInformationFactory::class);
-        $metaFactory->expects($this->exactly(2))
-            ->method('loadInformation')
-            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+        $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
         $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
@@ -106,17 +105,17 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $solr = new SolrClientFake();
         $solr->mapper = $mapper;
-        $solr->metaFactory = $metaFactory;
         $solr->response = array($entity);
+        $solr->metaFactory = $this->metaInformationFactory;
 
-        $repo = new Repository($solr, $entity);
+        $repo = new Repository($solr, $metaInformation);
 
         $found = $repo->findBy($fields);
 
         $this->assertTrue(is_array($found));
 
         $this->assertTrue($solr->query instanceof AbstractQuery);
-        $this->assertEquals('title_s:foo AND text_t:bar', $solr->query->getQuery());
+        $this->assertEquals('title:foo AND text_t:bar', $solr->query->getQuery());
         $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
     }
 
@@ -127,10 +126,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'text' => 'bar'
         );
 
-        $metaFactory = $this->createMock(MetaInformationFactory::class);
-        $metaFactory->expects($this->exactly(2))
-            ->method('loadInformation')
-            ->will($this->returnValue(MetaTestInformationFactory::getMetaInformation()));
+        $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
         $mapper = $this->createMock(EntityMapperInterface::class);
         $mapper->expects($this->once())
@@ -141,17 +137,17 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $solr = new SolrClientFake();
         $solr->mapper = $mapper;
-        $solr->metaFactory = $metaFactory;
         $solr->response = array($entity);
+        $solr->metaFactory = $this->metaInformationFactory;
 
-        $repo = new Repository($solr, $entity);
+        $repo = new Repository($solr, $metaInformation);
 
         $found = $repo->findOneBy($fields);
 
         $this->assertEquals($entity, $found);
 
         $this->assertTrue($solr->query instanceof AbstractQuery);
-        $this->assertEquals('title_s:foo AND text_t:bar', $solr->query->getQuery());
+        $this->assertEquals('title:foo AND text_t:bar', $solr->query->getQuery());
         $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
     }
 

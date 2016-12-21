@@ -142,7 +142,7 @@ class Solr implements SolrInterface
 
         $repositoryClass = $metaInformation->getRepository();
         if (class_exists($repositoryClass)) {
-            $repositoryInstance = new $repositoryClass($this, $entity);
+            $repositoryInstance = new $repositoryClass($this, $metaInformation);
 
             if ($repositoryInstance instanceof Repository) {
                 return $repositoryInstance;
@@ -154,7 +154,7 @@ class Solr implements SolrInterface
             ));
         }
 
-        return new Repository($this, $entity);
+        return new Repository($this, $metaInformation);
     }
 
     /**

@@ -22,7 +22,7 @@ class MetaTestInformationFactory
 
         $metaInformation = new MetaInformation();
 
-        $title = new Field(array('name' => 'title', 'type' => 'string', 'boost' => '1.8', 'value' => 'A title'));
+        $title = new Field(array('name' => 'title', 'boost' => '1.8', 'value' => 'A title'));
         $text = new Field(array('name' => 'text', 'type' => 'text', 'value' => 'A text'));
         $createdAt = new Field(array('name' => 'created_at', 'type' => 'date', 'boost' => '1', 'value' => 'A created at'));
 
