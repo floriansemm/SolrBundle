@@ -189,6 +189,11 @@ class Post
 }
 ```
 
+### `generateId` option
+
+Set this option to true and a the bundle will generate a Id for you. Use this option if you have no underlying DB which 
+ generates incremental Ids for you.
+
 ## `@Solr\Field` annotation
 
 This annotation should be added to properties that should be indexed. You should specify the `type` option for the annotation.
