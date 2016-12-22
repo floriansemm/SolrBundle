@@ -16,8 +16,8 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidOdmTestDocument;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use Symfony\Component\Validator\Constraints\Valid;
 
 /**

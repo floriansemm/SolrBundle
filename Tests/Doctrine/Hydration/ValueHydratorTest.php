@@ -9,9 +9,9 @@ use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithCollection;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithRelation;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 
 /**
  * @group hydration

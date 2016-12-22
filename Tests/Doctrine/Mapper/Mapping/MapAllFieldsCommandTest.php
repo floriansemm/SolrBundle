@@ -7,9 +7,9 @@ use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithCollection;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityWithRelation;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
 

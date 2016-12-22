@@ -1,14 +1,15 @@
 <?php
-namespace FS\SolrBundle\Tests\Doctrine\Mapper;
+
+namespace FS\SolrBundle\Tests\Fixtures;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @Solr\Document(boost="1", index="*")
+ * @Solr\Document(boost="1")
  */
-class ValidTestEntityAllCores
+class ValidTestEntity
 {
 
     /**

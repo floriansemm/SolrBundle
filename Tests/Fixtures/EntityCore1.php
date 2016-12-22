@@ -1,14 +1,13 @@
 <?php
 
-
-namespace FS\SolrBundle\Tests\Doctrine\Mapper;
+namespace FS\SolrBundle\Tests\Fixtures;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
- * @Solr\Document(index="core0")
+ * @Solr\Document(index="core1")
  */
-class EntityCore0
+class EntityCore1
 {
     /**
      * @Solr\Id

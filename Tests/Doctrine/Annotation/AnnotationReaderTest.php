@@ -4,19 +4,20 @@ namespace FS\SolrBundle\Tests\Doctrine\Mapping\Mapper;
 
 use Doctrine\Common\Annotations\Reader;
 use FS\SolrBundle\Doctrine\Annotation\Field;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexHandler;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityIndexProperty;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoBoost;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNoTypes;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFloatBoost;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityNumericFields;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidOdmTestDocument;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidEntityRepository;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityIndexHandler;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityIndexProperty;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityNoBoost;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityNoTypes;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityFiltered;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityFloatBoost;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityNumericFields;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost;
+use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
-use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithRepository;
-use FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity;
+use FS\SolrBundle\Tests\Fixtures\EntityWithRepository;
+use FS\SolrBundle\Tests\Fixtures\NotIndexedEntity;
 
 /**
  *
@@ -86,11 +87,9 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRepository_ValidRepositoryDeclared()
     {
-        $repository = $this->reader->getRepository(new EntityWithRepository());
+        $repositoryClassname = $this->reader->getRepository(new EntityWithRepository());
 
-        $expected = 'FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository';
-        $actual = $repository;
-        $this->assertEquals($expected, $actual, 'wrong declared repository');
+        $this->assertEquals(ValidEntityRepository::class, $repositoryClassname, 'wrong declared repository');
     }
 
     public function testGetRepository_NoRepositoryAttributSet()
@@ -109,19 +108,13 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $boost);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid boost value aaaa for entity FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost
+     */
     public function testGetBoost_BoostNotNumeric()
     {
-
-        try {
-            $boost = $this->reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
-
-            $this->fail();
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals(
-                'Invalid boost value aaaa for entity FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityWithInvalidBoost',
-                $e->getMessage()
-            );
-        }
+        $this->reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
     }
 
     public function testGetBoost_BoostIsNumberic()

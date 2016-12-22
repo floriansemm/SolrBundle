@@ -8,6 +8,9 @@ use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolverException;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Tests\Fixtures\NotIndexedEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 
 /**
  *
@@ -97,7 +100,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadInformation_EntityHasNoDocumentDeclaration_ShouldThrowException()
     {
-        $doctrineConfiguration = $this->getClassnameResolver('FS\SolrBundle\Tests\Doctrine\Mapper\NotIndexedEntity');
+        $doctrineConfiguration = $this->getClassnameResolver(NotIndexedEntity::class);
 
         $factory = new MetaInformationFactory($this->reader);
         $factory->setClassnameResolver($doctrineConfiguration);

@@ -3,7 +3,7 @@ namespace FS\SolrBundle\Tests\Util;
 
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Annotation\Id;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
 class MetaTestInformationFactory

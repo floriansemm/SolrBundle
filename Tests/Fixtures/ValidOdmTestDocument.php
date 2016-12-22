@@ -1,23 +1,26 @@
 <?php
-namespace FS\SolrBundle\Tests\Doctrine\Mapper;
+
+namespace FS\SolrBundle\Tests\Fixtures;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 
 /**
- * @ORM\Entity()
+ * @MongoDB\Document
  * @Solr\Document(boost="1")
  */
-class ValidTestEntity
+class ValidOdmTestDocument
 {
 
     /**
+     * @MongoDB\Id
      * @Solr\Id
      */
     private $id;
 
     /**
-     * @Solr\Field(type="text")
+     * @MongoDB\Field)
      *
      * @var string
      */
