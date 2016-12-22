@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithInvalidRepository;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore0;
@@ -34,43 +35,26 @@ class SolrTest extends AbstractSolrTest
 
     public function testCreateQuery_ValidEntity()
     {
-        $this->setupMetaFactoryLoadOneCompleteInformation();
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $query = $solr->createQuery('FSBlogBundle:ValidTestEntity');
+        $query = $this->solr->createQuery(ValidTestEntity::class);
 
         $this->assertTrue($query instanceof SolrQuery);
-        $this->assertEquals(4, count($query->getMappedFields()));
+        $this->assertEquals(5, count($query->getMappedFields()));
 
     }
 
     public function testGetRepository_UserdefinedRepository()
     {
-        $metaInformation = new MetaInformation();
-        $metaInformation->setClassName(get_class(new EntityWithRepository()));
-        $metaInformation->setRepository('FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidEntityRepository');
-
-        $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $actual = $solr->getRepository('Tests:EntityWithRepository');
+        $actual = $this->solr->getRepository(EntityWithRepository::class);
 
         $this->assertTrue($actual instanceof ValidEntityRepository);
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testGetRepository_UserdefinedInvalidRepository()
     {
-        $metaInformation = new MetaInformation();
-        $metaInformation->setClassName(get_class(new EntityWithRepository()));
-        $metaInformation->setRepository('FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidEntityRepository');
-
-        $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->getRepository('Tests:EntityWithInvalidRepository');
+        $this->solr->getRepository(EntityWithInvalidRepository::class);
     }
 
     public function testAddDocument()
@@ -80,12 +64,14 @@ class SolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
-        $this->mapOneDocument();
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
-        $this->setupMetaFactoryLoadOneCompleteInformation();
+        $entity = new ValidTestEntity();
+        $entity->setTitle('title');
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->addDocument(new ValidTestEntity());
+        $this->solr->addDocument($entity);
     }
 
     public function testUpdateDocument()
@@ -95,12 +81,14 @@ class SolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
-        $this->mapOneDocument();
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
-        $this->setupMetaFactoryLoadOneCompleteInformation();
+        $entity = new ValidTestEntity();
+        $entity->setTitle('title');
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->updateDocument(new ValidTestEntity());
+        $this->solr->updateDocument($entity);
     }
 
     public function testDoNotUpdateDocumentIfDocumentCallbackAvoidIt()
@@ -110,15 +98,10 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertUpdateQueryWasNotExecuted();
 
-        $information = new MetaInformation();
-        $information->setSynchronizationCallback('shouldBeIndex');
-        $this->setupMetaFactoryLoadOneCompleteInformation($information);
-
         $filteredEntity = new ValidTestEntityFiltered();
         $filteredEntity->shouldIndex = false;
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->updateDocument($filteredEntity);
+        $this->solr->updateDocument($filteredEntity);
     }
 
     public function testRemoveDocument()
@@ -128,14 +111,11 @@ class SolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
-        $this->setupMetaFactoryLoadOneCompleteInformation();
-
         $this->mapper->expects($this->once())
             ->method('toDocument')
             ->will($this->returnValue(new DocumentStub()));
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->removeDocument(new ValidTestEntity());
+        $this->solr->removeDocument(new ValidTestEntity());
     }
 
     public function testClearIndex()
@@ -149,8 +129,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertDeleteQueryWasExecuted();
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->clearIndex();
+        $this->solr->clearIndex();
     }
 
     public function testQuery_NoResponseKeyInResponseSet()
@@ -165,9 +144,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertQueryWasExecuted(array(), 'index0');
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
-        $entities = $solr->query($query);
+        $entities = $this->solr->query($query);
         $this->assertEquals(0, count($entities));
     }
 
@@ -186,9 +163,7 @@ class SolrTest extends AbstractSolrTest
 
         $this->assertQueryWasExecuted(array($arrayObj), 'index0');
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-
-        $entities = $solr->query($query);
+        $entities = $this->solr->query($query);
         $this->assertEquals(1, count($entities));
     }
 
@@ -201,12 +176,7 @@ class SolrTest extends AbstractSolrTest
 
         $entity = new ValidTestEntityFiltered();
 
-        $information = new MetaInformation();
-        $information->setSynchronizationCallback('shouldBeIndex');
-        $this->setupMetaFactoryLoadOneCompleteInformation($information);
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->addDocument($entity);
+        $this->solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
@@ -215,21 +185,17 @@ class SolrTest extends AbstractSolrTest
     {
         $this->assertUpdateQueryExecuted('index0');
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->any())
             ->method('dispatch');
 
         $entity = new ValidTestEntityFiltered();
         $entity->shouldIndex = true;
 
-        $information = MetaTestInformationFactory::getMetaInformation();
-        $information->setSynchronizationCallback('shouldBeIndex');
-        $information->setIndex('index0');
-        $this->setupMetaFactoryLoadOneCompleteInformation($information);
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
-        $this->mapOneDocument();
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->addDocument($entity);
+        $this->solr->addDocument($entity);
 
         $this->assertTrue($entity->getShouldBeIndexedWasCalled(), 'filter method was not called');
     }
@@ -244,12 +210,7 @@ class SolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
-        $information = MetaTestInformationFactory::getMetaInformation();
-        $information->setSynchronizationCallback('shouldBeIndex');
-        $this->setupMetaFactoryLoadOneCompleteInformation($information);
-
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->addDocument(new InvalidTestEntityFiltered());
+        $this->solr->addDocument(new InvalidTestEntityFiltered());
     }
 
     /**
@@ -274,8 +235,7 @@ class SolrTest extends AbstractSolrTest
             ->with('bufferedadd')
             ->will($this->returnValue($bufferPlugin));
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader())), $this->mapper);
-        $solr->synchronizeIndex(array($entity));
+        $this->solr->synchronizeIndex(array($entity));
     }
 
     /**
@@ -307,8 +267,7 @@ class SolrTest extends AbstractSolrTest
             ->with('bufferedadd')
             ->will($this->returnValue($bufferPlugin));
 
-        $solr = new Solr($this->solrClientFake, $this->eventDispatcher, new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader())), $this->mapper);
-        $solr->synchronizeIndex(array($entity1, $entity2));
+        $this->solr->synchronizeIndex(array($entity1, $entity2));
     }
 }
 

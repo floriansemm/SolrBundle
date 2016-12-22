@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntityAllCores;
 use FS\SolrBundle\Tests\DocumentStub;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
@@ -45,8 +46,6 @@ class MulticoreSolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->any())
             ->method('dispatch');
 
-        $this->mapOneDocument();
-
         $this->solrClientFake->expects($this->once())
             ->method('getEndpoints')
             ->will($this->returnValue(array(
@@ -62,12 +61,12 @@ class MulticoreSolrTest extends AbstractSolrTest
             ->method('update')
             ->with($updateQuery, 'core1');
 
-        $metaInformation = MetaTestInformationFactory::getMetaInformation();
-        $metaInformation->setIndex('*');
-        $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
         $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->addDocument(new ValidTestEntity());
+        $solr->addDocument(new ValidTestEntityAllCores());
     }
 
     /**
@@ -80,8 +79,6 @@ class MulticoreSolrTest extends AbstractSolrTest
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
-        $this->mapOneDocument();
-
         $this->solrClientFake->expects($this->once())
             ->method('getEndpoints')
             ->will($this->returnValue(array(
@@ -97,13 +94,12 @@ class MulticoreSolrTest extends AbstractSolrTest
             ->method('update')
             ->with($updateQuery, 'core1');
 
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation();
-        $metaInformation->setIndex('*');
-        $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
         $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->updateDocument(new ValidTestEntity());
+        $solr->updateDocument(new ValidTestEntityAllCores());
     }
 
     /**
@@ -111,11 +107,6 @@ class MulticoreSolrTest extends AbstractSolrTest
      */
     public function removeDocumentFromAllCores()
     {
-        $metaInformation = MetaTestInformationFactory::getMetaInformation();
-        $metaInformation->setIndex('*');
-        $metaInformation->setEntityId(1);
-        $this->setupMetaFactoryLoadOneCompleteInformation($metaInformation);
-
         $this->mapper->expects($this->once())
             ->method('toDocument')
             ->will($this->returnValue(new DocumentStub()));
@@ -144,7 +135,7 @@ class MulticoreSolrTest extends AbstractSolrTest
             ->method('update');
 
         $solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
-        $solr->removeDocument(new ValidTestEntity());
+        $solr->removeDocument(new ValidTestEntityAllCores());
     }
 }
  

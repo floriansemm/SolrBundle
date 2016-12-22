@@ -4,8 +4,10 @@
 namespace FS\SolrBundle\Tests;
 
 
+use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\Client;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
@@ -15,15 +17,22 @@ use Solarium\QueryType\Select\Query\Query as SelectQuery;
 
 abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @var MetaInformationFactory
+     */
     protected $metaFactory = null;
     protected $eventDispatcher = null;
     protected $mapper = null;
     protected $solrClientFake = null;
 
+    /**
+     * @var Solr
+     */
+    protected $solr;
+
     public function setUp()
     {
-        $this->metaFactory = $metaFactory = $this->createMock(MetaInformationFactory::class);
+        $this->metaFactory = new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->mapper = $this->getMockBuilder(EntityMapperInterface::class)
             ->disableOriginalConstructor()
@@ -31,6 +40,8 @@ abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->solrClientFake = $this->createMock(Client::class);
+
+        $this->solr = new Solr($this->solrClientFake, $this->eventDispatcher, $this->metaFactory, $this->mapper);
     }
 
     protected function assertUpdateQueryExecuted($index = null)
