@@ -44,11 +44,17 @@ interface MetaInformationInterface
     public function generateDocumentId();
 
     /**
+     * Returns full qualified classname
+     *
      * @return string
      */
     public function getClassName();
 
     /**
+     * Returns classname in lower case without namespaces
+     *
+     * AppBundle\Entity\ExampleEntity => exampleentity
+     *
      * @return string
      */
     public function getDocumentName();
@@ -59,6 +65,8 @@ interface MetaInformationInterface
     public function getFields();
 
     /**
+     * Returns full qualified classname of repository-class
+     *
      * @return string
      */
     public function getRepository();
