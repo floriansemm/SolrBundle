@@ -98,19 +98,17 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param object $entity
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return SolrQuery
      */
     public function createQuery($entity)
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
-        $class = $metaInformation->getClassName();
-        $entity = new $class;
 
         $query = new SolrQuery();
         $query->setSolr($this);
-        $query->setEntity($entity);
+        $query->setEntity($metaInformation->getClassName());
         $query->setIndex($metaInformation->getIndex());
         $query->setMetaInformation($metaInformation);
         $query->setMappedFields($metaInformation->getFieldMapping());
@@ -133,9 +131,9 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function getRepository($entityAlias)
+    public function getRepository($entity)
     {
-        $metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         $repositoryClass = $metaInformation->getRepository();
         if (class_exists($repositoryClass)) {
@@ -157,14 +155,11 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function createQueryBuilder($entityAlias)
+    public function createQueryBuilder($entity)
     {
-        $metaInformation = $this->metaInformationFactory->loadInformation($entityAlias);
-        $class = $metaInformation->getClassName();
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
-        $entity = new $class;
-
-        return new QueryBuilder($this, $metaInformation, $entity);
+        return new QueryBuilder($this, $metaInformation);
     }
 
     /**
@@ -355,9 +350,7 @@ class Solr implements SolrInterface
     }
 
     /**
-     * @param object $entity
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function updateDocument($entity)
     {

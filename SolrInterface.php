@@ -10,12 +10,12 @@ interface SolrInterface
 {
 
     /**
-     * @param object $entity
+     * @param object|string $entity entity, entity-alias or classname
      */
     public function removeDocument($entity);
 
     /**
-     * @param object $entity
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return bool
      */
@@ -29,25 +29,25 @@ interface SolrInterface
     public function query(AbstractQuery $query);
 
     /**
-     * @param object $entity
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return bool
      */
     public function updateDocument($entity);
 
     /**
-     * @param string $entityAlias
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return Repository
      *
      * @throws \RuntimeException if repository of the given $entityAlias does not extend FS\SolrBundle\Repository\Repository
      */
-    public function getRepository($entityAlias);
+    public function getRepository($entity);
 
     /**
-     * @param string $entityAlias
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return QueryBuilderInterface
      */
-    public function createQueryBuilder($entityAlias);
+    public function createQueryBuilder($entity);
 }

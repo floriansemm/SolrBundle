@@ -36,7 +36,7 @@ class MetaInformationFactory
     }
 
     /**
-     * @param object $entity
+     * @param object|string $entity entity, entity-alias or classname
      *
      * @return MetaInformation
      *
@@ -44,7 +44,6 @@ class MetaInformationFactory
      */
     public function loadInformation($entity)
     {
-
         $className = $this->getClass($entity);
 
         if (!is_object($entity)) {

@@ -125,8 +125,10 @@ class SolrQuery extends AbstractQuery
     {
         $documentFieldsAsValues = array_flip($this->mappedFields);
 
+        $classname = $this->getMetaInformation()->getClassName();
+
         if (!array_key_exists($field, $documentFieldsAsValues)) {
-            throw new UnknownFieldException(sprintf('Entity %s has no mapping for field %s', get_class($this->getEntity()), $field));
+            throw new UnknownFieldException(sprintf('Entity %s has no mapping for field %s', $classname, $field));
         }
 
         $documentFieldName = $documentFieldsAsValues[$field];

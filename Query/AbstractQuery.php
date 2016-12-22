@@ -26,9 +26,11 @@ abstract class AbstractQuery extends SolariumQuery
     protected $index = null;
 
     /**
-     * @var object
+     * Classname of entity
+     *
+     * @var string
      */
-    private $entity = null;
+    private $entity;
 
     /**
      * @var MetaInformationInterface
@@ -50,12 +52,12 @@ abstract class AbstractQuery extends SolariumQuery
     {
         $this->metaInformation = $metaInformation;
 
-        $this->entity = $metaInformation->getEntity();
+        $this->entity = $metaInformation->getClassName();
         $this->index = $metaInformation->getIndex();
     }
 
     /**
-     * @return object
+     * @return string
      */
     public function getEntity()
     {
@@ -63,7 +65,7 @@ abstract class AbstractQuery extends SolariumQuery
     }
 
     /**
-     * @param object $entity
+     * @param string $entity
      */
     public function setEntity($entity)
     {

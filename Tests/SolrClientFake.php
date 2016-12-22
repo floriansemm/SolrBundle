@@ -97,7 +97,7 @@ class SolrClientFake implements SolrInterface
         // TODO: Implement updateDocument() method.
     }
 
-    public function getRepository($entityAlias)
+    public function getRepository($entity)
     {
         // TODO: Implement getRepository() method.
     }
@@ -107,7 +107,7 @@ class SolrClientFake implements SolrInterface
         // TODO: Implement computeChangeSet() method.
     }
 
-    public function createQueryBuilder($entityAlias)
+    public function createQueryBuilder($entity)
     {
         // TODO: Implement createQueryBuilder() method.
     }

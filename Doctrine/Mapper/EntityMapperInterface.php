@@ -17,8 +17,8 @@ interface EntityMapperInterface
     public function toDocument(MetaInformationInterface $meta);
 
     /**
-     * @param \ArrayAccess $document
-     * @param object       $sourceTargetEntity
+     * @param \ArrayAccess  $document
+     * @param object|string $sourceTargetEntity entity, entity-alias or classname
      *
      * @return object
      *

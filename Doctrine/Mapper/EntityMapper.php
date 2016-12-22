@@ -71,12 +71,7 @@ class EntityMapper implements EntityMapperInterface
     }
 
     /**
-     * @param \ArrayAccess $document
-     * @param object       $sourceTargetEntity
-     *
-     * @return object
-     *
-     * @throws \InvalidArgumentException if $sourceTargetEntity is null
+     * {@inheritdoc}
      */
     public function toEntity(\ArrayAccess $document, $sourceTargetEntity)
     {
