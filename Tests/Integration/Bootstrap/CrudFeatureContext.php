@@ -5,7 +5,7 @@ namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 use Behat\Behat\Context\Context;
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Solr;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Util\EntityIdentifier;
 use Solarium\QueryType\Update\Query\Document\Document;
 

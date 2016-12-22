@@ -4,13 +4,14 @@ namespace FS\SolrBundle\Tests\Solr\Doctrine;
 
 use FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver;
 use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 
 /**
  * @group resolver
  */
 class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_NAMESPACE = 'FS\SolrBundle\Tests\Doctrine\Mapper';
+    const ENTITY_NAMESPACE = 'FS\SolrBundle\Tests\Fixtures';
     const UNKNOW_ENTITY_NAMESPACE = 'FS\Unknown';
 
     private $knownAliases;
@@ -27,9 +28,8 @@ class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
     {
         $resolver = $this->getResolverWithKnowNamespace(self::ENTITY_NAMESPACE);
 
-        $expectedClass = 'FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity';
 
-        $this->assertEquals($expectedClass, $resolver->resolveFullQualifiedClassname('FSTest:ValidTestEntity'));
+        $this->assertEquals(ValidTestEntity::class, $resolver->resolveFullQualifiedClassname('FSTest:ValidTestEntity'));
     }
 
     /**

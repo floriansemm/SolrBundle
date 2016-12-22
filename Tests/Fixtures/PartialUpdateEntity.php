@@ -1,6 +1,6 @@
 <?php
 
-namespace FS\SolrBundle\Tests\Doctrine\Mapper;
+namespace FS\SolrBundle\Tests\Fixtures;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 

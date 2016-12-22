@@ -16,7 +16,7 @@ use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use Solarium\Core\Query\Helper;
 use Solarium\QueryType\Update\Query\Document\Document;
 use FS\SolrBundle\Repository\Repository;
-use FS\SolrBundle\Tests\Doctrine\Mapper\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 
 /**
  * @group repository

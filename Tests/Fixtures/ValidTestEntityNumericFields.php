@@ -1,10 +1,10 @@
 <?php
-namespace FS\SolrBundle\Tests\Doctrine\Annotation\Entities;
+
+namespace FS\SolrBundle\Tests\Fixtures;
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
- *
  * @Solr\Document
  * @Solr\SynchronizationFilter(callback="shouldBeIndex")
  */
@@ -12,7 +12,6 @@ class ValidTestEntityNumericFields
 {
 
     /**
-     *
      * @Solr\Field(type="integer")
      */
     private $integer;

@@ -3,8 +3,8 @@
 namespace FS\SolrBundle\Tests\Integration\Bootstrap;
 
 use FS\SolrBundle\Solr;
-use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore0;
-use FS\SolrBundle\Tests\Doctrine\Mapper\EntityCore1;
+use FS\SolrBundle\Tests\Fixtures\EntityCore0;
+use FS\SolrBundle\Tests\Fixtures\EntityCore1;
 use FS\SolrBundle\Tests\Util\EntityIdentifier;
 
 class MulticoreFeatureContext extends FeatureContext

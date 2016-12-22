@@ -1,14 +1,13 @@
 <?php
-namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
-use Doctrine\Common\Collections\ArrayCollection;
+namespace FS\SolrBundle\Tests\Fixtures;
+
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
- *
  * @Solr\Document(boost="1")
  */
-class ValidTestEntityWithCollection
+class ValidTestEntityWithRelation
 {
 
     /**
@@ -18,31 +17,18 @@ class ValidTestEntityWithCollection
 
     /**
      * @Solr\Field(type="text")
-     *
-     * @var text
      */
     private $text;
 
     /**
      * @Solr\Field()
-     *
-     * @var text
      */
     private $title;
 
     /**
      * @Solr\Field(type="date")
-     *
-     * @var date
      */
     private $created_at;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @Solr\Field(type="strings", getter="getTitle")
-     */
-    private $collection;
 
     /**
      * @Solr\Field(type="my_costom_fieldtype")
@@ -50,6 +36,20 @@ class ValidTestEntityWithCollection
      * @var string
      */
     private $costomField;
+
+    /**
+     * @var object
+     *
+     * @Solr\Field(type="strings", getter="getTitle")
+     */
+    private $relation;
+
+    /**
+     * @var object
+     *
+     * @Solr\Field(type="strings")
+     */
+    private $posts;
 
     public function getId()
     {
@@ -62,7 +62,7 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @return the $text
+     * @return mixed
      */
     public function getText()
     {
@@ -70,15 +70,7 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @return the $title
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param \FS\BlogBundle\Tests\Solr\Doctrine\Mapper\text $text
+     * @param mixed $text
      */
     public function setText($text)
     {
@@ -86,7 +78,15 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @param \FS\BlogBundle\Tests\Solr\Doctrine\Mapper\text $title
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
      */
     public function setTitle($title)
     {
@@ -110,7 +110,39 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @return \FS\SolrBundle\Tests\Doctrine\Mapper\date
+     * @return object
+     */
+    public function getRelation()
+    {
+        return $this->relation;
+    }
+
+    /**
+     * @param object $relation
+     */
+    public function setRelation($relation)
+    {
+        $this->relation = $relation;
+    }
+
+    /**
+     * @return object
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    /**
+     * @param object $posts
+     */
+    public function setPosts($posts)
+    {
+        $this->posts = $posts;
+    }
+
+    /**
+     * @return mixed
      */
     public function getCreatedAt()
     {
@@ -118,29 +150,11 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @param \FS\SolrBundle\Tests\Doctrine\Mapper\date $created_at
+     * @param mixed $created_at
      */
     public function setCreatedAt($created_at)
     {
         $this->created_at = $created_at;
     }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-    /**
-     * @param ArrayCollection $collection
-     */
-    public function setCollection($collection)
-    {
-        $this->collection = $collection;
-    }
-
-
 }
 
