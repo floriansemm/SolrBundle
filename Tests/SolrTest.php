@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\EntityWithInvalidRepository;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Doctrine\Annotation\Entities\ValidTestEntityFiltered;
@@ -268,6 +269,16 @@ class SolrTest extends AbstractSolrTest
             ->will($this->returnValue($bufferPlugin));
 
         $this->solr->synchronizeIndex(array($entity1, $entity2));
+    }
+
+    /**
+     * @test
+     */
+    public function createQueryBuilder()
+    {
+        $queryBuilder = $this->solr->createQueryBuilder(ValidTestEntity::class);
+
+        $this->assertTrue($queryBuilder instanceof QueryBuilderInterface);
     }
 }
 
