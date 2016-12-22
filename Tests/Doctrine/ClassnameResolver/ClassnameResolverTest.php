@@ -28,7 +28,6 @@ class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
     {
         $resolver = $this->getResolverWithKnowNamespace(self::ENTITY_NAMESPACE);
 
-
         $this->assertEquals(ValidTestEntity::class, $resolver->resolveFullQualifiedClassname('FSTest:ValidTestEntity'));
     }
 

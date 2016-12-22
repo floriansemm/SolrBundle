@@ -17,16 +17,22 @@ class ValidTestEntityWithRelation
 
     /**
      * @Solr\Field(type="text")
+     *
+     * @var string
      */
     private $text;
 
     /**
      * @Solr\Field()
+     *
+     * @var string
      */
     private $title;
 
     /**
      * @Solr\Field(type="date")
+     *
+     * @var \DateTime
      */
     private $created_at;
 
@@ -59,38 +65,6 @@ class ValidTestEntityWithRelation
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @param mixed $text
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param mixed $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
     }
 
     /**
@@ -142,7 +116,39 @@ class ValidTestEntityWithRelation
     }
 
     /**
-     * @return mixed
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @param string $text
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -150,7 +156,7 @@ class ValidTestEntityWithRelation
     }
 
     /**
-     * @param mixed $created_at
+     * @param \DateTime $created_at
      */
     public function setCreatedAt($created_at)
     {

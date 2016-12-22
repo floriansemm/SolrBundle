@@ -108,19 +108,13 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $boost);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid boost value aaaa for entity FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost
+     */
     public function testGetBoost_BoostNotNumeric()
     {
-
-        try {
-            $boost = $this->reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
-
-            $this->fail();
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals(
-                'Invalid boost value aaaa for entity FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost',
-                $e->getMessage()
-            );
-        }
+        $this->reader->getEntityBoost(new ValidTestEntityWithInvalidBoost());
     }
 
     public function testGetBoost_BoostIsNumberic()
