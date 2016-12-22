@@ -3,17 +3,13 @@ namespace FS\SolrBundle\Doctrine\Mapper;
 
 use FS\SolrBundle\Doctrine\Hydration\HydrationModes;
 use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
+use FS\SolrBundle\Doctrine\Mapper\Factory\DocumentFactory;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\AbstractDocumentCommand;
 use FS\SolrBundle\Doctrine\Annotation\Index as Solr;
 use Solarium\QueryType\Update\Query\Document\Document;
 
 class EntityMapper implements EntityMapperInterface
 {
-    /**
-     * @var AbstractDocumentCommand
-     */
-    private $mappingCommand = null;
-
     /**
      * @var HydratorInterface
      */
@@ -35,6 +31,11 @@ class EntityMapper implements EntityMapperInterface
     private $metaInformationFactory;
 
     /**
+     * @var DocumentFactory
+     */
+    private $documentFactory;
+
+    /**
      * @param HydratorInterface      $doctrineHydrator
      * @param HydratorInterface      $indexHydrator
      * @param MetaInformationFactory $metaInformationFactory
@@ -44,30 +45,17 @@ class EntityMapper implements EntityMapperInterface
         $this->doctrineHydrator = $doctrineHydrator;
         $this->indexHydrator = $indexHydrator;
         $this->metaInformationFactory = $metaInformationFactory;
+        $this->documentFactory = new DocumentFactory($metaInformationFactory);
 
         $this->hydrationMode = HydrationModes::HYDRATE_DOCTRINE;
     }
 
     /**
-     * @param AbstractDocumentCommand $command
+     * {@inheritdoc}
      */
-    public function setMappingCommand(AbstractDocumentCommand $command)
+    public function toDocument(MetaInformationInterface $metaInformation)
     {
-        $this->mappingCommand = $command;
-    }
-
-    /**
-     * @param MetaInformationInterface $meta
-     *
-     * @return Document
-     */
-    public function toDocument(MetaInformationInterface $meta)
-    {
-        if ($this->mappingCommand instanceof AbstractDocumentCommand) {
-            return $this->mappingCommand->createDocument($meta);
-        }
-
-        return null;
+        return $this->documentFactory->createDocument($metaInformation);
     }
 
     /**

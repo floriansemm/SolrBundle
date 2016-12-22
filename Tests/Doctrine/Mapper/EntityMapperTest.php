@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Tests\Doctrine\Mapper;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -15,13 +16,15 @@ use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Tests\Fixtures\EntityWithCustomId;
 use FS\SolrBundle\Tests\Fixtures\PartialUpdateEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  *
@@ -38,29 +41,24 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
      */
     private $metaInformationFactory;
 
+    /**
+     * @var EntityMapper
+     */
+    private $mapper;
+
     public function setUp()
     {
         $this->doctrineHydrator = $this->createMock(HydratorInterface::class);
         $this->indexHydrator = $this->createMock(HydratorInterface::class);
         $this->metaInformationFactory = new MetaInformationFactory(new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
-    }
 
-    public function testToDocument_EntityMayNotIndexed()
-    {
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-
-        $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
-        $this->assertNull($actual);
+        $this->mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
     }
 
     public function testToDocument_DocumentIsUpdated()
     {
-        $reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
 
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setMappingCommand(new MapAllFieldsCommand(new MetaInformationFactory($reader)));
-
-        $actual = $mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
+        $actual = $this->mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
         $this->assertTrue($actual instanceof Document);
 
         $this->assertNotNull($actual->id);
@@ -71,12 +69,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function setFieldModifier()
     {
-        $annotationReader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader());
-
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
-
-        $actualDocument = $mapper->toDocument($this->metaInformationFactory->loadInformation(new PartialUpdateEntity()));
+        $actualDocument = $this->mapper->toDocument($this->metaInformationFactory->loadInformation(new PartialUpdateEntity()));
 
         $this->assertEquals('set', $actualDocument->getFieldModifier('subtitle'));
         $this->assertNull($actualDocument->getFieldModifier('title'));
@@ -93,9 +86,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator->expects($this->never())
             ->method('hydrate');
 
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setHydrationMode(HydrationModes::HYDRATE_INDEX);
-        $entity = $mapper->toEntity(new SolrDocumentStub(), $targetEntity);
+        $this->mapper->setHydrationMode(HydrationModes::HYDRATE_INDEX);
+        $entity = $this->mapper->toEntity(new SolrDocumentStub(), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
     }
@@ -110,9 +102,9 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
         $this->doctrineHydrator->setOrmManager($this->setupOrmManager($targetEntity, 1));
 
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
-        $entity = $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
+        $this->mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $this->mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $entity = $this->mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
 
@@ -130,9 +122,9 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
         $this->doctrineHydrator->setOdmManager($this->setupOdmManager($targetEntity, 1));
 
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
-        $entity = $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
+        $this->mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $this->mapper->setHydrationMode(HydrationModes::HYDRATE_DOCTRINE);
+        $entity = $this->mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
 
         $this->assertTrue($entity instanceof $targetEntity);
 
@@ -153,8 +145,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
 
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
+        $this->mapper->toEntity(new Document(array('id' => 'document_1', 'title' => 'value from index')), $targetEntity);
     }
 
     /**
@@ -169,17 +160,190 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHydrator = new DoctrineHydrator(new ValueHydrator());
 
         $metainformation = $this->metaInformationFactory->loadInformation($entity);
-        $mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
-        $mapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
 
-
-        $document = $mapper->toDocument($metainformation);
+        $this->mapper = new EntityMapper($this->doctrineHydrator, $this->indexHydrator, $this->metaInformationFactory);
+        $document = $this->mapper->toDocument($metainformation);
 
         $fields = $document->getFields();
         $this->assertArrayHasKey('id', $fields);
         $this->assertNotNull($fields['id']);
     }
 
+    public function testMapEntity_DocumentShouldContainThreeFields()
+    {
+        $document = $this->mapper->toDocument(MetaTestInformationFactory::getMetaInformation());
+
+        $this->assertTrue($document instanceof Document, 'is a Document');
+        $this->assertEquals(4, $document->count(), 'three fields are mapped');
+
+        $this->assertEquals(1, $document->getBoost(), 'document boost should be 1');
+
+        $boostTitleField = $document->getFieldBoost('title');
+        $this->assertEquals(1.8, $boostTitleField, 'boost value of field title_s should be 1.8');
+
+        $this->assertArrayHasKey('id', $document);
+        $this->assertArrayHasKey('title', $document);
+        $this->assertArrayHasKey('text_t', $document);
+        $this->assertArrayHasKey('created_at_dt', $document);
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationFieldByGetter()
+    {
+        $entity1 = new ValidTestEntity();
+        $entity1->setTitle('title 1');
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+
+        $collection = new ArrayCollection();
+        $collection->add($entity1);
+        $collection->add($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'getTitle'));
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayHasKey('collection_ss', $document->getFields());
+        $collectionField = $document->getFields()['collection_ss'];
+
+        $this->assertEquals(2, count($collectionField));
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationFieldAllFields()
+    {
+        $entity1 = new ValidTestEntity();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+        $entity1->setText('text 2');
+
+        $collection = new ArrayCollection();
+        $collection->add($entity1);
+        $collection->add($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection));
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayHasKey('collection_ss', $document->getFields());
+        $collectionField = $document->getFields()['collection_ss'];
+
+        $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
+        $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationField_AllFields()
+    {
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('embbeded object');
+
+        $entity1 = new ValidTestEntityWithRelation();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+        $entity1->setRelation($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity1));
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayHasKey('relation_ss', $document->getFields());
+        $collectionField = $document->getFields()['relation_ss'];
+
+        $this->assertEquals(4, count($collectionField), 'collection contains 4 fields');
+    }
+
+    /**
+     * @test
+     */
+    public function mapRelationField_Getter()
+    {
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('embedded object');
+
+        $entity1 = new ValidTestEntityWithRelation();
+        $entity1->setTitle('title 1');
+        $entity1->setText('text 1');
+        $entity1->setRelation($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity2, 'getter'=>'getTitle'));
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayHasKey('relation_ss', $document->getFields());
+        $collectionField = $document->getFields()['relation_ss'];
+
+        $this->assertEquals('embedded object', $collectionField);
+    }
+
+    /**
+     * @test
+     */
+    public function callGetterWithParameter()
+    {
+        $entity1 = new ValidTestEntity();
+        $date = new \DateTime();
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $metaInformation->setFields(array(
+            new Field(array('name' => 'created_at', 'type' => 'datetime', 'boost' => '1', 'value' => $date, 'getter' => "format('d.m.Y')"))
+        ));
+
+        $fields = $metaInformation->getFields();
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $fields = $document->getFields();
+
+        $this->assertArrayHasKey('created_at_dt', $fields);
+        $this->assertEquals($date->format('d.m.Y'), $fields['created_at_dt']);
+    }
+
+    /**
+     * @test
+     */
+    public function callGetterWithParameters()
+    {
+        $entity1 = new ValidTestEntity();
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $metaInformation->setFields(array(
+            new Field(array('name' => 'test_field', 'type' => 'datetime', 'boost' => '1', 'value' => new TestObject(), 'getter' => "testGetter('string3', 'string1', 'string')"))
+        ));
+
+        $fields = $metaInformation->getFields();
+        $metaInformation->setFields($fields);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $fields = $document->getFields();
+
+        $this->assertArrayHasKey('test_field_dt', $fields);
+        $this->assertEquals(array('string3', 'string1', 'string'), $fields['test_field_dt']);
+    }
 
     private function setupOrmManager($entity, $expectedEntityId)
     {
@@ -239,3 +403,9 @@ class PlainObject
     private $id;
 }
 
+class TestObject {
+    public function testGetter($para1, $para2, $para3)
+    {
+        return array($para1, $para2, $para3);
+    }
+}

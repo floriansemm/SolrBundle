@@ -167,8 +167,6 @@ class Solr implements SolrInterface
      */
     public function removeDocument($entity)
     {
-        $this->entityMapper->setMappingCommand(new MapIdentifierCommand());
-
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
         $event = new Event($this->solrClientCore, $metaInformations);
@@ -379,7 +377,6 @@ class Solr implements SolrInterface
      */
     private function toDocument(MetaInformationInterface $metaInformation)
     {
-        $this->entityMapper->setMappingCommand(new MapAllFieldsCommand($this->metaInformationFactory));
         $doc = $this->entityMapper->toDocument($metaInformation);
 
         return $doc;

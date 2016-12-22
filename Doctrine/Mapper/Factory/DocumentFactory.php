@@ -1,18 +1,15 @@
 <?php
-namespace FS\SolrBundle\Doctrine\Mapper\Mapping;
 
+namespace FS\SolrBundle\Doctrine\Mapper\Factory;
+
+use Doctrine\Common\Collections\Collection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Ramsey\Uuid\Uuid;
+use Solarium\QueryType\Update\Query\Document\Document;
 
-/**
- * command maps all fields of the entity
- *
- * uses parent method for mapping of document_name and id
- */
-class MapAllFieldsCommand extends AbstractDocumentCommand
+class DocumentFactory
 {
     /**
      * @var MetaInformationFactory
@@ -28,18 +25,26 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
     }
 
     /**
-     * @param MetaInformationInterface $meta
+     * @param MetaInformationInterface $metaInformation
      *
-     * @return null|\Solarium\QueryType\Update\Query\Document\Document
+     * @return null|Document
      */
-    public function createDocument(MetaInformationInterface $meta)
+    public function createDocument(MetaInformationInterface $metaInformation)
     {
-        $fields = $meta->getFields();
+        $fields = $metaInformation->getFields();
         if (count($fields) == 0) {
             return null;
         }
 
-        $document = parent::createDocument($meta);
+        $document = new Document();
+
+        $documentId = $metaInformation->getDocumentKey();
+        if ($metaInformation->generateDocumentId()) {
+            $documentId = $metaInformation->getDocumentName() . '_' . Uuid::uuid1()->toString();
+        }
+        $document->setKey(MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME, $documentId);
+
+        $document->setBoost($metaInformation->getBoost());
 
         foreach ($fields as $field) {
             if (!$field instanceof Field) {
