@@ -219,6 +219,29 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
+     * @expectedExceptionMessage No method "unknown()" found in class "DateTime"
+     */
+    public function throwExceptionIfConfiguredGetterDoesNotExists()
+    {
+        $entity1 = new \DateTime('+2 days');
+
+        $entity2 = new \DateTime('+1 day');
+
+        $collection = new ArrayCollection();
+        $collection->add($entity1);
+        $collection->add($entity2);
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
+        $fields = $metaInformation->getFields();
+        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'unknown(\'d.m.Y\')'));
+        $metaInformation->setFields($fields);
+
+        $this->mapper->toDocument($metaInformation);
+    }
+
+    /**
+     * @test
      */
     public function mapRelationFieldAllFields()
     {

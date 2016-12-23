@@ -110,12 +110,18 @@ class DocumentFactory
      * @param string $getter
      *
      * @return mixed
+     *
+     * @throws SolrMappingException if given getter does not exists
      */
     private function callGetterMethod($object, $getter)
     {
         $methodName = $getter;
         if (strpos($getter, '(') !== false) {
             $methodName = substr($getter, 0, strpos($getter, '('));
+        }
+
+        if (!method_exists($object, $methodName)) {
+            throw new SolrMappingException(sprintf('No method "%s()" found in class "%s"', $methodName, get_class($object)));
         }
 
         $method = new \ReflectionMethod($object, $methodName);
@@ -150,7 +156,7 @@ class DocumentFactory
 
         $values = array();
         foreach ($value as $relatedObj) {
-            $values[] = $relatedObj->{$getter}();
+            $values[] = $this->callGetterMethod($relatedObj, $getter);
         }
 
         return $values;
