@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 use Ramsey\Uuid\Uuid;
 use Solarium\QueryType\Update\Query\Document\Document;
 
@@ -72,13 +73,21 @@ class DocumentFactory
      * @param Field $field
      *
      * @return array|string
+     *
+     * @throws SolrMappingException if getter return value is object
      */
     private function mapObject(Field $field)
     {
         $value = $field->getValue();
         $getter = $field->getGetterName();
         if (!empty($getter)) {
-            return $this->callGetterMethod($value, $getter);
+            $getterReturnValue = $this->callGetterMethod($value, $getter);
+
+            if (is_object($getterReturnValue)) {
+                throw new SolrMappingException('The configured getter must return a string or array, got object');
+            }
+
+            return $getterReturnValue;
         }
 
         $metaInformation = $this->metaInformationFactory->loadInformation($value);
@@ -106,13 +115,14 @@ class DocumentFactory
         }
 
         $method = new \ReflectionMethod($object, $methodName);
+        // getter with arguments
         if (strpos($getter, ')') !== false) {
-            $parameters = explode(',', substr($getter, strpos($getter, '(') + 1, -1));
-            $parameters = array_map(function ($parameter) {
+            $getterArguments = explode(',', substr($getter, strpos($getter, '(') + 1, -1));
+            $getterArguments = array_map(function ($parameter) {
                 return trim(preg_replace('#[\'"]#', '', $parameter));
-            }, $parameters);
+            }, $getterArguments);
 
-            return $method->invokeArgs($object, $parameters);
+            return $method->invokeArgs($object, $getterArguments);
         }
 
         return $method->invoke($object);

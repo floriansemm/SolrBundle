@@ -14,7 +14,6 @@ use FS\SolrBundle\Doctrine\Hydration\IndexHydrator;
 use FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator;
 use FS\SolrBundle\Doctrine\Hydration\ValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
-use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Tests\Fixtures\EntityWithCustomId;
@@ -345,6 +344,26 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('string3', 'string1', 'string'), $fields['test_field_dt']);
     }
 
+    /**
+     * @test
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
+     * @expectedExceptionMessage The configured getter must return a string or array, got object
+     */
+    public function callGetterWithObjectAsReturnValue()
+    {
+        $entity1 = new ValidTestEntity();
+
+        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
+        $metaInformation->setFields(array(
+            new Field(array('name' => 'test_field', 'type' => 'datetime', 'boost' => '1', 'value' => new TestObject(), 'getter' => "asString"))
+        ));
+
+        $fields = $metaInformation->getFields();
+        $metaInformation->setFields($fields);
+
+        $this->mapper->toDocument($metaInformation);
+    }
+
     private function setupOrmManager($entity, $expectedEntityId)
     {
         $repository = $this->createMock(ObjectRepository::class);
@@ -407,5 +426,10 @@ class TestObject {
     public function testGetter($para1, $para2, $para3)
     {
         return array($para1, $para2, $para3);
+    }
+
+    public function asString()
+    {
+        return $this;
     }
 }
