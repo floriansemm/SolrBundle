@@ -48,6 +48,13 @@ class ValidTestEntityWithCollection
     private $collection;
 
     /**
+     * @var ArrayCollection
+     *
+     * @Solr\Field(type="strings")
+     */
+    private $collectionNoGetter;
+
+    /**
      * @Solr\Field(type="my_costom_fieldtype")
      *
      * @var string
@@ -144,5 +151,20 @@ class ValidTestEntityWithCollection
         $this->created_at = $created_at;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getCollectionNoGetter(): ArrayCollection
+    {
+        return $this->collectionNoGetter;
+    }
+
+    /**
+     * @param ArrayCollection $collectionNoGetter
+     */
+    public function setCollectionNoGetter(ArrayCollection $collectionNoGetter)
+    {
+        $this->collectionNoGetter = $collectionNoGetter;
+    }
 }
 

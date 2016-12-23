@@ -68,7 +68,10 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function setFieldModifier()
     {
-        $actualDocument = $this->mapper->toDocument($this->metaInformationFactory->loadInformation(new PartialUpdateEntity()));
+        $entity = new PartialUpdateEntity();
+        $entity->setId(uniqid());
+
+        $actualDocument = $this->mapper->toDocument($this->metaInformationFactory->loadInformation($entity));
 
         $this->assertEquals('set', $actualDocument->getFieldModifier('subtitle'));
         $this->assertNull($actualDocument->getFieldModifier('title'));
@@ -219,16 +222,49 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function mapRelationFieldAllFields()
     {
+        $this->markTestSkipped('sub-documents not yet supported');
+
         $entity1 = new ValidTestEntity();
+        $entity1->setId(uniqid());
         $entity1->setTitle('title 1');
         $entity1->setText('text 1');
 
         $entity2 = new ValidTestEntity();
+        $entity2->setId(uniqid());
         $entity2->setTitle('title 2');
-        $entity1->setText('text 2');
+        $entity2->setText('text 2');
 
         $collection = new ArrayCollection();
         $collection->add($entity1);
+        $collection->add($entity2);
+
+        $entity = new ValidTestEntityWithCollection();
+        $entity->setId(uniqid());
+        $entity->setCollectionNoGetter($collection);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayHasKey('collection_no_getter_ss', $document->getFields());
+        $collectionField = $document->getFields()['collection_no_getter_ss'];
+
+        $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
+        $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
+    }
+
+    /**
+     * @test
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
+     * @expectedExceptionMessage No getter method for property "collection" found
+     */
+    public function throwExceptionIfEmbbededObjectsHasNoGetter()
+    {
+        $entity2 = new ValidTestEntity();
+        $entity2->setTitle('title 2');
+        $entity2->setText('text 2');
+
+        $collection = new ArrayCollection();
         $collection->add($entity2);
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
@@ -236,13 +272,21 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
         $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection));
         $metaInformation->setFields($fields);
 
-        $document = $this->mapper->toDocument($metaInformation);
+        $this->mapper->toDocument($metaInformation);
+    }
 
-        $this->assertArrayHasKey('collection_ss', $document->getFields());
-        $collectionField = $document->getFields()['collection_ss'];
+    /**
+     * @test
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
+     * @expectedExceptionMessage No entity id set for "FS\SolrBundle\Tests\Fixtures\ValidTestEntity"
+     */
+    public function throwExceptionIfEntityHasNoId()
+    {
+        $entity = new ValidTestEntity;
 
-        $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
-        $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $this->mapper->toDocument($metaInformation);
     }
 
     /**

@@ -37,12 +37,16 @@ class DocumentFactory
             return null;
         }
 
-        $document = new Document();
+        if (!$metaInformation->getEntityId() && !$metaInformation->generateDocumentId()) {
+            throw new SolrMappingException(sprintf('No entity id set for "%s"', $metaInformation->getClassName()));
+        }
 
         $documentId = $metaInformation->getDocumentKey();
         if ($metaInformation->generateDocumentId()) {
             $documentId = $metaInformation->getDocumentName() . '_' . Uuid::uuid1()->toString();
         }
+
+        $document = new Document();
         $document->setKey(MetaInformationInterface::DOCUMENT_KEY_FIELD_NAME, $documentId);
 
         $document->setBoost($metaInformation->getBoost());
@@ -132,34 +136,23 @@ class DocumentFactory
      * @param Field $field
      *
      * @return array
+     *
+     * @throws SolrMappingException if no getter method was found
      */
     private function mapCollection(Field $field)
     {
         /** @var Collection $value */
         $value = $field->getValue();
         $getter = $field->getGetterName();
-        if (!empty($getter)) {
-            $values = array();
-            foreach ($value as $relatedObj) {
-                $values[] = $relatedObj->{$getter}();
-            }
-
-            return $values;
+        if ($getter == '') {
+            throw new SolrMappingException(sprintf('No getter method for property "%s" found', $field->name));
         }
 
-        $collection = array();
-        foreach ($value as $object) {
-            $metaInformation = $this->metaInformationFactory->loadInformation($object);
-
-            $field = array();
-            $document = $this->createDocument($metaInformation);
-            foreach ($document as $fieldName => $value) {
-                $field[$fieldName] = $value;
-            }
-
-            $collection[] = $field;
+        $values = array();
+        foreach ($value as $relatedObj) {
+            $values[] = $relatedObj->{$getter}();
         }
 
-        return $collection;
+        return $values;
     }
 }
