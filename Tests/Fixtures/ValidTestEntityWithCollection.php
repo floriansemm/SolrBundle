@@ -154,7 +154,7 @@ class ValidTestEntityWithCollection
     /**
      * @return ArrayCollection
      */
-    public function getCollectionNoGetter(): ArrayCollection
+    public function getCollectionNoGetter()
     {
         return $this->collectionNoGetter;
     }
