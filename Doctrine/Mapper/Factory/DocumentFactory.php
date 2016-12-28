@@ -60,7 +60,7 @@ class DocumentFactory
 
             $value = $field->getValue();
             if ($value instanceof Collection) {
-                $document->addField($field->getNameWithAlias(), $this->mapCollection($field), $field->getBoost());
+                $document->addField($field->getNameWithAlias(), $this->mapCollection($field, $metaInformation->getClassName()), $field->getBoost());
             } elseif (is_object($value)) {
                 $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
             } else {
@@ -90,7 +90,7 @@ class DocumentFactory
             $getterReturnValue = $this->callGetterMethod($value, $getter);
 
             if (is_object($getterReturnValue)) {
-                throw new SolrMappingException('The configured getter must return a string or array, got object');
+                throw new SolrMappingException(sprintf('The configured getter "%s" in "%s" must return a string or array, got object', $getter, get_class($value)));
             }
 
             return $getterReturnValue;
@@ -141,19 +141,20 @@ class DocumentFactory
     }
 
     /**
-     * @param Field $field
+     * @param Field  $field
+     * @param string $sourceTargetClass
      *
      * @return array
      *
      * @throws SolrMappingException if no getter method was found
      */
-    private function mapCollection(Field $field)
+    private function mapCollection(Field $field, $sourceTargetClass)
     {
         /** @var Collection $value */
         $value = $field->getValue();
         $getter = $field->getGetterName();
         if ($getter == '') {
-            throw new SolrMappingException(sprintf('No getter method for property "%s" found', $field->name));
+            throw new SolrMappingException(sprintf('No getter method for property "%s" configured in class "%s"', $field->name, $sourceTargetClass));
         }
 
         $values = array();

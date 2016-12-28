@@ -279,7 +279,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
-     * @expectedExceptionMessage No getter method for property "collection" found
+     * @expectedExceptionMessage No getter method for property "collection" configured in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection"
      */
     public function throwExceptionIfEmbbededObjectsHasNoGetter()
     {
@@ -414,7 +414,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
-     * @expectedExceptionMessage The configured getter must return a string or array, got object
+     * @expectedExceptionMessage The configured getter "asString" in "FS\SolrBundle\Tests\Doctrine\Mapper\TestObject" must return a string or array, got object
      */
     public function callGetterWithObjectAsReturnValue()
     {
