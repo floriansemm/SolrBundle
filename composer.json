@@ -11,7 +11,7 @@
   "homepage": "https://github.com/floriansemm/SolrBundle",
   "license": "MIT",
   "require": {
-    "php": ">=5.5.9 | ^7.0",
+    "php": "^7.0",
     "solarium/solarium": "^3.6",
     "symfony/dependency-injection": "^2.3|^3.0",
     "symfony/http-kernel": "^2.3|^3.0",
