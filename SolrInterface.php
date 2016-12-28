@@ -25,6 +25,8 @@ interface SolrInterface
      * @param AbstractQuery $query
      *
      * @return array of found documents
+     *
+     * @throws SolrException
      */
     public function query(AbstractQuery $query);
 

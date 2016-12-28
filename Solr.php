@@ -143,7 +143,7 @@ class Solr implements SolrInterface
                 return $repositoryInstance;
             }
 
-            throw new \RuntimeException(sprintf(
+            throw new SolrException(sprintf(
                 '%s must extends the FS\SolrBundle\Repository\Repository',
                 $repositoryClass
             ));
@@ -185,6 +185,8 @@ class Solr implements SolrInterface
                 $errorEvent->setException($e);
 
                 $this->eventManager->dispatch(Events::ERROR, $errorEvent);
+
+                throw new SolrException($e->getMessage(), $e->getCode(), $e);
             }
 
             $this->eventManager->dispatch(Events::POST_DELETE, $event);
@@ -279,7 +281,7 @@ class Solr implements SolrInterface
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
 
-            return array();
+            throw new SolrException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -308,6 +310,8 @@ class Solr implements SolrInterface
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
+
+            throw new SolrException($e->getMessage(), $e->getCode(), $e);
         }
 
         $this->eventManager->dispatch(Events::POST_CLEAR_INDEX, new Event($this->solrClientCore));
@@ -386,6 +390,8 @@ class Solr implements SolrInterface
      * @param object                   $doc
      * @param MetaInformationInterface $metaInformation
      * @param Event                    $event
+     *
+     * @throws SolrException
      */
     private function addDocumentToIndex($doc, MetaInformationInterface $metaInformation, Event $event)
     {
@@ -400,6 +406,8 @@ class Solr implements SolrInterface
             $errorEvent->setException($e);
 
             $this->eventManager->dispatch(Events::ERROR, $errorEvent);
+
+            throw new SolrException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }
