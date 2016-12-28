@@ -91,7 +91,7 @@ class AnnotationReader
      *
      * @return number
      *
-     * @throws \InvalidArgumentException if the boost value is not numeric
+     * @throws AnnotationReaderException if the boost value is not numeric
      */
     public function getEntityBoost($entity)
     {
@@ -101,10 +101,13 @@ class AnnotationReader
             return 0;
         }
 
-        try {
-            $boostValue = $annotation->getBoost();
-        } catch (\InvalidArgumentException $e) {
-            throw new \InvalidArgumentException(sprintf($e->getMessage() . ' for entity %s', get_class($entity)));
+        $boostValue = $annotation->getBoost();
+        if (!is_numeric($boostValue)) {
+            throw new AnnotationReaderException(sprintf('Invalid boost value "%s" in class "%s" configured', $boostValue, get_class($entity)));
+        }
+
+        if ($boostValue === 0) {
+            return null;
         }
 
         return $boostValue;
@@ -135,14 +138,14 @@ class AnnotationReader
      *
      * @return Id
      *
-     * @throws \RuntimeException
+     * @throws AnnotationReaderException if given $entity has no identifier
      */
     public function getIdentifier($entity)
     {
         $id = $this->getPropertiesByType($entity, self::FIELD_IDENTIFIER_CLASS);
 
         if (count($id) == 0) {
-            throw new \RuntimeException('no identifer declared in entity ' . get_class($entity));
+            throw new AnnotationReaderException('no identifer declared in entity ' . get_class($entity));
         }
 
         return reset($id);

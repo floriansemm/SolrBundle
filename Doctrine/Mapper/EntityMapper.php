@@ -64,13 +64,13 @@ class EntityMapper implements EntityMapperInterface
     public function toEntity(\ArrayAccess $document, $sourceTargetEntity)
     {
         if (null === $sourceTargetEntity) {
-            throw new \InvalidArgumentException('$sourceTargetEntity should not be null');
+            throw new SolrMappingException('$sourceTargetEntity should not be null');
         }
 
         $metaInformation = $this->metaInformationFactory->loadInformation($sourceTargetEntity);
 
         if ($metaInformation->isDoctrineEntity() === false && $this->hydrationMode == HydrationModes::HYDRATE_DOCTRINE) {
-            throw new \RuntimeException(sprintf('Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.'));
+            throw new SolrMappingException(sprintf('Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.'));
         }
 
         if ($this->hydrationMode == HydrationModes::HYDRATE_INDEX) {

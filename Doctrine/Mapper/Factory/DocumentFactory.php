@@ -29,6 +29,8 @@ class DocumentFactory
      * @param MetaInformationInterface $metaInformation
      *
      * @return null|Document
+     *
+     * @throws SolrMappingException if no id is set
      */
     public function createDocument(MetaInformationInterface $metaInformation)
     {

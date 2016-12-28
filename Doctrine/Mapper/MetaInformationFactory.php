@@ -40,7 +40,7 @@ class MetaInformationFactory
      *
      * @return MetaInformation
      *
-     * @throws \RuntimeException if no declaration for document found in $entity
+     * @throws SolrMappingException if no declaration for document found in $entity
      */
     public function loadInformation($entity)
     {
@@ -49,13 +49,13 @@ class MetaInformationFactory
         if (!is_object($entity)) {
             $reflectionClass = new \ReflectionClass($className);
             if (!$reflectionClass->isInstantiable()) {
-                throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
+                throw new SolrMappingException(sprintf('Cannot instantiate entity %s', $className));
             }
             $entity = $reflectionClass->newInstanceWithoutConstructor();
         }
 
         if (!$this->annotationReader->hasDocumentDeclaration($entity)) {
-            throw new \RuntimeException(sprintf('no declaration for document found in entity %s', $className));
+            throw new SolrMappingException(sprintf('no declaration for document found in entity %s', $className));
         }
 
         $metaInformation = new MetaInformation();

@@ -197,12 +197,12 @@ class MetaInformation implements MetaInformationInterface
      * @param string $fieldName
      * @param string $value
      *
-     * @throws \InvalidArgumentException if $fieldName does not exist
+     * @throws SolrMappingException if $fieldName does not exist
      */
     public function setFieldValue($fieldName, $value)
     {
         if ($this->hasField($fieldName) == false) {
-            throw new \InvalidArgumentException(sprintf('Field %s does not exist', $fieldName));
+            throw new SolrMappingException(sprintf('Field %s does not exist', $fieldName));
         }
 
         $field = $this->getField($fieldName);
@@ -215,7 +215,7 @@ class MetaInformation implements MetaInformationInterface
     public function getField($fieldName)
     {
         if ($fieldName == '') {
-            throw new \InvalidArgumentException('$fieldName must not be empty');
+            throw new SolrMappingException('$fieldName must not be empty');
         }
 
         if (!$this->hasField($fieldName)) {
@@ -375,7 +375,7 @@ class MetaInformation implements MetaInformationInterface
     public function generateDocumentId()
     {
         if ($this->identifier == null) {
-            throw new \RuntimeException('No identifier is set');
+            throw new SolrMappingException('No identifier is set');
         }
 
         return $this->identifier->generateId;

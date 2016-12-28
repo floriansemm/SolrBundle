@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Query\QueryBuilderInterface;
+use FS\SolrBundle\SolrException;
 use FS\SolrBundle\Tests\Fixtures\EntityWithInvalidRepository;
 use FS\SolrBundle\Tests\Fixtures\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityFiltered;
@@ -47,7 +48,8 @@ class SolrTest extends AbstractSolrTest
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \FS\SolrBundle\SolrException
+     * @expectedExceptionMessage FS\SolrBundle\Tests\Fixtures\InvalidEntityRepository must extends the FS\SolrBundle\Repository\Repository
      */
     public function testGetRepository_UserdefinedInvalidRepository()
     {
@@ -198,7 +200,7 @@ class SolrTest extends AbstractSolrTest
     }
 
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException \FS\SolrBundle\SolrException
      */
     public function testAddEntity_FilteredEntityWithUnknownCallback()
     {

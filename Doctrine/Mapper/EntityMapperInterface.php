@@ -22,7 +22,7 @@ interface EntityMapperInterface
      *
      * @return object
      *
-     * @throws \InvalidArgumentException if $sourceTargetEntity is null
+     * @throws SolrMappingException( if $sourceTargetEntity is null
      */
     public function toEntity(\ArrayAccess $document, $sourceTargetEntity);
 

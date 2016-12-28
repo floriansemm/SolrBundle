@@ -31,18 +31,11 @@ class Document extends Annotation
     public $indexHandler;
 
     /**
-     * @throws \InvalidArgumentException if boost is not a number
-     *
      * @return number
      */
     public function getBoost()
     {
-        if (!is_numeric($this->boost)) {
-            throw new \InvalidArgumentException(sprintf('Invalid boost value %s', $this->boost));
-        }
-
-        $float = floatval($this->boost);
-        return $float ?: null;
+        return $this->boost;
     }
 
     /**

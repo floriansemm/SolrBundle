@@ -95,7 +95,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
      * @expectedExceptionMessage no declaration for document found in entity
      */
     public function testLoadInformation_EntityHasNoDocumentDeclaration_ShouldThrowException()

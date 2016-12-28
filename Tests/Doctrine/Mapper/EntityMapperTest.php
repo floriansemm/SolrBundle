@@ -136,7 +136,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \RuntimeException
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
      * @expectedExceptionMessage Please check your config. Given entity is not a Doctrine entity, but Doctrine hydration is enabled. Use setHydrationMode(HydrationModes::HYDRATE_DOCTRINE) to fix this.
      */
     public function throwExceptionIfGivenObjectIsNotEntityButItShould()

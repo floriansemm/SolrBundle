@@ -143,10 +143,7 @@ class Solr implements SolrInterface
                 return $repositoryInstance;
             }
 
-            throw new SolrException(sprintf(
-                '%s must extends the FS\SolrBundle\Repository\Repository',
-                $repositoryClass
-            ));
+            throw new SolrException(sprintf('%s must extends the FS\SolrBundle\Repository\Repository', $repositoryClass));
         }
 
         return new Repository($this, $metaInformation);
@@ -220,7 +217,7 @@ class Solr implements SolrInterface
      *
      * @return boolean
      *
-     * @throws \BadMethodCallException if callback method not exists
+     * @throws SolrException if callback method not exists
      */
     private function addToIndex(MetaInformationInterface $metaInformation, $entity)
     {
@@ -230,7 +227,7 @@ class Solr implements SolrInterface
 
         $callback = $metaInformation->getSynchronizationCallback();
         if (!method_exists($entity, $callback)) {
-            throw new \BadMethodCallException(sprintf('unknown method %s in entity %s', $callback, get_class($entity)));
+            throw new SolrException(sprintf('unknown method %s in entity %s', $callback, get_class($entity)));
         }
 
         return $entity->$callback();

@@ -88,7 +88,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
      * @expectedExceptionMessage $fieldName must not be empty
      */
     public function setEmpty()

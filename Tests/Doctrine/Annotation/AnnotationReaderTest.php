@@ -61,7 +61,8 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage no identifer declared in entity FS\SolrBundle\Tests\Fixtures\NotIndexedEntity
      */
     public function testGetIdentifier_ShouldThrowException()
     {
@@ -109,8 +110,8 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid boost value aaaa for entity FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage Invalid boost value "aaaa" in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithInvalidBoost" configured
      */
     public function testGetBoost_BoostNotNumeric()
     {
