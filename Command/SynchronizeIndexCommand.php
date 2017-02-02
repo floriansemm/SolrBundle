@@ -2,7 +2,8 @@
 namespace FS\SolrBundle\Command;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
-use FS\SolrBundle\Console\ConsoleErrorListOutput;
+use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -136,26 +137,35 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
      * @param string $source
      *
      * @return int
+     *
      * @throws \Exception
      */
     private function getTotalNumberOfEntities($entity, $source)
     {
         $objectManager = $this->getObjectManager($source);
         $repository = $objectManager->getRepository($entity);
-        $dataStoreMetadata = $objectManager->getManager()->getClassMetadata($entity);
 
-        $identifierFieldNames = $dataStoreMetadata->getIdentifierFieldNames();
+        if ($repository instanceof DocumentRepository) {
+            $totalSize = $repository->createQueryBuilder()
+                ->getQuery()
+                ->count();
+        } else {
+            $dataStoreMetadata = $objectManager->getManager()->getClassMetadata($entity);
 
-        if (!count($identifierFieldNames)) {
-            throw new \Exception(sprintf('No primary key found for entity %s', $entity));
+            $identifierFieldNames = $dataStoreMetadata->getIdentifierFieldNames();
+
+            if (!count($identifierFieldNames)) {
+                throw new \Exception(sprintf('No primary key found for entity %s', $entity));
+            }
+
+            $countableColumn = reset($identifierFieldNames);
+
+            /** @var EntityRepository $repository */
+            $totalSize = $repository->createQueryBuilder('size')
+                ->select(sprintf('count(size.%s)', $countableColumn))
+                ->getQuery()
+                ->getSingleScalarResult();
         }
-
-        $countableColumn = reset($identifierFieldNames);
-
-        $totalSize = $repository->createQueryBuilder('size')
-            ->select(sprintf('count(size.%s)', $countableColumn))
-            ->getQuery()
-            ->getSingleScalarResult();
 
         return $totalSize;
     }
