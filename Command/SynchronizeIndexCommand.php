@@ -2,6 +2,7 @@
 namespace FS\SolrBundle\Command;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -24,7 +25,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
         $this->setName('solr:index:populate')
             ->addArgument('entity', InputArgument::OPTIONAL, 'The entity you want to index', null)
             ->addOption('flushsize', null, InputOption::VALUE_OPTIONAL, 'Number of items to handle before flushing data', 500)
-            ->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', 'relational')
+            ->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', null)
             ->setDescription('Index all entities');
     }
 
@@ -35,12 +36,16 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     {
         $entities = $this->getIndexableEntities($input->getArgument('entity'));
         $source = $input->getOption('source');
+        if ($source !== null) {
+            $output->writeln('<comment>The source option is deprecated and will be removed in version 2.0</comment>');
+        }
+
         $batchSize = $input->getOption('flushsize');
         $solr = $this->getContainer()->get('solr.client');
 
-        $objectManager = $this->getObjectManager($source);
-
         foreach ($entities as $entityCollection) {
+            $objectManager = $this->getObjectManager($entityCollection);
+
             $output->writeln(sprintf('Indexing: <info>%s</info>', $entityCollection));
 
             try {
@@ -51,7 +56,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                 continue;
             }
 
-            $totalSize = $this->getTotalNumberOfEntities($entityCollection, $source);
+            $totalSize = $this->getTotalNumberOfEntities($entityCollection);
 
             if ($totalSize === 0) {
                 $output->writeln('<comment>No entities found for indexing</comment>');
@@ -78,34 +83,32 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param string $source
+     * @param string $entityClassname
      *
-     * @throws \InvalidArgumentException if $source is unknown
      * @throws \RuntimeException if no doctrine instance is configured
      *
-     * @return AbstractManagerRegistry
+     * @return ObjectManager
      */
-    private function getObjectManager($source)
+    private function getObjectManager($entityClassname)
     {
-        $objectManager = null;
-
-        if ($source === 'relational') {
-            $objectManager = $this->getContainer()->get('doctrine');
-        } else {
-            if ($source === 'mongodb') {
-                $objectManager = $this->getContainer()->get('doctrine_mongodb');
-            } else {
-                throw new \InvalidArgumentException(sprintf('Unknown source %s', $source));
-            }
+        $objectManager = $this->getContainer()->get('doctrine')->getManagerForClass($entityClassname);
+        if ($objectManager) {
+            return $objectManager;
         }
 
-        return $objectManager;
+        $objectManager = $this->getContainer()->get('doctrine_mongodb')->getManagerForClass($entityClassname);
+        if ($objectManager) {
+            return $objectManager;
+        }
+
+        throw new \RuntimeException(sprintf('Class "%s" is not a managed entity', $entityClassname));
     }
 
     /**
      * Get a list of entities which are indexable by Solr
      *
      * @param null|string $entity
+     *
      * @return array
      */
     private function getIndexableEntities($entity = null)
@@ -134,15 +137,14 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
      * Get the total number of entities in a repository
      *
      * @param string $entity
-     * @param string $source
      *
      * @return int
      *
-     * @throws \Exception
+     * @throws \Exception if no primary key was found for the given entity
      */
-    private function getTotalNumberOfEntities($entity, $source)
+    private function getTotalNumberOfEntities($entity)
     {
-        $objectManager = $this->getObjectManager($source);
+        $objectManager = $this->getObjectManager($entity);
         $repository = $objectManager->getRepository($entity);
 
         if ($repository instanceof DocumentRepository) {
@@ -150,7 +152,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                 ->getQuery()
                 ->count();
         } else {
-            $dataStoreMetadata = $objectManager->getManager()->getClassMetadata($entity);
+            $dataStoreMetadata = $objectManager->getClassMetadata($entity);
 
             $identifierFieldNames = $dataStoreMetadata->getIdentifierFieldNames();
 
