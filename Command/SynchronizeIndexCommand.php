@@ -1,12 +1,10 @@
 <?php
 namespace FS\SolrBundle\Command;
 
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,6 +24,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             ->addArgument('entity', InputArgument::OPTIONAL, 'The entity you want to index', null)
             ->addOption('flushsize', null, InputOption::VALUE_OPTIONAL, 'Number of items to handle before flushing data', 500)
             ->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb]', null)
+            ->addOption('start-offset', null, InputOption::VALUE_OPTIONAL, 'Start with row', 0)
             ->setDescription('Index all entities');
     }
 
@@ -40,25 +39,32 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             $output->writeln('<comment>The source option is deprecated and will be removed in version 2.0</comment>');
         }
 
+        $startOffset = $input->getOption('start-offset');
         $batchSize = $input->getOption('flushsize');
         $solr = $this->getContainer()->get('solr.client');
 
-        foreach ($entities as $entityCollection) {
-            $objectManager = $this->getObjectManager($entityCollection);
+        if ($startOffset > 0 && count($entities) > 1) {
+            $output->writeln('<error>Wrong usage. Please use start-offset option together with the entity argument.</error>');
 
-            $output->writeln(sprintf('Indexing: <info>%s</info>', $entityCollection));
+            return;
+        }
+
+        foreach ($entities as $entityClassname) {
+            $objectManager = $this->getObjectManager($entityClassname);
+
+            $output->writeln(sprintf('Indexing: <info>%s</info>', $entityClassname));
 
             try {
-                $repository = $objectManager->getRepository($entityCollection);
+                $repository = $objectManager->getRepository($entityClassname);
             } catch (\Exception $e) {
-                $output->writeln(sprintf('<error>No repository found for "%s", check your input</error>', $entityCollection));
+                $output->writeln(sprintf('<error>No repository found for "%s", check your input</error>', $entityClassname));
 
                 continue;
             }
 
-            $totalSize = $this->getTotalNumberOfEntities($entityCollection);
+            $totalSize = $this->getTotalNumberOfEntities($entityClassname, $startOffset);
 
-            if ($totalSize === 0) {
+            if ($totalSize <= 0) {
                 $output->writeln('<comment>No entities found for indexing</comment>');
 
                 continue;
@@ -69,7 +75,14 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             $batchLoops = ceil($totalSize / $batchSize);
 
             for ($i = 0; $i <= $batchLoops; $i++) {
-                $entities = $repository->findBy(array(), null, $batchSize, $i * $batchSize);
+                $offset = $i * $batchSize;
+                if ($startOffset && $i == 0) {
+                    $offset = $startOffset;
+                    $i++;
+                }
+
+                $entities = $repository->findBy(array(), null, $batchSize, $offset);
+
                 try {
                     $solr->synchronizeIndex($entities);
                 } catch (\Exception $e) {
@@ -137,12 +150,13 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
      * Get the total number of entities in a repository
      *
      * @param string $entity
+     * @param int    $startOffset
      *
      * @return int
      *
      * @throws \Exception if no primary key was found for the given entity
      */
-    private function getTotalNumberOfEntities($entity)
+    private function getTotalNumberOfEntities($entity, $startOffset)
     {
         $objectManager = $this->getObjectManager($entity);
         $repository = $objectManager->getRepository($entity);
@@ -169,6 +183,6 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                 ->getSingleScalarResult();
         }
 
-        return $totalSize;
+        return $totalSize - $startOffset;
     }
 }
