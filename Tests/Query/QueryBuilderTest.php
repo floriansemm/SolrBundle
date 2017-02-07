@@ -26,7 +26,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new QueryBuilder($this->solr, $metaInformation);
 
         $nearNorthPole  = $builder->where('position')->nearCircle(38.116181, -86.929463, 100.5);
-        self::assertEquals("{!bbox pt=38.116181,\\-86.929463 sfield=position_s d=100.5}", $nearNorthPole->getQuery()->getCustomQuery());
+        self::assertEquals("{!bbox pt=38.116181,-86.929463 sfield=position_s d=100.5}", $nearNorthPole->getQuery()->getCustomQuery());
 
         $builder = new QueryBuilder($this->solr, $metaInformation);
         $santaClaus = $builder->where('santa-name')->contains(['Noel', 'Claus', 'Natale', 'Baba', 'Nicolas'])
@@ -35,7 +35,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
             ->andWhere('santa-beard-color')->startsWith('whi')->endsWith('te')
             ->andWhere($nearNorthPole);
 
-        self::assertEquals("santa-name_ss:(*Noel* *Claus* *Natale* *Baba* *Nicolas*) AND santa-beard-exists_b:true AND santa-beard-lenght_f:[5.5 TO 10] AND santa-beard-color_s:(whi* *te) AND {!bbox pt=38.116181,\\-86.929463 sfield=position_s d=100.5}", $santaClaus->getQuery()->getCustomQuery());
+        self::assertEquals("santa-name_ss:(*Noel* *Claus* *Natale* *Baba* *Nicolas*) AND santa-beard-exists_b:true AND santa-beard-lenght_f:[5.5 TO 10] AND santa-beard-color_s:(whi* *te) AND {!bbox pt=38.116181,-86.929463 sfield=position_s d=100.5}", $santaClaus->getQuery()->getCustomQuery());
 
         $builder = new QueryBuilder($this->solr, $metaInformation);
         $goodPeople = $builder->where('good-actions')->greaterThanEqual(10)
@@ -66,7 +66,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
                     ->orWhere($goodPeople)
             );
 
-        self::assertEquals("-gift-received_s:[* TO *] AND chimney_s:[* TO *] AND date_dt:(2016\\-12\\-25T00\\:00\\:00Z [1970\\-01\\-01T00\\:00\\:00Z TO *]) AND (santa-name_ss:(*Noel* *Claus* *Natale* *Baba* *Nicolas*) AND santa-beard-exists_b:true AND santa-beard-lenght_f:[5.5 TO 10] AND santa-beard-color_s:(whi* *te) AND {!bbox pt=38.116181,\\-86.929463 sfield=position_s d=100.5}) AND (gift-name_s:\"LED TV GoPro Oculus Tablet Laptop\"~2 AND gift-type_s:(information~0.4 tech*) AND __query___s:{!dismax qf=myfield}how now brown cow) AND (name_s:(Christoph Philipp Francisco Fabio)^2.0 OR (good-actions_i:[10 TO *] OR bad-actions_i:[* TO 5]))", $giftReceivers->getQuery()->getCustomQuery());
+        self::assertEquals("-gift-received_s:[* TO *] AND chimney_s:[* TO *] AND date_dt:(2016\\-12\\-25T00\\:00\\:00Z [1970\\-01\\-01T00\\:00\\:00Z TO *]) AND (santa-name_ss:(*Noel* *Claus* *Natale* *Baba* *Nicolas*) AND santa-beard-exists_b:true AND santa-beard-lenght_f:[5.5 TO 10] AND santa-beard-color_s:(whi* *te) AND {!bbox pt=38.116181,-86.929463 sfield=position_s d=100.5}) AND (gift-name_s:\"LED TV GoPro Oculus Tablet Laptop\"~2 AND gift-type_s:(information~0.4 tech*) AND __query___s:{!dismax qf=myfield}how now brown cow) AND (name_s:(Christoph Philipp Francisco Fabio)^2.0 OR (good-actions_i:[10 TO *] OR bad-actions_i:[* TO 5]))", $giftReceivers->getQuery()->getCustomQuery());
     }
 
     /**

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Command synchronizes the DB with solr
@@ -64,7 +65,18 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
 
             $totalSize = $this->getTotalNumberOfEntities($entityClassname, $startOffset);
 
-            if ($totalSize <= 0) {
+            if ($totalSize >= 500000) {
+                $helper = $this->getHelper('question');
+                $question = new ConfirmationQuestion('Indexing more than 500000 entities does not perform well and can exhaust the whole memory. Execute anyway?', false);
+
+                if (!$helper->ask($input, $output, $question)) {
+                    $output->writeln('');
+
+                    continue;
+                }
+            }
+
+            if ($totalSize === 0) {
                 $output->writeln('<comment>No entities found for indexing</comment>');
 
                 continue;

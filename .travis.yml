@@ -16,5 +16,5 @@ install:
   - composer update
 
 script:
-    - phpunit
+    - ./bin/phpunit
     - ./bin/behat
