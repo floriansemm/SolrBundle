@@ -3,7 +3,6 @@
 namespace FS\SolrBundle\Tests;
 
 use FS\SolrBundle\Query\QueryBuilderInterface;
-use FS\SolrBundle\SolrException;
 use FS\SolrBundle\Tests\Fixtures\EntityWithInvalidRepository;
 use FS\SolrBundle\Tests\Fixtures\InvalidTestEntityFiltered;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityFiltered;
@@ -11,15 +10,9 @@ use FS\SolrBundle\Tests\Fixtures\EntityCore0;
 use FS\SolrBundle\Tests\Fixtures\EntityCore1;
 use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
-use FS\SolrBundle\Event\EventManager;
-use FS\SolrBundle\Tests\SolrClientFake;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Fixtures\EntityWithRepository;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
-use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
-use FS\SolrBundle\Solr;
 use FS\SolrBundle\Tests\Fixtures\ValidEntityRepository;
-use FS\SolrBundle\Tests\Util\CommandFactoryStub;
 use FS\SolrBundle\Query\SolrQuery;
 use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -234,6 +227,11 @@ class SolrTest extends AbstractSolrTest
             ->with('bufferedadd')
             ->will($this->returnValue($bufferPlugin));
 
+
+        $this->mapper->expects($this->once())
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
+
         $this->solr->synchronizeIndex(array($entity));
     }
 
@@ -265,6 +263,11 @@ class SolrTest extends AbstractSolrTest
             ->method('getPlugin')
             ->with('bufferedadd')
             ->will($this->returnValue($bufferPlugin));
+
+
+        $this->mapper->expects($this->exactly(2))
+            ->method('toDocument')
+            ->will($this->returnValue(new DocumentStub()));
 
         $this->solr->synchronizeIndex(array($entity1, $entity2));
     }

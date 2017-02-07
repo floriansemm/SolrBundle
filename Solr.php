@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FS\SolrBundle;
 
 use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
-use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
-use FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Query\QueryBuilder;
 use FS\SolrBundle\Query\QueryBuilderInterface;
+use FS\SolrBundle\Repository\RepositoryInterface;
 use Solarium\Plugin\BufferedAdd\BufferedAdd;
 use Solarium\QueryType\Update\Query\Document\Document;
+use Solarium\QueryType\Select\Query\Query as SolariumQuery;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
-use FS\SolrBundle\Doctrine\Mapper\Mapping\CommandFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Event\ErrorEvent;
 use FS\SolrBundle\Event\Event;
@@ -21,6 +22,7 @@ use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
 use Solarium\Client;
+use Solarium\QueryType\Update\Query\Document\DocumentInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -76,7 +78,7 @@ class Solr implements SolrInterface
     /**
      * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->solrClientCore;
     }
@@ -84,7 +86,7 @@ class Solr implements SolrInterface
     /**
      * @return EntityMapper
      */
-    public function getMapper()
+    public function getMapper(): EntityMapper
     {
         return $this->entityMapper;
     }
@@ -92,7 +94,7 @@ class Solr implements SolrInterface
     /**
      * @return MetaInformationFactory
      */
-    public function getMetaFactory()
+    public function getMetaFactory(): MetaInformationFactory
     {
         return $this->metaInformationFactory;
     }
@@ -102,7 +104,7 @@ class Solr implements SolrInterface
      *
      * @return SolrQuery
      */
-    public function createQuery($entity)
+    public function createQuery($entity): SolrQuery
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -121,7 +123,7 @@ class Solr implements SolrInterface
      *
      * @return QueryBuilderInterface
      */
-    public function getQueryBuilder($entity)
+    public function getQueryBuilder($entity): QueryBuilderInterface
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -131,7 +133,7 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function getRepository($entity)
+    public function getRepository($entity): RepositoryInterface
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -152,7 +154,7 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function createQueryBuilder($entity)
+    public function createQueryBuilder($entity): QueryBuilderInterface
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -193,7 +195,7 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function addDocument($entity)
+    public function addDocument($entity): bool
     {
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -209,6 +211,8 @@ class Solr implements SolrInterface
         $this->addDocumentToIndex($doc, $metaInformation, $event);
 
         $this->eventManager->dispatch(Events::POST_INSERT, $event);
+
+        return true;
     }
 
     /**
@@ -219,7 +223,7 @@ class Solr implements SolrInterface
      *
      * @throws SolrException if callback method not exists
      */
-    private function addToIndex(MetaInformationInterface $metaInformation, $entity)
+    private function addToIndex(MetaInformationInterface $metaInformation, $entity): bool
     {
         if (!$metaInformation->hasSynchronizationFilter()) {
             return true;
@@ -238,9 +242,9 @@ class Solr implements SolrInterface
      *
      * @param AbstractQuery $query
      *
-     * @return \Solarium\QueryType\Select\Query\Query
+     * @return SolariumQuery
      */
-    public function getSelectQuery(AbstractQuery $query)
+    public function getSelectQuery(AbstractQuery $query): SolariumQuery
     {
         $selectQuery = $this->solrClientCore->createSelect($query->getOptions());
 
@@ -255,7 +259,7 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function query(AbstractQuery $query)
+    public function query(AbstractQuery $query): array
     {
         $entity = $query->getEntity();
         $runQueryInIndex = $query->getIndex();
@@ -287,13 +291,15 @@ class Solr implements SolrInterface
      *
      * @return integer
      */
-    public function getNumFound()
+    public function getNumFound(): int
     {
         return $this->numberOfFoundDocuments;
     }
 
     /**
      * clears the whole index by using the query *:*
+     *
+     * @throws SolrException if an error occurs
      */
     public function clearIndex()
     {
@@ -351,7 +357,7 @@ class Solr implements SolrInterface
     /**
      * {@inheritdoc}
      */
-    public function updateDocument($entity)
+    public function updateDocument($entity): bool
     {
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
 
@@ -374,9 +380,9 @@ class Solr implements SolrInterface
     /**
      * @param MetaInformationInterface $metaInformation
      *
-     * @return Document
+     * @return DocumentInterface
      */
-    private function toDocument(MetaInformationInterface $metaInformation)
+    private function toDocument(MetaInformationInterface $metaInformation): DocumentInterface
     {
         $doc = $this->entityMapper->toDocument($metaInformation);
 
@@ -388,7 +394,7 @@ class Solr implements SolrInterface
      * @param MetaInformationInterface $metaInformation
      * @param Event                    $event
      *
-     * @throws SolrException
+     * @throws SolrException if an error occurs
      */
     private function addDocumentToIndex($doc, MetaInformationInterface $metaInformation, Event $event)
     {
