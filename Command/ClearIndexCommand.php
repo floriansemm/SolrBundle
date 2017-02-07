@@ -1,7 +1,8 @@
 <?php
+
 namespace FS\SolrBundle\Command;
 
-use FS\SolrBundle\Console\ConsoleErrorListOutput;
+use FS\SolrBundle\SolrException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +33,7 @@ class ClearIndexCommand extends ContainerAwareCommand
 
         try {
             $solr->clearIndex();
-        } catch (\Exception $e) {
+        } catch (SolrException $e) {
             $output->writeln(sprintf('A error occurs: %s', $e->getMessage()));
         }
 

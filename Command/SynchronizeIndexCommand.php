@@ -1,9 +1,11 @@
 <?php
+
 namespace FS\SolrBundle\Command;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ORM\EntityRepository;
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -150,7 +152,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
             try {
                 $metaInformation = $metaInformationFactory->loadInformation($classname);
                 array_push($entities, $metaInformation->getClassName());
-            } catch (\RuntimeException $e) {
+            } catch (SolrMappingException $e) {
                 continue;
             }
         }

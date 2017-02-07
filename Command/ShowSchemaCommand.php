@@ -2,6 +2,7 @@
 
 namespace FS\SolrBundle\Command;
 
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +30,7 @@ class ShowSchemaCommand extends ContainerAwareCommand
         foreach ($namespaces->getEntityClassnames() as $classname) {
             try {
                 $metaInformation = $metaInformationFactory->loadInformation($classname);
-            } catch (\RuntimeException $e) {
+            } catch (SolrMappingException $e) {
                 $output->writeln(sprintf('<info>%s</info>', $e->getMessage()));
                 continue;
             }
