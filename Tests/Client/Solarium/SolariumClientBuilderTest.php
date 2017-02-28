@@ -54,7 +54,7 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
      * @param string $message
      * @dataProvider dsnProvider
      */
-    public function testCreateClientDsn($dsn, $expectedBaseUri, $message)
+    public function testCreateClientWithDsn($dsn, $expectedBaseUri, $message)
     {
         $settings = $this->defaultEndpoints;
         $settings['unittest'] = [
@@ -73,7 +73,7 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
      * @param string $message
      * @dataProvider dsnProvider
      */
-    public function testCreateClientDsnWithCore($dsn, $expectedBaseUri, $message)
+    public function testCreateClientWithDsnAndCore($dsn, $expectedBaseUri, $message)
     {
         $settings = $this->defaultEndpoints;
         $settings['unittest'] = [
