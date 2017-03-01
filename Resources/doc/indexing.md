@@ -46,6 +46,7 @@ The resulting file looks like this: `/tmp/person_2017_03_01_11_21_41.csv`
 ## PDO Select + [Solarium BufferedAdd](http://solarium.readthedocs.io/en/stable/plugins/#example-usage)
 
 The script has two parts:
+
 1. select a chunk of rows from the DB
 2. add the rows to the index with Solarium
 
@@ -98,4 +99,5 @@ for ($i = 0; $i <= $pages; $i++) {
     echo sprintf('Indexing page %s / %s', $i, $pages) . PHP_EOL;
 }
 
-$buffer->flush();```
+$buffer->flush();
+```
