@@ -43,3 +43,59 @@ The resulting file looks like this: `/tmp/person_2017_03_01_11_21_41.csv`
 /opt/solr/solr-5.5.2/bin/post -c core0 /tmp/person_2017_03_01_11_21_41.csv
 ```
 
+## PDO Select + [Solarium BufferedAdd](http://solarium.readthedocs.io/en/stable/plugins/#example-usage)
+
+The script has two parts:
+1. select a chunk of rows from the DB
+2. add the rows to the index with Solarium
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+$connection = new PDO('mysql:host=localhost;dbname=dbname;charset=utf8mb4', 'dbuser', '123');
+$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$statement = $connection->prepare('SELECT COUNT(*) as total_items FROM person');
+$statement->execute();
+$countResult = $statement->fetch(PDO::FETCH_ASSOC);
+
+$totalItems = $countResult['total_items'];
+$batchSize = 5000;
+
+$pages = ceil($totalItems / $batchSize);
+
+$client = new Solarium\Client([
+    'endpoint' => [
+        'localhost' => [
+            'host' => 'localhost',
+            'port' => 8983,
+            'path' => '/solr/core0',
+        ]
+    ]
+]);
+
+/** @var \Solarium\Plugin\BufferedAdd\BufferedAdd $buffer */
+$buffer = $client->getPlugin('bufferedadd');
+$buffer->setBufferSize($batchSize);
+
+for ($i = 0; $i <= $pages; $i++) {
+    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person LIMIT %s, %s', $i * $batchSize, $batchSize));
+    $statement->execute();
+
+    foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $item) {
+        $buffer->createDocument([
+            'id' => $item['id'],
+            'name_s' => $item['name'],
+            'email_s' => $item['email']
+        ]);
+    }
+
+    $statement->closeCursor();
+
+    $buffer->commit();
+
+    echo sprintf('Indexing page %s / %s', $i, $pages) . PHP_EOL;
+}
+
+$buffer->flush();```
