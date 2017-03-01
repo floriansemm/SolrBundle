@@ -7,7 +7,7 @@ In my following example I have a `person` table with 5000000 rows and three colu
 
 Here are some possibilities which works well for me:
 
-## MySQL Prepared Statement + Solr PostTool
+## CSV export with MySQL Prepared Statement + Solr PostTool
 
 This solution does not use PHP.
 
@@ -101,3 +101,4 @@ for ($i = 0; $i <= $pages; $i++) {
 
 $buffer->flush();
 ```
+
