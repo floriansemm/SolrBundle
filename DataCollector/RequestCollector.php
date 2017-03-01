@@ -25,9 +25,7 @@ class RequestCollector extends DataCollector
     }
 
     /**
-     * @param Request         $request
-     * @param Response        $response
-     * @param \Exception|null $exception
+     * {@inheritdoc}
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {

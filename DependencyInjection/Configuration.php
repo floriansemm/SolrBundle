@@ -9,7 +9,7 @@ class Configuration implements ConfigurationInterface
 {
 
     /**
-     * @return TreeBuilder
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {

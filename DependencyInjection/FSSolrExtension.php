@@ -14,8 +14,7 @@ class FSSolrExtension extends Extension
 {
 
     /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
