@@ -28,7 +28,7 @@ class SolariumClientBuilder implements Builder
     private $eventDispatcher;
 
     /**
-     * @param array $settings
+     * @param array                    $settings
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(array $settings, EventDispatcherInterface $eventDispatcher)
@@ -38,7 +38,7 @@ class SolariumClientBuilder implements Builder
     }
 
     /**
-     * @param string $pluginName
+     * @param string         $pluginName
      * @param AbstractPlugin $plugin
      */
     public function addPlugin($pluginName, AbstractPlugin $plugin)

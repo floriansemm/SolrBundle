@@ -5,17 +5,16 @@ namespace FS\SolrBundle\Tests\Client\Solarium;
 use FS\SolrBundle\Client\Solarium\SolariumClientBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Class SolariumClientBuilderTest
- * @package FS\SolrBundle\Tests\Client\Solarium
- */
 class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var
+     * @var array
      */
     private $defaultEndpoints;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->defaultEndpoints = [
@@ -52,6 +51,7 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
      * @param string $dsn
      * @param string $expectedBaseUri
      * @param string $message
+     *
      * @dataProvider dsnProvider
      */
     public function testCreateClientWithDsn($dsn, $expectedBaseUri, $message)
@@ -71,6 +71,7 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
      * @param string $dsn
      * @param string $expectedBaseUri
      * @param string $message
+     *
      * @dataProvider dsnProvider
      */
     public function testCreateClientWithDsnAndCore($dsn, $expectedBaseUri, $message)
@@ -87,6 +88,9 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedBaseUri . 'core0/', $endpoint->getBaseUri(), $message . ' with core');
     }
 
+    /**
+     * @return array
+     */
     public function dsnProvider()
     {
         return [
@@ -120,12 +124,14 @@ class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $settings
+     *
      * @return \Solarium\Client
      */
     private function createClientWithSettings(array $settings)
     {
         /** @var EventDispatcherInterface $eventDispatcherMock */
         $eventDispatcherMock = $this->createMock(EventDispatcherInterface::class);
+        
         return (new SolariumClientBuilder($settings, $eventDispatcherMock))->build();
     }
 }
