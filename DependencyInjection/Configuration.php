@@ -20,6 +20,8 @@ class Configuration implements ConfigurationInterface
             ->useAttributeAsKey('name')
             ->prototype('array')
             ->children()
+            ->scalarNode('dsn')->end()
+            ->scalarNode('scheme')->end()
             ->scalarNode('host')->end()
             ->scalarNode('port')->end()
             ->scalarNode('path')->end()
