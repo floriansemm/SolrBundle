@@ -102,3 +102,45 @@ for ($i = 0; $i <= $pages; $i++) {
 $buffer->flush();
 ```
 
+# PDO Select + CSV Export + Solr Post-Tool
+
+This solution exports the database to csv by using PDO. The exported files are located under `/tmp/export`.
+
+```php
+$connection = new PDO('mysql:host=localhost;dbname=dbname;charset=utf8mb4', 'dbuser', '123');
+$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$statement = $connection->prepare('SELECT COUNT(*) as total_items FROM person');
+$statement->execute();
+$countResult = $statement->fetch(PDO::FETCH_ASSOC);
+$statement->closeCursor();
+
+$totalItems = $countResult['total_items'];
+$batchSize = 10000;
+
+$pages = ceil($totalItems / $batchSize);
+
+@mkdir('/tmp/export');
+
+for ($i = 0; $i <= $pages; $i++) {
+    $data = [];
+    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person LIMIT %s, %s', $i * $batchSize, $batchSize));
+    $statement->execute();
+
+    $data[] = "id, name_s, email_s\n";
+
+    foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $item) {
+        $data[] = sprintf("\"%s\", \"%s\", \"%s\"", $item['id'], $item['name'], $item['email']);
+    }
+
+    $statement->closeCursor();
+
+    file_put_contents(sprintf('/tmp/export/person_%s.csv', $i), join("\n", $data));
+
+    echo sprintf('Indexing page %s / %s', $i, $pages) . PHP_EOL;
+}
+```
+
+To import the data we are using Solr Post-Tool:
+
+`/opt/solr/solr-5.5.2/bin/post -c core0 /tmp/export`
