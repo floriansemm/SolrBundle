@@ -473,6 +473,10 @@ Here's all the commands provided by this bundle:
 * `solr:index:populate` - synchronize the db with the index
 * `solr:schema:show` - shows your configured documents
 
+### Indexing huge sets of entities
+
+The `solr:index:populate` command works well for sets up to 300k entities, everthing large makes the command very slow. You can find [here](Resources/doc/indexing.md) some solution how to sync your DB with Solr.
+
 ## Extend Solarium
 
 To extend Solarium with your own plugins, create a tagged service:
