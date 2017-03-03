@@ -81,7 +81,14 @@ $buffer = $client->getPlugin('bufferedadd');
 $buffer->setBufferSize($batchSize);
 
 for ($i = 0; $i <= $pages; $i++) {
-    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person LIMIT %s, %s', $i * $batchSize, $batchSize));
+    $limitStart = ($i - 1) * $batchSize;
+    $limitEnd = $batchSize * $i;
+    if ($i == 0) {
+        $limitStart = 1;
+        $limitEnd = $batchSize;
+    }
+
+    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person WHERE id >= %s AND id <= %s ', $limitStart, $limitEnd));
     $statement->execute();
 
     foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $item) {
@@ -124,7 +131,14 @@ $pages = ceil($totalItems / $batchSize);
 
 for ($i = 0; $i <= $pages; $i++) {
     $data = [];
-    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person LIMIT %s, %s', $i * $batchSize, $batchSize));
+    $limitStart = ($i - 1) * $batchSize;
+    $limitEnd = $batchSize * $i;
+    if ($i == 0) {
+        $limitStart = 1;
+        $limitEnd = $batchSize;
+    }
+
+    $statement = $connection->prepare(sprintf('SELECT id, name, email FROM person WHERE id >= %s AND id <= %s ', $limitStart, $limitEnd));
     $statement->execute();
 
     $data[] = "id, name_s, email_s\n";
