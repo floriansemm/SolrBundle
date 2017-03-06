@@ -503,3 +503,12 @@ To hook into the [Solarium events](http://solarium.readthedocs.io/en/stable/cust
 ```xml
 <tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
 ```
+
+## Document helper
+
+### Retrieve the last insert entity-id
+
+```php
+$helper = $this->get('solr.client')->getDocumentHelper();
+$id = $helper->getLastInsertDocumentId();
+```
