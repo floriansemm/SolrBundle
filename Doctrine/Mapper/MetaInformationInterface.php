@@ -44,11 +44,15 @@ interface MetaInformationInterface
     public function generateDocumentId();
 
     /**
+     * Entity classname
+     *
      * @return string
      */
     public function getClassName();
 
     /**
+     * If the entity classname is Product, then the document will be product.
+     *
      * @return string
      */
     public function getDocumentName();
@@ -59,11 +63,15 @@ interface MetaInformationInterface
     public function getFields();
 
     /**
+     * Classname of the document-repository
+     *
      * @return string
      */
     public function getRepository();
 
     /**
+     * Source/target entity instance
+     *
      * @return object
      */
     public function getEntity();
@@ -72,6 +80,8 @@ interface MetaInformationInterface
      * @param string $fieldName
      *
      * @return Field|null
+     *
+     * @throws \InvalidArgumentException if given $fieldName is unknown
      */
     public function getField($fieldName);
 
@@ -81,6 +91,8 @@ interface MetaInformationInterface
     public function getFieldMapping();
 
     /**
+     * The document boost value
+     *
      * @return number
      */
     public function getBoost();
@@ -96,6 +108,8 @@ interface MetaInformationInterface
     public function hasSynchronizationFilter();
 
     /**
+     * Returns the configured index argument in FS\SolrBundle\Doctrine\Annotation\Document or the returns value of the index-handler callback
+     *
      * @return string
      */
     public function getIndex();
@@ -108,11 +122,16 @@ interface MetaInformationInterface
     public function getDocumentKey();
 
     /**
+     * The property which has the FS\SolrBundle\Doctrine\Annotation\Id annotation
+     *
      * @return string
      */
     public function getIdentifierFieldName();
 
     /**
+     * Returns MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT if target is an doctrine-odm object or
+     * MetaInformationInterface::DOCTRINE_MAPPER_TYPE_RELATIONAL if it is an doctrine-orm object, otherwise an empty string
+     *
      * @return string
      */
     public function getDoctrineMapperType();

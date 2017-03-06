@@ -7,6 +7,7 @@ use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapAllFieldsCommand;
 use FS\SolrBundle\Doctrine\Mapper\Mapping\MapIdentifierCommand;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Helper\DocumentHelper;
 use FS\SolrBundle\Query\QueryBuilder;
 use FS\SolrBundle\Query\QueryBuilderInterface;
 use Solarium\Plugin\BufferedAdd\BufferedAdd;
@@ -95,6 +96,14 @@ class Solr implements SolrInterface
     public function getMetaFactory()
     {
         return $this->metaInformationFactory;
+    }
+
+    /**
+     * @return DocumentHelper
+     */
+    public function getDocumentHelper()
+    {
+        return new DocumentHelper($this);
     }
 
     /**
