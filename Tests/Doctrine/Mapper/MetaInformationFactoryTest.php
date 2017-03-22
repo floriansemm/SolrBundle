@@ -48,8 +48,6 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         return $doctrineConfiguration;
     }
 
-
-
     public function testLoadInformation_ShouldLoadAll()
     {
         $testEntity = new ValidTestEntity();
@@ -168,6 +166,18 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         $metainformation = $factory->loadInformation(new ValidOdmTestDocument());
 
         $this->assertEquals(MetaInformationInterface::DOCTRINE_MAPPER_TYPE_DOCUMENT, $metainformation->getDoctrineMapperType());
+    }
+
+    /**
+     * @test
+     */
+    public function useCachedEntityInstanceIfItIsSet()
+    {
+        $factory = new MetaInformationFactory($this->reader);
+        $metainformation1 = $factory->loadInformation(new ValidTestEntity());
+        $metainformation2 = $factory->loadInformation(new ValidTestEntity());
+
+        $this->assertEquals($metainformation1->getEntity(), $metainformation2->getEntity());
     }
 }
 

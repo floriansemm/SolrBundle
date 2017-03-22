@@ -20,6 +20,11 @@ class MetaInformationFactory
     private $classnameResolver = null;
 
     /**
+     * @var array
+     */
+    private $objectCache;
+
+    /**
      * @param AnnotationReader $reader
      */
     public function __construct(AnnotationReader $reader)
@@ -46,12 +51,18 @@ class MetaInformationFactory
     {
         $className = $this->getClass($entity);
 
-        if (!is_object($entity)) {
-            $reflectionClass = new \ReflectionClass($className);
-            if (!$reflectionClass->isInstantiable()) {
-                throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
+        if (isset($this->objectCache[$className])) {
+            $entity = $this->objectCache[$className];
+        } else {
+            if (!is_object($entity)) {
+                $reflectionClass = new \ReflectionClass($className);
+                if (!$reflectionClass->isInstantiable()) {
+                    throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
+                }
+                $entity = $reflectionClass->newInstanceWithoutConstructor();
             }
-            $entity = $reflectionClass->newInstanceWithoutConstructor();
+
+            $this->objectCache[$className] = $entity;
         }
 
         if (!$this->annotationReader->hasDocumentDeclaration($entity)) {
