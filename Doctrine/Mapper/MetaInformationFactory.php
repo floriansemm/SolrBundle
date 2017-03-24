@@ -20,11 +20,6 @@ class MetaInformationFactory
     private $classnameResolver = null;
 
     /**
-     * @var array
-     */
-    private $objectCache;
-
-    /**
      * @param AnnotationReader $reader
      */
     public function __construct(AnnotationReader $reader)
@@ -51,18 +46,12 @@ class MetaInformationFactory
     {
         $className = $this->getClass($entity);
 
-        if (isset($this->objectCache[$className])) {
-            $entity = $this->objectCache[$className];
-        } else {
-            if (!is_object($entity)) {
-                $reflectionClass = new \ReflectionClass($className);
-                if (!$reflectionClass->isInstantiable()) {
-                    throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
-                }
-                $entity = $reflectionClass->newInstanceWithoutConstructor();
+        if (!is_object($entity)) {
+            $reflectionClass = new \ReflectionClass($className);
+            if (!$reflectionClass->isInstantiable()) {
+                throw new \RuntimeException(sprintf('cannot instantiate entity %s', $className));
             }
-
-            $this->objectCache[$className] = $entity;
+            $entity = $reflectionClass->newInstanceWithoutConstructor();
         }
 
         if (!$this->annotationReader->hasDocumentDeclaration($entity)) {
@@ -82,6 +71,7 @@ class MetaInformationFactory
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
         $metaInformation->setIsDoctrineEntity($this->isDoctrineEntity($entity));
         $metaInformation->setDoctrineMapperType($this->getDoctrineMapperType($entity));
+        $metaInformation->setNested($this->annotationReader->isNested($entity));
 
         return $metaInformation;
     }
