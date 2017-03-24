@@ -28,7 +28,9 @@ class FSSolrExtension extends Extension
 
         $this->setupClients($config, $container);
 
-        $container->setParameter('solr.auto_index', $config['auto_index']);
+        if (!$container->hasParameter('solr.auto_index')) {
+            $container->setParameter('solr.auto_index', $config['auto_index']);
+        }
 
         $this->setupDoctrineListener($config, $container);
         $this->setupDoctrineConfiguration($config, $container);
