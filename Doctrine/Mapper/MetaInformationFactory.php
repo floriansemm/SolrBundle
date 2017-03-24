@@ -71,7 +71,6 @@ class MetaInformationFactory
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
         $metaInformation->setIsDoctrineEntity($this->isDoctrineEntity($entity));
         $metaInformation->setDoctrineMapperType($this->getDoctrineMapperType($entity));
-        $metaInformation->setNested($this->annotationReader->isNested($entity));
 
         return $metaInformation;
     }
