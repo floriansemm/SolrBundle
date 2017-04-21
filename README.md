@@ -79,7 +79,10 @@ Any values in `schema`, `host`, `port` and `path` option, will be ignored if you
 ### Step 4: Configure your entities
 
 To make an entity indexed, you must add some annotations to your entity. Basic configuration requires two annotations: 
-`@Solr\Document()`, `@Solr\Id()`. To index data add `@Solr\Field()` to your properties.
+`@Solr\Document()`, `@Solr\Id()`. To index data add `@Solr\Field()` to your properties. 
+
+If you want to index documents without any database, then you have to use the same annotations. Make sure you have set a Id or
+set `@Solr\Id(generateId=true)`.
 
 ```php
 // ....
