@@ -47,9 +47,11 @@ class Repository implements RepositoryInterface
      */
     public function find($id)
     {
+        $documentKey = $this->metaInformation->getDocumentName() . '_' . $id;
+
         $query = new FindByIdentifierQuery();
         $query->setIndex($this->metaInformation->getIndex());
-        $query->setDocumentKey($this->metaInformation->getDocumentKey());
+        $query->setDocumentKey($documentKey);
         $query->setEntity($this->metaInformation->getEntity());
         $query->setSolr($this->solr);
         $query->setHydrationMode($this->hydrationMode);
