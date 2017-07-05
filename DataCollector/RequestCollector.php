@@ -3,11 +3,11 @@
 namespace FS\SolrBundle\DataCollector;
 
 use FS\SolrBundle\Logging\DebugLogger;
-use FS\SolrBundle\Logging\SolrLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
 
 class RequestCollector extends DataCollector
 {
@@ -74,10 +74,17 @@ class RequestCollector extends DataCollector
     {
         list($endpoint, $params) = explode('?', $request['request']);
 
-        return array_merge($request, [
-            'endpoint' => $endpoint,
-            'params' => $params
-        ]);
+        $request['endpoint'] = $endpoint;
+        $request['params'] = $params;
+
+        if (class_exists(VarCloner::class)) {
+            $varCloner = new VarCloner();
+
+            parse_str($params, $stub);
+            $request['stub'] = Kernel::VERSION_ID >= 30200 ? $varCloner->cloneVar($stub) : $stub;
+        }
+
+        return $request;
     }
 
     /**
