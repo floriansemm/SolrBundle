@@ -3,45 +3,53 @@
 {% block toolbar %}
     {% set profiler_markup_version = profiler_markup_version|default(1) %}
 
-    {% set icon %}
+    {% if collector.querycount > 0 %}
         {% if profiler_markup_version == 1 %}
+            {% set icon %}
+                <img width="20" height="28" alt="Solr" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQRJREFUeNpi/P//PwM1ARMDlcGogZQDlpMnT7pxc3NbA9nhQKxOpL5rQLwJiPeBsI6Ozl+YBOOOHTv+AOllQNwtLS39F2owKYZ/gRq8G4i3ggxEToggWzvc3d2Pk+1lNL4fFAs6ODi8JzdS7mMRVyDVoAMHDsANdAPiOCC+jCQvQKqBQB/BDbwBxK5AHA3E/kB8nKJkA8TMQBwLxaBIKQbi70AvTADSBiSadwFXpCikpKQU8PDwkGTaly9fHFigkaKIJid4584dkiMFFI6jkTJII0WVmpHCAixZQEXWYhDeuXMnyLsVlEQKI45qFBQZ8eRECi4DBaAlDqle/8A48ip6gAADANdQY88Uc0oGAAAAAElFTkSuQmCC" />
+                <span class="sf-toolbar-value sf-toolbar-status {% if collector.querycount > 50 %}sf-toolbar-status-yellow{% endif %}">{{ collector.querycount }}</span>
+                {% if collector.querycount > 0 %}
+                    <span class="sf-toolbar-info-piece-additional-detail">in {{ '%0.2f'|format(collector.time * 1000) }} ms</span>
+                {% endif %}
+            {% endset %}
 
-            <img width="20" height="28" alt="Solr" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQRJREFUeNpi/P//PwM1ARMDlcGogZQDlpMnT7pxc3NbA9nhQKxOpL5rQLwJiPeBsI6Ozl+YBOOOHTv+AOllQNwtLS39F2owKYZ/gRq8G4i3ggxEToggWzvc3d2Pk+1lNL4fFAs6ODi8JzdS7mMRVyDVoAMHDsANdAPiOCC+jCQvQKqBQB/BDbwBxK5AHA3E/kB8nKJkA8TMQBwLxaBIKQbi70AvTADSBiSadwFXpCikpKQU8PDwkGTaly9fHFigkaKIJid4584dkiMFFI6jkTJII0WVmpHCAixZQEXWYhDeuXMnyLsVlEQKI45qFBQZ8eRECi4DBaAlDqle/8A48ip6gAADANdQY88Uc0oGAAAAAElFTkSuQmCC" />
-            <span class="sf-toolbar-value sf-toolbar-status {% if collector.querycount > 50 %}sf-toolbar-status-yellow{% endif %}">{{ collector.querycount }}</span>
-            {% if collector.querycount > 0 %}
-                <span class="sf-toolbar-info-piece-additional-detail">in {{ '%0.2f'|format(collector.time * 1000) }} ms</span>
-            {% endif %}
-
+            {% set text %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Solr queries</b>
+                    <span class="sf-toolbar-status">{{ collector.querycount }}</span>
+                </div>
+                <div class="sf-toolbar-info-piece">
+                    <b>Query time</b>
+                    <span>{{ '%0.2f'|format(collector.time * 1000) }} ms</span>
+                </div>
+            {% endset %}
         {% else %}
+            {% set status = collector.querycount > 50 ? 'yellow' %}
 
-            {% if collector.querycount > 0 %}
-                {% set status = collector.querycount > 50 ? 'yellow' %}
-
+            {% set icon %}
                 {{ include('@FSSolr/Profiler/icon.svg') }}
-
                 <span class="sf-toolbar-value">{{ collector.querycount }}</span>
                 <span class="sf-toolbar-info-piece-additional-detail">
                     <span class="sf-toolbar-label">in</span>
                     <span class="sf-toolbar-value">{{ '%0.2f'|format(collector.time * 1000) }}</span>
                     <span class="sf-toolbar-label">ms</span>
                 </span>
-            {% endif %}
+            {% endset %}
 
+            {% set text %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Solr queries</b>
+                    <span class="sf-toolbar-status">{{ collector.querycount }}</span>
+                </div>
+                <div class="sf-toolbar-info-piece">
+                    <b>Query time</b>
+                    <span>{{ '%0.2f'|format(collector.time * 1000) }} ms</span>
+                </div>
+            {% endset %}
         {% endif %}
-    {% endset %}
 
-    {% set text %}
-        <div class="sf-toolbar-info-piece">
-            <b>Solr Queries</b>
-            <span class="sf-toolbar-status">{{ collector.querycount }}</span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Query time</b>
-            <span>{{ '%0.2f'|format(collector.time * 1000) }} ms</span>
-        </div>
-    {% endset %}
-
-    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, status: status|default('') }) }}
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, status: status|default('') }) }}
+    {% endif %}
 {% endblock %}
 
 {% block menu %}
@@ -50,7 +58,7 @@
     {% if profiler_markup_version == 1 %}
 
         <span class="label">
-            <span class="icon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAABLUlEQVR42u3TP0vDQBiA8UK/gDiLzi0IhU4OEunk5OQUAhGSOBUCzqWfIKSzX8DRySF0URCcMjWLIJjFD9Cpk/D6HITecEPUuzhIAz8CIdyTP/f2iqI4qaqqDx8l5Ic2uIeP/bquezCokOAFF+oCN3t4gPzSEjc4NEPaCldQbzjELTYW0RJzHDchwwem+ons6ZBpLSJ7nueJC22h0V+FzmwWV0ee59vQNV67CGVZJmEYbkNjfpY6X6I0Qo4/3RMmTdDDspuQVsJvgkP3IdMbIkIjLPBoadG2646iKJI0Ta2wxm6OdnP0/Tk6DYJgHcfxpw21RtscDTDDnaVZ26474GkkSRIrrPEv5sgMTfHe+cA2O6wPH6vOBpYQNALneHb96XTEDI6dzpEZ0VzO0Rf3pP5LMLI4tAAAAABJRU5ErkJggg==" alt="" /></span>
+            <span class="icon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAABLUlEQVR42u3TP0vDQBiA8UK/gDiLzi0IhU4OEunk5OQUAhGSOBUCzqWfIKSzX8DRySF0URCcMjWLIJjFD9Cpk/D6HITecEPUuzhIAz8CIdyTP/f2iqI4qaqqDx8l5Ic2uIeP/bquezCokOAFF+oCN3t4gPzSEjc4NEPaCldQbzjELTYW0RJzHDchwwem+ons6ZBpLSJ7nueJC22h0V+FzmwWV0ee59vQNV67CGVZJmEYbkNjfpY6X6I0Qo4/3RMmTdDDspuQVsJvgkP3IdMbIkIjLPBoadG2646iKJI0Ta2wxm6OdnP0/Tk6DYJgHcfxpw21RtscDTDDnaVZ26474GkkSRIrrPEv5sgMTfHe+cA2O6wPH6vOBpYQNALneHb96XTEDI6dzpEZ0VzO0Rf3pP5LMLI4tAAAAABJRU5ErkJggg==" alt="Solr" /></span>
             <strong>Solr</strong>
             <span class="count">
                 <span>{{ collector.querycount }}</span>
@@ -76,6 +84,7 @@
 
 {% block queries %}
     {% if profiler_markup_version == 1 %}
+
         <style>
             .hidden { display: none; }
             .queries-table td, .queries-table th { vertical-align: top; }
@@ -91,9 +100,27 @@
             .highlight .number    { color: #F5871F; font-weight: bold; }
             .highlight .error     { color: #C82829; }
         </style>
-    {% endif %}
 
-    <h2>Queries</h2>
+        <h2>Solr Queries</h2>
+
+    {% else %}
+
+        <h2>Query Metrics</h2>
+        <div class="metrics">
+            <div class="metric">
+                <span class="value">{{ collector.querycount }}</span>
+                <span class="label">Solr queries</span>
+            </div>
+
+            <div class="metric">
+                <span class="value">{{ '%0.2f'|format(collector.time * 1000) }} ms</span>
+                <span class="label">Query time</span>
+            </div>
+        </div>
+
+        <h2>Queries</h2>
+
+    {% endif %}
 
     {% if collector.queries is empty %}
         <div class="empty">
@@ -106,7 +133,9 @@
                     <th class="nowrap" onclick="javascript:sortTable(this, 0, 'queries-1')" data-sort-direction="-1" style="cursor: pointer;">#<span class="text-muted">&#9650;</span></th>
                     <th class="nowrap" onclick="javascript:sortTable(this, 1, 'queries-1')" style="cursor: pointer;">Time<span></span></th>
                     <th class="nowrap" style="cursor: pointer;">End Point</th>
+                    <th>Method</th>
                     <th>Parameters</th>
+                    <th>Raw Data</th>
                 </tr>
             </thead>
             <tbody id="queries-1">
@@ -118,7 +147,17 @@
                             {{ query.endpoint }}
                         </td>
                         <td>
-                            {{ query.params | replace({'&': "<br />"}) | raw }}
+                            {{ query.method }}
+                        </td>
+                        <td>
+                            {% if query.stub is not defined %}
+                                {{ query.params | replace({'&': "<br />"}) | raw }}
+                            {% else %}
+                                {{ profiler_dump(query.stub, 1) }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <pre>{{ query.raw_data }}</pre>
                         </td>
                     </tr>
                 {% endfor %}
