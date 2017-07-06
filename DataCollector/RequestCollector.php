@@ -72,10 +72,12 @@ class RequestCollector extends DataCollector
      */
     public function parseQuery($request)
     {
-        list($endpoint, $params) = explode('?', $request['request']);
+        list($endpoint, $params) = explode('?', $request['request']['uri']);
 
         $request['endpoint'] = $endpoint;
         $request['params'] = $params;
+        $request['method'] = $request['request']['method'];
+        $request['raw_data'] = $request['request']['raw_data'];
 
         if (class_exists(VarCloner::class)) {
             $varCloner = new VarCloner();
