@@ -12,7 +12,7 @@ install:
   - composer self-update
   - if [[ ${TRAVIS_PHP_VERSION:0:2} == "5." ]]; then yes '' | pecl -q install -f mongo; fi
   - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then pecl install -f mongodb; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then composer require "alcaeus/mongo-php-adapter" --ignore-platform-reqs; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then composer config "platform.ext-mongo" "1.6.16" && composer require alcaeus/mongo-php-adapter; fi
   - composer update
 
 script:
