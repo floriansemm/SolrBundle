@@ -7,6 +7,7 @@ namespace FS\SolrBundle;
 use FS\SolrBundle\Client\Solarium\SolariumMulticoreClient;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapperInterface;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
+use FS\SolrBundle\Helper\DocumentHelper;
 use FS\SolrBundle\Query\QueryBuilder;
 use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Repository\RepositoryInterface;
@@ -97,6 +98,14 @@ class Solr implements SolrInterface
     public function getMetaFactory(): MetaInformationFactory
     {
         return $this->metaInformationFactory;
+    }
+
+    /**
+     * @return DocumentHelper
+     */
+    public function getDocumentHelper()
+    {
+        return new DocumentHelper($this);
     }
 
     /**
