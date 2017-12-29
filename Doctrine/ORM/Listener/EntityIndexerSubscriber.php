@@ -34,7 +34,7 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
             }
 
             $this->solr->updateDocument($entity);
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
         }
     }
@@ -48,7 +48,7 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
 
         try {
             $this->solr->addDocument($entity);
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
         }
     }
@@ -62,7 +62,7 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
 
         try {
             $this->solr->removeDocument($entity);
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
         }
     }
