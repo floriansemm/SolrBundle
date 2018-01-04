@@ -212,6 +212,10 @@ class Solr implements SolrInterface
             return false;
         }
 
+        if ($metaInformation->isNested()) {
+            return false;
+        }
+
         $event = new Event($this->solrClientCore, $metaInformation);
         $this->eventManager->dispatch(Events::PRE_INSERT, $event);
 

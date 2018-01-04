@@ -137,4 +137,9 @@ interface MetaInformationInterface
      * @return string
      */
     public function getDoctrineMapperType();
+
+    /**
+     * @return bool
+     */
+    public function isNested();
 }

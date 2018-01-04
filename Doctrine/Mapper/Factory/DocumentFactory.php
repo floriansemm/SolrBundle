@@ -60,9 +60,9 @@ class DocumentFactory
 
             $value = $field->getValue();
             if ($value instanceof Collection) {
-                $document->addField($field->getNameWithAlias(), $this->mapCollection($field, $metaInformation->getClassName()), $field->getBoost());
+                $this->mapCollectionField($document, $field, $metaInformation->getEntity());
             } elseif (is_object($value)) {
-                $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
+                $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
             } else {
                 $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
             }
@@ -82,7 +82,7 @@ class DocumentFactory
      *
      * @throws SolrMappingException if getter return value is object
      */
-    private function mapObject(Field $field)
+    private function mapObjectField(Field $field)
     {
         $value = $field->getValue();
         $getter = $field->getGetterName();
@@ -96,15 +96,7 @@ class DocumentFactory
             return $getterReturnValue;
         }
 
-        $metaInformation = $this->metaInformationFactory->loadInformation($value);
-
-        $field = array();
-        $document = $this->createDocument($metaInformation);
-        foreach ($document as $fieldName => $value) {
-            $field[$fieldName] = $value;
-        }
-
-        return $field;
+        return $this->objectToDocument($value);
     }
 
     /**
@@ -148,20 +140,47 @@ class DocumentFactory
      *
      * @throws SolrMappingException if no getter method was found
      */
-    private function mapCollection(Field $field, $sourceTargetClass)
+    private function mapCollectionField($document, Field $field, $sourceTargetObject)
     {
         /** @var Collection $value */
         $value = $field->getValue();
         $getter = $field->getGetterName();
-        if ($getter == '') {
-            throw new SolrMappingException(sprintf('No getter method for property "%s" configured in class "%s"', $field->name, $sourceTargetClass));
+
+        if ($getter != '') {
+            $value = $this->callGetterMethod($sourceTargetObject, $getter);
         }
 
-        $values = array();
+        $values = [];
         foreach ($value as $relatedObj) {
-            $values[] = $this->callGetterMethod($relatedObj, $getter);
+            if (is_object($relatedObj)) {
+                $values[] = $this->objectToDocument($relatedObj);
+            } else {
+                $values[] = $relatedObj;
+            }
         }
+
+        $document->addField('_childDocuments_', $values, $field->getBoost());
 
         return $values;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return array
+     *
+     * @throws SolrMappingException
+     */
+    private function objectToDocument($value)
+    {
+        $metaInformation = $this->metaInformationFactory->loadInformation($value);
+
+        $field = [];
+        $document = $this->createDocument($metaInformation);
+        foreach ($document as $fieldName => $value) {
+            $field[$fieldName] = $value;
+        }
+
+        return $field;
     }
 }

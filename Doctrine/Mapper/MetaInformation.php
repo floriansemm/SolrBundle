@@ -76,6 +76,11 @@ class MetaInformation implements MetaInformationInterface
     private $doctrineMapperType;
 
     /**
+     * @var bool
+     */
+    private $nested;
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityId()
@@ -378,6 +383,22 @@ class MetaInformation implements MetaInformationInterface
             throw new SolrMappingException('No identifier is set');
         }
 
-        return $this->identifier->generateId;
+        return $this->identifier->generateId || $this->isNested();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isNested()
+    {
+        return $this->nested;
+    }
+
+    /**
+     * @param bool $nested
+     */
+    public function setNested(bool $nested)
+    {
+        $this->nested = $nested;
     }
 }

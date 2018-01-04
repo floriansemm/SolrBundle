@@ -38,6 +38,11 @@ class Field extends Annotation
     public $fieldModifier;
 
     /**
+     * @var string
+     */
+    public $nestedClass;
+
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array();

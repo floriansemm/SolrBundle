@@ -198,6 +198,14 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function readAnnotationsOfNestedObject()
+    {
+        $this->assertTrue($this->reader->hasDocumentDeclaration(new NestedObject()));
+    }
+
+    /**
+     * @test
+     */
     public function readAnnotationsFromMultipleClassHierarchy()
     {
         $fields = $this->reader->getFields(new ChildEntity2());
@@ -301,3 +309,8 @@ class EntityWithObject
      */
     private $object;
 }
+
+/**
+ * @Solr\Nested()
+ */
+class NestedObject {}

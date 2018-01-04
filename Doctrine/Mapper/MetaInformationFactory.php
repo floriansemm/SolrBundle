@@ -71,6 +71,27 @@ class MetaInformationFactory
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
         $metaInformation->setIsDoctrineEntity($this->isDoctrineEntity($entity));
         $metaInformation->setDoctrineMapperType($this->getDoctrineMapperType($entity));
+        $metaInformation->setNested($this->annotationReader->isNested($entity));
+
+        $fields = $this->annotationReader->getFields($entity);
+        foreach ($fields as $field) {
+            if (!$field->nestedClass) {
+                continue;
+            }
+
+            $nestedObjectMetainformation = $this->loadInformation($field->nestedClass);
+
+            $subentityMapping = [];
+            $nestedFieldName = $field->name;
+            foreach ($nestedObjectMetainformation->getFieldMapping() as $documentName => $fieldName) {
+                $subentityMapping[$nestedFieldName . '.' . $documentName] = $nestedFieldName . '.' . $fieldName;
+            }
+
+            $rootEntityMapping = $metaInformation->getFieldMapping();
+            $subentityMapping = array_merge($subentityMapping, $rootEntityMapping);
+            unset($subentityMapping[$field->name]);
+            $metaInformation->setFieldMapping($subentityMapping);
+        }
 
         return $metaInformation;
     }
