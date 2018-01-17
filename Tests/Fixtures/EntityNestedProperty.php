@@ -41,7 +41,7 @@ class EntityNestedProperty
     /**
      * @param mixed $id
      */
-    public function setId($id) : void
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -57,7 +57,7 @@ class EntityNestedProperty
     /**
      * @param string $name
      */
-    public function setName(string $name) : void
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -73,7 +73,7 @@ class EntityNestedProperty
     /**
      * @param array $collection
      */
-    public function setCollection(array $collection) : void
+    public function setCollection(array $collection)
     {
         $this->collection = $collection;
     }
