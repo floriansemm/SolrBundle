@@ -2,13 +2,13 @@
 
 namespace FS\SolrBundle\Doctrine\ORM\Listener;
 
+use DeepCopy\DeepCopy;
+use DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter;
+use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use FS\SolrBundle\Doctrine\AbstractIndexingListener;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
-use FS\SolrBundle\SolrInterface;
-use Psr\Log\LoggerInterface;
 
 class EntityIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
@@ -32,7 +32,7 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
      */
     public function getSubscribedEvents()
     {
-        return array('postUpdate', 'postPersist', 'preRemove', 'postFlush');
+        return ['postUpdate', 'postPersist', 'preRemove', 'postFlush'];
     }
 
     /**
@@ -72,20 +72,23 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
         $entity = $args->getEntity();
 
         if ($this->isNested($entity)) {
-            $this->deletedNestedEntities[] = clone $entity;
+            $this->deletedNestedEntities[] = $this->emptyCollections($entity);
         } else {
-            $entity = clone $entity;
             $this->deletedRootEntities[] = $this->emptyCollections($entity);
         }
     }
 
+    /**
+     * @param object $object
+     *
+     * @return object
+     */
     private function emptyCollections($object)
     {
-        if (method_exists($object, 'setTags')) {
-            $object->setTags([]);
-        }
+        $deepcopy = new DeepCopy();
+        $deepcopy->addFilter(new DoctrineEmptyCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
-        return $object;
+        return $deepcopy->copy($object);
     }
 
     /**
