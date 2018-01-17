@@ -34,7 +34,7 @@ class NestedEntity
     /**
      * @param mixed $id
      */
-    public function setId($id) : void
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -50,7 +50,7 @@ class NestedEntity
     /**
      * @param string $name
      */
-    public function setName(string $name) : void
+    public function setName(string $name)
     {
         $this->name = $name;
     }
