@@ -61,4 +61,16 @@ class AbstractIndexingListener
 
         return count($documentChangeSet) > 0;
     }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    protected function isNested($entity)
+    {
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        return $metaInformation->isNested();
+    }
 }

@@ -175,21 +175,21 @@ class Solr implements SolrInterface
      */
     public function removeDocument($entity)
     {
-        $metaInformations = $this->metaInformationFactory->loadInformation($entity);
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
-        $event = new Event($this->solrClientCore, $metaInformations);
+        $event = new Event($this->solrClientCore, $metaInformation);
         $this->eventManager->dispatch(Events::PRE_DELETE, $event);
 
-        if ($document = $this->entityMapper->toDocument($metaInformations)) {
+        if ($document = $this->entityMapper->toDocument($metaInformation)) {
 
             try {
-                $indexName = $metaInformations->getIndex();
+                $indexName = $metaInformation->getIndex();
 
                 $client = new SolariumMulticoreClient($this->solrClientCore);
 
                 $client->delete($document, $indexName);
             } catch (\Exception $e) {
-                $errorEvent = new ErrorEvent(null, $metaInformations, 'delete-document', $event);
+                $errorEvent = new ErrorEvent(null, $metaInformation, 'delete-document', $event);
                 $errorEvent->setException($e);
 
                 $this->eventManager->dispatch(Events::ERROR, $errorEvent);

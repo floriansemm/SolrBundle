@@ -18,7 +18,8 @@
     "symfony/config": "^2.3|^3.0|^4.0",
     "symfony/doctrine-bridge": "^2.3|^3.0|^4.0",
     "minimalcode/search": "^1.0",
-    "ramsey/uuid": "^3.5"
+    "ramsey/uuid": "^3.5",
+    "myclabs/deep-copy": "^1.7"
   },
   "require-dev": {
     "behat/behat": "^3.1",

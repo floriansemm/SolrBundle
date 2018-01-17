@@ -122,7 +122,7 @@ class AnnotationReader
     {
         $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS);
         if (!$annotation instanceof Document) {
-            return '';
+            return null;
         }
 
         $indexHandler = $annotation->indexHandler;

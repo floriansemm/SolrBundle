@@ -383,7 +383,7 @@ class MetaInformation implements MetaInformationInterface
             throw new SolrMappingException('No identifier is set');
         }
 
-        return $this->identifier->generateId || $this->isNested();
+        return $this->identifier->generateId;
     }
 
     /**

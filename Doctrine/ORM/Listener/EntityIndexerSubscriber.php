@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine\ORM\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use FS\SolrBundle\Doctrine\AbstractIndexingListener;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\SolrInterface;
@@ -11,13 +12,27 @@ use Psr\Log\LoggerInterface;
 
 class EntityIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
+    /**
+     * @var array
+     */
+    private $persistedEntities = [];
+
+    /**
+     * @var array
+     */
+    private $deletedRootEntities = [];
+
+    /**
+     * @var array
+     */
+    private $deletedNestedEntities = [];
 
     /**
      * {@inheritdoc}
      */
     public function getSubscribedEvents()
     {
-        return array('postUpdate', 'postPersist', 'preRemove');
+        return array('postUpdate', 'postPersist', 'preRemove', 'postFlush');
     }
 
     /**
@@ -46,11 +61,7 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     {
         $entity = $args->getEntity();
 
-        try {
-            $this->solr->addDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
-        }
+        $this->persistedEntities[] = $entity;
     }
 
     /**
@@ -60,10 +71,41 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     {
         $entity = $args->getEntity();
 
-        try {
-            $this->solr->removeDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+        if ($this->isNested($entity)) {
+            $this->deletedNestedEntities[] = clone $entity;
+        } else {
+            $entity = clone $entity;
+            $this->deletedRootEntities[] = $this->emptyCollections($entity);
         }
+    }
+
+    private function emptyCollections($object)
+    {
+        if (method_exists($object, 'setTags')) {
+            $object->setTags([]);
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param PostFlushEventArgs $eventArgs
+     */
+    public function postFlush(PostFlushEventArgs $eventArgs)
+    {
+        foreach ($this->persistedEntities as $entity) {
+            $this->solr->addDocument($entity);
+        }
+        $this->persistedEntities = [];
+
+        foreach ($this->deletedRootEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedRootEntities = [];
+
+        foreach ($this->deletedNestedEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedNestedEntities = [];
     }
 }
