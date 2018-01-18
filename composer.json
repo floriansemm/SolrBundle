@@ -19,7 +19,7 @@
     "symfony/doctrine-bridge": "^2.3|^3.0|^4.0",
     "minimalcode/search": "^1.0",
     "ramsey/uuid": "^3.5",
-    "myclabs/deep-copy": "^1.7",
+    "myclabs/deep-copy": "^1.6",
     "doctrine/annotations": "^1.4"
   },
   "require-dev": {
