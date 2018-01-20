@@ -52,7 +52,11 @@ class MapAllFieldsCommand extends AbstractDocumentCommand
             } elseif (is_object($value)) {
                 $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
             } else {
-                $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
+                if ($getter = $field->getGetterName()) {
+                    $document->addField($field->getNameWithAlias(), $meta->getEntity()->$getter(), $field->getBoost());
+                } else {
+                    $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
+                }
             }
 
             if ($field->getFieldModifier()) {

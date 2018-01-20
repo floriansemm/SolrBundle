@@ -38,6 +38,11 @@ class Field extends Annotation
     public $fieldModifier;
 
     /**
+     * @var string
+     */
+    public $trackedFields;
+
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array();
@@ -113,6 +118,16 @@ class Field extends Annotation
     public function getGetterName()
     {
         return $this->getter;
+    }
+
+    /**
+     * Field list for track
+     *
+     * @return string
+     */
+    public function getTrackedFields()
+    {
+        return $this->trackedFields;
     }
 
     /**

@@ -57,6 +57,16 @@ class AbstractIndexingListener
             if (array_key_exists($field->name, $doctrineChangeSet)) {
                 $documentChangeSet[] = $field->name;
             }
+
+            if ($field->trackedFields != "") {
+                $trackedFields = explode(",", $field->trackedFields);
+                foreach ($trackedFields as $tf) {
+                    if (array_key_exists($tf, $doctrineChangeSet)) {
+                        $documentChangeSet[] = $field->name;
+                        break;
+                    }
+                }
+            }
         }
 
         return count($documentChangeSet) > 0;
