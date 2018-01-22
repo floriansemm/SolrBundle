@@ -58,13 +58,16 @@ class DocumentFactory
                 continue;
             }
 
-            $value = $field->getValue();
-            if ($value instanceof Collection) {
+            $fieldValue = $field->getValue();
+            if ($fieldValue instanceof Collection) {
                 $document->addField($field->getNameWithAlias(), $this->mapCollection($field, $metaInformation->getClassName()), $field->getBoost());
-            } elseif (is_object($value)) {
+            } elseif (is_object($fieldValue)) {
                 $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
+            } else if ($field->getter && $fieldValue) {
+                $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());
+                $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
             } else {
-                $document->addField($field->getNameWithAlias(), $field->getValue(), $field->getBoost());
+                $document->addField($field->getNameWithAlias(), $fieldValue, $field->getBoost());
             }
 
             if ($field->getFieldModifier()) {

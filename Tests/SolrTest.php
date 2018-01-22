@@ -36,7 +36,7 @@ class SolrTest extends AbstractSolrTest
         $query = $this->solr->createQuery(ValidTestEntity::class);
 
         $this->assertTrue($query instanceof SolrQuery);
-        $this->assertEquals(5, count($query->getMappedFields()));
+        $this->assertEquals(6, count($query->getMappedFields()));
 
     }
 

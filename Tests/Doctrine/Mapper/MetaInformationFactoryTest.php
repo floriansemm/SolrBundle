@@ -66,8 +66,8 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($actual instanceof MetaInformation);
         $this->assertEquals($expectedClassName, $actual->getClassName(), 'wrong classname');
         $this->assertEquals($expectedDocumentName, $actual->getDocumentName(), 'wrong documentname');
-        $this->assertEquals(4, count($actual->getFields()), '4 fields are set');
-        $this->assertEquals(5, count($actual->getFieldMapping()), '5 fields are mapped');
+        $this->assertEquals(5, count($actual->getFields()), '5 fields are set');
+        $this->assertEquals(6, count($actual->getFieldMapping()), '5 fields are mapped');
     }
 
     public function testLoadInformation_LoadInformationFromObject()
@@ -86,7 +86,7 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($actual instanceof MetaInformation);
         $this->assertEquals($expectedClassName, $actual->getClassName(), 'wrong classname');
         $this->assertEquals($expectedDocumentName, $actual->getDocumentName(), 'wrong documentname');
-        $this->assertEquals(4, count($actual->getFields()), '4 fields are mapped');
+        $this->assertEquals(5, count($actual->getFields()), '5 fields are mapped');
 
         $this->assertTrue($actual->hasField('title'), 'field should be able to located by field-name');
         $this->assertTrue($actual->hasField('text_t'), 'field should be able to located by field-name with suffix');

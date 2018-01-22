@@ -369,16 +369,15 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function callGetterWithParameter()
     {
-        $entity1 = new ValidTestEntity();
+        $data = ['key' => 'value'];
+
         $date = new \DateTime();
+        $entity1 = new ValidTestEntity();
+        $entity1->setId(uniqid());
+        $entity1->setCreatedAt($date);
+        $entity1->setComplexDataType(json_encode($data));
 
-        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
-        $metaInformation->setFields(array(
-            new Field(array('name' => 'created_at', 'type' => 'datetime', 'boost' => '1', 'value' => $date, 'getter' => "format('d.m.Y')"))
-        ));
-
-        $fields = $metaInformation->getFields();
-        $metaInformation->setFields($fields);
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity1);
 
         $document = $this->mapper->toDocument($metaInformation);
 
@@ -386,6 +385,9 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('created_at_dt', $fields);
         $this->assertEquals($date->format('d.m.Y'), $fields['created_at_dt']);
+        $this->assertArrayHasKey('complex_data_type', $fields);
+
+        $this->assertEquals($data, $fields['complex_data_type']);
     }
 
     /**
