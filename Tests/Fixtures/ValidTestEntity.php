@@ -61,6 +61,13 @@ class ValidTestEntity
     private $privateField;
 
     /**
+     * @var array
+     *
+     * @Solr\Field(name="complex_data_type", getter="getComplexData")
+     */
+    private $complexDataType;
+
+    /**
      * @return int
      */
     public function getId()
@@ -186,6 +193,27 @@ class ValidTestEntity
     public function setPublishDate($publishDate)
     {
         $this->publishDate = $publishDate;
+    }
+
+    /**
+     * @return array
+     */
+    public function getComplexDataType()
+    {
+        return $this->complexDataType;
+    }
+
+    /**
+     * @param string $complexDataType
+     */
+    public function setComplexDataType($complexDataType)
+    {
+        $this->complexDataType = $complexDataType;
+    }
+
+    public function getComplexData()
+    {
+        return json_decode($this->complexDataType, true);
     }
 }
 
