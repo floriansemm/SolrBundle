@@ -35,7 +35,11 @@ class ShowSchemaCommand extends ContainerAwareCommand
                 continue;
             }
 
-            $output->writeln(sprintf('<comment>%s</comment>', $classname));
+            $nested = '';
+            if ($metaInformation->isNested()) {
+                $nested = '(nested)';
+            }
+            $output->writeln(sprintf('<comment>%s</comment> %s', $classname, $nested));
             $output->writeln(sprintf('Documentname: %s', $metaInformation->getDocumentName()));
             $output->writeln(sprintf('Document Boost: %s', $metaInformation->getBoost()?$metaInformation->getBoost(): '-'));
 
