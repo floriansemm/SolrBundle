@@ -42,7 +42,7 @@ class NestedEntity
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName()
     {
         return $this->name;
     }
@@ -50,7 +50,7 @@ class NestedEntity
     /**
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }

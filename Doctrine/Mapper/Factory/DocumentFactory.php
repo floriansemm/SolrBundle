@@ -59,7 +59,7 @@ class DocumentFactory
             }
 
             $fieldValue = $field->getValue();
-            if ($fieldValue instanceof Collection) {
+            if ($fieldValue instanceof Collection && $field->nestedClass) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
             } else if (is_object($fieldValue) && $field->nestedClass) {
                 $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());

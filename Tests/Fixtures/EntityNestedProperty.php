@@ -31,11 +31,35 @@ class EntityNestedProperty
     private $collection;
 
     /**
+     * @var array
+     *
+     * @Solr\Field(nestedClass="FS\SolrBundle\Tests\Fixtures\NestedEntity", getter="sliceCollection")
+     */
+    private $collectionValidGetter;
+
+    /**
+     * @var array
+     *
+     * @Solr\Field(nestedClass="FS\SolrBundle\Tests\Fixtures\NestedEntity", getter="unknown")
+     */
+    private $collectionInvalidGetter;
+    
+    /**
      * @var object
      *
      * @Solr\Field(nestedClass="FS\SolrBundle\Tests\Fixtures\NestedEntity")
      */
     private $nestedProperty;
+
+    /**
+     * @Solr\Field(type="datetime", getter="format('d.m.Y')")
+     */
+    private $getterWithParameters;
+
+    /**
+     * @Solr\Field(type="string", getter="getName")
+     */
+    private $simpleGetter;
 
     /**
      * @return mixed
@@ -52,13 +76,10 @@ class EntityNestedProperty
     {
         $this->id = $id;
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
+    
+    public function sliceCollection()
     {
-        return $this->name;
+        return [$this->collectionValidGetter[0]];
     }
 
     /**
@@ -70,12 +91,6 @@ class EntityNestedProperty
     }
 
     /**
-     * @return array
-     */
-    public function getCollection()
-    {
-        return $this->collection;
-    }
 
     /**
      * @param array $collection
@@ -86,20 +101,42 @@ class EntityNestedProperty
     }
 
     /**
-     * @return object
-     */
-    public function getNestedProperty()
-    {
-        return $this->nestedProperty;
-    }
-
-    /**
      * @param object $nestedProperty
      */
     public function setNestedProperty($nestedProperty)
     {
         $this->nestedProperty = $nestedProperty;
     }
-    
-    
+
+    /**
+     * @param array $collectionValidGetter
+     */
+    public function setCollectionValidGetter($collectionValidGetter)
+    {
+        $this->collectionValidGetter = $collectionValidGetter;
+    }
+
+    /**
+     * @param array $collectionInvalidGetter
+     */
+    public function setCollectionInvalidGetter($collectionInvalidGetter)
+    {
+        $this->collectionInvalidGetter = $collectionInvalidGetter;
+    }
+
+    /**
+     * @param mixed $objectToSimpleFormat
+     */
+    public function setGetterWithParameters($getterWithParameters)
+    {
+        $this->getterWithParameters = $getterWithParameters;
+    }
+
+    /**
+     * @param mixed $simpleGetter
+     */
+    public function setSimpleGetter($simpleGetter)
+    {
+        $this->simpleGetter = $simpleGetter;
+    }
 }

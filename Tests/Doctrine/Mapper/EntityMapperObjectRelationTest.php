@@ -44,55 +44,44 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
      */
     public function mapRelationFieldByGetter()
     {
-        $collectionItem1 = new ValidTestEntity();
+        $collectionItem1 = new NestedEntity();
         $collectionItem1->setId(uniqid());
-        $collectionItem1->setTitle('title 1');
-        $collectionItem1->setText('text 1');
+        $collectionItem1->setName('title 1');
 
-        $collectionItem2 = new ValidTestEntity();
+        $collectionItem2 = new NestedEntity();
         $collectionItem2->setId(uniqid());
-        $collectionItem2->setTitle('title 2');
-        $collectionItem2->setText('text 2');
+        $collectionItem2->setName('title 2');
 
-        $collection = new ArrayCollection();
-        $collection->add($collectionItem1);
-        $collection->add($collectionItem2);
+        $collection = new ArrayCollection([$collectionItem1, $collectionItem2]);
 
-        $entity = new ValidTestEntityWithCollection();
-        $entity->setTitle($collection);
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+        $entity->setCollectionValidGetter($collection);
 
-        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity);
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'getTitle'));
-        $metaInformation->setFields($fields);
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         $document = $this->mapper->toDocument($metaInformation);
 
         $this->assertArrayHasKey('_childDocuments_', $document->getFields());
         $collectionField = $document->getFields()['_childDocuments_'];
 
-        $this->assertCollectionItemsMappedProperly($collectionField);
+        $this->assertCollectionItemsMappedProperly($collectionField, 1);
     }
 
     /**
      * @test
      * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
-     * @expectedExceptionMessage No method "unknown()" found in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection"
+     * @expectedExceptionMessage No method "unknown()" found in class "FS\SolrBundle\Tests\Fixtures\EntityNestedProperty"
      */
     public function throwExceptionIfConfiguredGetterDoesNotExists()
     {
-        $entity1 = new \DateTime('+2 days');
+        $collection = new ArrayCollection([new \DateTime(), new \DateTime()]);
 
-        $entity2 = new \DateTime('+1 day');
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+        $entity->setCollectionInvalidGetter($collection);
 
-        $collection = new ArrayCollection();
-        $collection->add($entity1);
-        $collection->add($entity2);
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'unknown(\'d.m.Y\')'));
-        $metaInformation->setFields($fields);
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         $this->mapper->toDocument($metaInformation);
     }
@@ -102,23 +91,19 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
      */
     public function mapRelationFieldAllFields()
     {
-        $collectionItem1 = new ValidTestEntity();
+        $collectionItem1 = new NestedEntity();
         $collectionItem1->setId(uniqid());
-        $collectionItem1->setTitle('title 1');
-        $collectionItem1->setText('text 1');
+        $collectionItem1->setName('title 1');
 
-        $collectionItem2 = new ValidTestEntity();
+        $collectionItem2 = new NestedEntity();
         $collectionItem2->setId(uniqid());
-        $collectionItem2->setTitle('title 2');
-        $collectionItem2->setText('text 2');
+        $collectionItem2->setName('title 2');
 
-        $collection = new ArrayCollection();
-        $collection->add($collectionItem1);
-        $collection->add($collectionItem2);
+        $collection = new ArrayCollection([$collectionItem1, $collectionItem2]);
 
-        $entity = new ValidTestEntityWithCollection();
+        $entity = new EntityNestedProperty();
         $entity->setId(uniqid());
-        $entity->setCollectionNoGetter($collection);
+        $entity->setCollection($collection);
 
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
@@ -127,7 +112,7 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('_childDocuments_', $document->getFields());
         $collectionField = $document->getFields()['_childDocuments_'];
 
-        $this->assertCollectionItemsMappedProperly($collectionField);
+        $this->assertCollectionItemsMappedProperly($collectionField, 2);
     }
 
     /**
@@ -198,25 +183,24 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
      */
     public function mapRelationField_Getter()
     {
-        $entity2 = new ValidTestEntity();
-        $entity2->setTitle('embedded object');
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
 
-        $entity1 = new ValidTestEntityWithRelation();
-        $entity1->setTitle('title 1');
-        $entity1->setText('text 1');
-        $entity1->setRelation($entity2);
+        $object = new NestedEntity();
+        $object->setId(uniqid());
+        $object->setName('nested entity');
 
-        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity2, 'getter'=>'getTitle'));
-        $metaInformation->setFields($fields);
+        $entity->setSimpleGetter($object);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         $document = $this->mapper->toDocument($metaInformation);
 
-        $this->assertArrayHasKey('relation_ss', $document->getFields());
-        $collectionField = $document->getFields()['relation_ss'];
+        $this->assertArrayHasKey('simple_getter_s', $document->getFields());
 
-        $this->assertEquals('embedded object', $collectionField);
+        $collectionField = $document->getFields()['simple_getter_s'];
+
+        $this->assertEquals('nested entity', $collectionField);
     }
 
     /**
@@ -224,13 +208,13 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
      */
     public function callGetterWithParameter_ObjectProperty()
     {
-        $entity1 = new ValidTestEntity();
         $date = new \DateTime();
 
-        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
-        $metaInformation->setFields(array(
-            new Field(array('name' => 'created_at', 'type' => 'datetime', 'boost' => '1', 'value' => $date, 'getter' => "format('d.m.Y')"))
-        ));
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+        $entity->setGetterWithParameters($date);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         $fields = $metaInformation->getFields();
         $metaInformation->setFields($fields);
@@ -238,9 +222,8 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
         $document = $this->mapper->toDocument($metaInformation);
 
         $fields = $document->getFields();
-
-        $this->assertArrayHasKey('created_at_dt', $fields);
-        $this->assertEquals($date->format('d.m.Y'), $fields['created_at_dt']);
+        $this->assertArrayHasKey('getter_with_parameters_dt', $fields);
+        $this->assertEquals($date->format('d.m.Y'), $fields['getter_with_parameters_dt']);
     }
 
     /**
@@ -314,15 +297,16 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $collectionField
+     * @param int $expectedItems
      */
-    private function assertCollectionItemsMappedProperly($collectionField)
+    private function assertCollectionItemsMappedProperly($collectionField, $expectedItems)
     {
-        $this->assertEquals(2, count($collectionField), 'should be 2 collection items');
+        $this->assertEquals($expectedItems, count($collectionField), 'should be 2 collection items');
 
         foreach ($collectionField as $item) {
             $this->assertArrayHasKey('id', $item);
-            $this->assertArrayHasKey('title', $item);
-            $this->assertEquals(3, count($item), 'field has 3 properties');
+            $this->assertArrayHasKey('name_t', $item);
+            $this->assertEquals(2, count($item), 'field has 2 properties');
         }
     }
 }
