@@ -242,70 +242,13 @@ Solr supports partial updates of fields in an existing document. Supported value
 - remove (multivalue field only, removes a value(s) from existing list)
 - inc (integer field only)
    
+### `nestedClass` property
+
+Set this property if you want to index collections with nested Objects.
+
+
 
 ### Object relations
-
-Indexing relations works in simplified way. Related entities will not be indexed as a new document, but only as a searchable value.
-Related entities do not need a `@Solr\Document` annotation.
-
-#### ManyToOne relation
-
-```php
-/**
- * @var Category
- *
- * @Solr\Field(type="string", getter="getTitle")
- *
- * @ORM\ManyToOne(targetEntity="Acme\DemoBundle\Entity\Category", inversedBy="posts", cascade={"persist"})
- * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
- */
-private $category;
-```
-
-Related entity:
-
-```php
-class Category
-{
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-}
-```
-
-#### OneToMany relation
-
-To index a set of objects it is important to use the fieldtype `strings`.
-
-```php
-/**
- * @var Tag[]
- *
- * @Solr\Field(type="strings", getter="getName")
- *
- * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
- */
-private $tags;
-```
-
-Related entity:
-
-```php
-class Tag
-{
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-}
-```
 
 [For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
 
@@ -412,29 +355,6 @@ class YourRepository extends Repository
     }
 }
 
-```
-
-
-### Define Result-Mapping
-
-To narrow the mapping, you can use the `addField()` method.
-
-```php
-$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
-$query->addSearchTerm('title', 'my title');
-$query->addField('id');
-$query->addField('text');
-
-$result = $query->getResult();
-```
-
-In this case, only the `id` and `text` fields will be mapped (addField()), `title` and created_at` fields will be
-empty. If nothing was found $result is empty.
-
-By default, the result set contains 10 rows. You can increase this value:
-
-```php
-$query->setRows(1000000);
 ```
 
 ### Configure HydrationModes
