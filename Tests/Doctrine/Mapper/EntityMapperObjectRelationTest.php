@@ -133,32 +133,6 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function mapRelationField_AllFields()
-    {
-        $entity2 = new ValidTestEntity();
-        $entity2->setTitle('embbeded object');
-
-        $entity1 = new ValidTestEntityWithRelation();
-        $entity1->setTitle('title 1');
-        $entity1->setText('text 1');
-        $entity1->setRelation($entity2);
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'relation', 'type' => 'strings', 'boost' => '1', 'value' => $entity1));
-        $metaInformation->setFields($fields);
-
-        $document = $this->mapper->toDocument($metaInformation);
-
-        $this->assertArrayHasKey('relation_ss', $document->getFields());
-        $collectionField = $document->getFields()['relation_ss'];
-
-        $this->assertEquals(4, count($collectionField), 'collection contains 4 fields');
-    }
-
-    /**
-     * @test
-     */
     public function mapEntityWithRelation_singleObject()
     {
         $entity = new EntityNestedProperty();
