@@ -56,7 +56,7 @@ class EntityNestedProperty
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName()
     {
         return $this->name;
     }
@@ -64,7 +64,7 @@ class EntityNestedProperty
     /**
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -72,7 +72,7 @@ class EntityNestedProperty
     /**
      * @return array
      */
-    public function getCollection() : array
+    public function getCollection()
     {
         return $this->collection;
     }
@@ -80,7 +80,7 @@ class EntityNestedProperty
     /**
      * @param array $collection
      */
-    public function setCollection(array $collection)
+    public function setCollection($collection)
     {
         $this->collection = $collection;
     }

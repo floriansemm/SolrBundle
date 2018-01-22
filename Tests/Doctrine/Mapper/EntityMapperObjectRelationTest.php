@@ -187,6 +187,41 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function indexEntityMultipleRelations()
+    {
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+
+        $nested1 = new NestedEntity();
+        $nested1->setId(uniqid());
+        $nested1->setName('nested document');
+
+        $entity->setNestedProperty($nested1);
+
+        $collectionItem1 = new NestedEntity();
+        $collectionItem1->setId(uniqid());
+        $collectionItem1->setName('collection item 1');
+
+        $collectionItem2 = new NestedEntity();
+        $collectionItem2->setId(uniqid());
+        $collectionItem2->setName('collection item 2');
+
+        $collection = new ArrayCollection([$collectionItem1, $collectionItem2]);
+
+        $entity->setCollection($collection);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $fields = $document->getFields();
+
+        $this->assertEquals(3, count($fields['_childDocuments_']));
+    }
+
+    /**
+     * @test
+     */
     public function mapRelationField_Getter()
     {
         $entity2 = new ValidTestEntity();
