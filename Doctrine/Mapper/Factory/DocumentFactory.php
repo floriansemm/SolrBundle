@@ -61,7 +61,9 @@ class DocumentFactory
             $fieldValue = $field->getValue();
             if ($fieldValue instanceof Collection) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
-            } elseif (is_object($fieldValue)) {
+            } else if (is_object($fieldValue) && $field->nestedClass) {
+                $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
+            } else if (is_object($fieldValue) && !$field->nestedClass) {
                 $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
             } else if ($field->getter && $fieldValue) {
                 $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());

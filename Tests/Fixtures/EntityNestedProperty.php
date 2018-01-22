@@ -31,6 +31,13 @@ class EntityNestedProperty
     private $collection;
 
     /**
+     * @var object
+     *
+     * @Solr\Field(nestedClass="FS\SolrBundle\Tests\Fixtures\NestedEntity")
+     */
+    private $nestedProperty;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -77,4 +84,22 @@ class EntityNestedProperty
     {
         $this->collection = $collection;
     }
+
+    /**
+     * @return object
+     */
+    public function getNestedProperty()
+    {
+        return $this->nestedProperty;
+    }
+
+    /**
+     * @param object $nestedProperty
+     */
+    public function setNestedProperty($nestedProperty)
+    {
+        $this->nestedProperty = $nestedProperty;
+    }
+    
+    
 }

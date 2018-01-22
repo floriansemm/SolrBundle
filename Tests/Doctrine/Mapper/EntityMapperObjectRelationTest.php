@@ -8,6 +8,8 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Hydration\HydratorInterface;
 use FS\SolrBundle\Doctrine\Mapper\EntityMapper;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Tests\Fixtures\EntityNestedProperty;
+use FS\SolrBundle\Tests\Fixtures\NestedEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
@@ -152,6 +154,34 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
         $collectionField = $document->getFields()['relation_ss'];
 
         $this->assertEquals(4, count($collectionField), 'collection contains 4 fields');
+    }
+
+    /**
+     * @test
+     */
+    public function mapEntityWithRelation_singleObject()
+    {
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+
+        $nested1 = new NestedEntity();
+        $nested1->setId(uniqid());
+        $nested1->setName('nested document');
+
+        $entity->setNestedProperty($nested1);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $fields = $document->getFields();
+
+        $this->assertArrayHasKey('_childDocuments_', $fields);
+
+        $subDocument = $fields['_childDocuments_'][0];
+
+        $this->assertArrayHasKey('id', $subDocument);
+        $this->assertArrayHasKey('name_t', $subDocument);
     }
 
     /**

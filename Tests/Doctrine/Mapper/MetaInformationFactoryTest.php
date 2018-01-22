@@ -196,8 +196,6 @@ class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new MetaInformationFactory($this->reader);
         $metainformation = $factory->loadInformation($entity);
 
-        $this->assertEquals(4, count($metainformation->getFieldMapping()));
-
         $this->assertArrayNotHasKey('collection', $metainformation->getFieldMapping());
         $this->assertArrayHasKey('collection.id', $metainformation->getFieldMapping());
         $this->assertArrayHasKey('collection.name_t', $metainformation->getFieldMapping());
