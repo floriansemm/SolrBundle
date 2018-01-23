@@ -61,14 +61,14 @@ class DocumentFactory
             $fieldValue = $field->getValue();
             if ($fieldValue instanceof Collection && $field->nestedClass) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
-            } else if (is_object($fieldValue) && $field->nestedClass) {
+            } else if (is_object($fieldValue) && $field->nestedClass) { // index sinsgle object as nested child-document
                 $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
-            } else if (is_object($fieldValue) && !$field->nestedClass) {
+            } else if (is_object($fieldValue) && !$field->nestedClass) { // index object as "flat" string, call getter
                 $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
-            } else if ($field->getter && $fieldValue) {
+            } else if ($field->getter && $fieldValue) { // call getter to transform data (json to array, etc.)
                 $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());
                 $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
-            } else {
+            } else { // field contains simple data-type
                 $document->addField($field->getNameWithAlias(), $fieldValue, $field->getBoost());
             }
 
@@ -91,17 +91,17 @@ class DocumentFactory
     {
         $value = $field->getValue();
         $getter = $field->getGetterName();
-        if (!empty($getter)) {
-            $getterReturnValue = $this->callGetterMethod($value, $getter);
+        if (empty($getter)) {
+            throw new SolrMappingException(sprintf('Please configure a getter for property "%s" in class "%s"', $field->name, get_class($value)));
+        }
+        
+        $getterReturnValue = $this->callGetterMethod($value, $getter);
 
-            if (is_object($getterReturnValue)) {
-                throw new SolrMappingException(sprintf('The configured getter "%s" in "%s" must return a string or array, got object', $getter, get_class($value)));
-            }
-
-            return $getterReturnValue;
+        if (is_object($getterReturnValue)) {
+            throw new SolrMappingException(sprintf('The configured getter "%s" in "%s" must return a string or array, got object', $getter, get_class($value)));
         }
 
-        return $this->objectToDocument($value);
+        return $getterReturnValue;
     }
 
     /**
