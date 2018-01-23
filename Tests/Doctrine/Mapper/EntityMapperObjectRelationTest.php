@@ -259,7 +259,6 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
         $date = new \DateTime();
         $entity1 = new ValidTestEntity();
         $entity1->setId(uniqid());
-        $entity1->setCreatedAt($date);
         $entity1->setComplexDataType(json_encode($data));
 
         $metaInformation = $this->metaInformationFactory->loadInformation($entity1);
@@ -268,8 +267,6 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
 
         $fields = $document->getFields();
 
-        $this->assertArrayHasKey('created_at_dt', $fields);
-        $this->assertEquals($date->format('d.m.Y'), $fields['created_at_dt']);
         $this->assertArrayHasKey('complex_data_type', $fields);
 
         $this->assertEquals($data, $fields['complex_data_type']);
