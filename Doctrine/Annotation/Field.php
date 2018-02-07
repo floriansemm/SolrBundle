@@ -59,7 +59,8 @@ class Field extends Annotation
         'long' => '_l',
         'float' => '_f',
         'double' => '_d',
-        'datetime' => '_dt'
+        'datetime' => '_dt',
+        'point' => '_p'
     );
 
     /**
