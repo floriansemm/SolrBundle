@@ -14,6 +14,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
+use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
 {
@@ -293,6 +294,21 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function callGetterToRetrieveFieldValue()
+    {
+        $metainformation = $this->metaInformationFactory->loadInformation(new TestObject());
+
+        $document = $this->mapper->toDocument($metainformation);
+
+        $fields = $document->getFields();
+
+        $this->assertArrayHasKey('property_s', $fields);
+        $this->assertEquals(1234, $fields['property_s']);
+    }
+
+    /**
      * @param array $collectionField
      * @param int $expectedItems
      */
@@ -308,7 +324,28 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
     }
 }
 
+/** @Solr\Document() */
 class TestObject {
+
+    /** @Solr\Id  */
+    private $id;
+
+    public function __construct()
+    {
+        $this->id = uniqid();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /** @Solr\Field(type="string", name="property") */
+    public function getPropertyValue()
+    {
+        return 1234;
+    }
+
     public function testGetter($para1, $para2, $para3)
     {
         return array($para1, $para2, $para3);

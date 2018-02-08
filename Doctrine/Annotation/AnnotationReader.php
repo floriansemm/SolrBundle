@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 
 class AnnotationReader
 {
@@ -84,6 +85,38 @@ class AnnotationReader
     public function getFields($entity)
     {
         return $this->getPropertiesByType($entity, self::FIELD_CLASS);
+    }
+
+    /**
+     * @param object $entity
+     * 
+     * @return array
+     *
+     * @throws \ReflectionException
+     */
+    public function getMethods($entity)
+    {
+        $reflectionClass = new \ReflectionClass($entity);
+
+        $methods = [];
+        foreach ($reflectionClass->getMethods() as $method) {
+            /** @var Field $annotation */
+            $annotation = $this->reader->getMethodAnnotation($method, self::FIELD_CLASS);
+
+            if ($annotation === null) {
+                continue;
+            }
+
+            $annotation->value = $method->invoke($entity);
+            
+            if ($annotation->name == '') {
+                throw new SolrMappingException(sprintf('Please configure a field-name for method "%s" with field-annotation in class "%s"', $method->getName(), get_class($entity)));
+            }
+
+            $methods[] = $annotation;
+        }
+
+        return $methods;
     }
 
     /**

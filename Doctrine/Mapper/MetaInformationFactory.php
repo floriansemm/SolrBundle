@@ -58,12 +58,14 @@ class MetaInformationFactory
             throw new SolrMappingException(sprintf('no declaration for document found in entity %s', $className));
         }
 
+        $fields = array_merge($this->annotationReader->getFields($entity), $this->annotationReader->getMethods($entity));
+
         $metaInformation = new MetaInformation();
         $metaInformation->setEntity($entity);
         $metaInformation->setClassName($className);
         $metaInformation->setDocumentName($this->getDocumentName($className));
         $metaInformation->setFieldMapping($this->annotationReader->getFieldMapping($entity));
-        $metaInformation->setFields($this->annotationReader->getFields($entity));
+        $metaInformation->setFields($fields);
         $metaInformation->setRepository($this->annotationReader->getRepository($entity));
         $metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
