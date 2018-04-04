@@ -97,4 +97,14 @@ class RequestCollector extends DataCollector
     {
         return 'solr';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        $this->data = [
+            'queries' => [],
+        ];
+    }
 }
