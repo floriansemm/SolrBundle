@@ -78,7 +78,7 @@
         <service id="solr.doctrine.hydration.no_database_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator">
         </service>
 
-        <service id="solr.doctrine.hydration.doctrine_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator">
+        <service id="solr.doctrine.hydration.doctrine_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator" public="true">
         </service>
 
         <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
