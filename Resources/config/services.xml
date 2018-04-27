@@ -36,7 +36,7 @@
         <service id="solr.data_collector" class="FS\SolrBundle\DataCollector\RequestCollector" public="false">
             <argument type="service" id="solr.client.logger.debug" />
 
-            <tag name="data_collector" template="FSSolrBundle:Profiler:solr" id="solr" />
+            <tag name="data_collector" template="@FSSolr/Profiler/solr.html.twig" id="solr" />
         </service>
 
         <service id="solr.debug.client_debugger" class="FS\SolrBundle\Client\Solarium\Plugin\RequestDebugger">
