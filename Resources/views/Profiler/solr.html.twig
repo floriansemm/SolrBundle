@@ -13,11 +13,10 @@
             {% endif %}
 
         {% else %}
-
+            {{ include('@FSSolr/Profiler/icon.svg') }}
+            
             {% if collector.querycount > 0 %}
                 {% set status = collector.querycount > 50 ? 'yellow' %}
-
-                {{ include('@FSSolr/Profiler/icon.svg') }}
 
                 <span class="sf-toolbar-value">{{ collector.querycount }}</span>
                 <span class="sf-toolbar-info-piece-additional-detail">
