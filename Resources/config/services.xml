@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="solr.client" class="%solr.class%">
+        <service id="solr.client" class="%solr.class%" public="true">
             <argument type="service" id="solr.client.adapter"/>
             <argument type="service" id="event_dispatcher"/>
             <argument type="service" id="solr.meta.information.factory"/>
@@ -46,11 +46,11 @@
             <tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
         </service>
 
-        <service id="solr.meta.information.factory" class="FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory">
+        <service id="solr.meta.information.factory" class="FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory" public="true">
             <argument type="service" id="solr.doctrine.annotation.annotation_reader" />
         </service>
 
-        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases"/>
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases" public="true"/>
 
         <service id="solr.doctrine.classnameresolver" class="FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces"/>
@@ -89,5 +89,16 @@
             <argument id="annotation_reader" type="service"/>
         </service>
 
+        <service id="solr.command.clear_index_command" class="FS\SolrBundle\Command\ClearIndexCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="solr.command.show_schema_command" class="FS\SolrBundle\Command\ShowSchemaCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="solr.command.synchronize_index_command" class="FS\SolrBundle\Command\SynchronizeIndexCommand">
+            <tag name="console.command"/>
+        </service>
     </services>
 </container>
