@@ -9,7 +9,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 /**
  * @group resolver
  */
-class ClassnameResolverTest extends \PHPUnit_Framework_TestCase
+class ClassnameResolverTest extends \PHPUnit\Framework\TestCase
 {
     const ENTITY_NAMESPACE = 'FS\SolrBundle\Tests\Fixtures';
     const UNKNOW_ENTITY_NAMESPACE = 'FS\Unknown';
