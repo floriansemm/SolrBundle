@@ -285,6 +285,20 @@ class Tag
         return $this->name;
     }
 }
+
+To define an alias field name for the database entry you can use the fieldAlias in the @Solr\Field tag. 
+
+```php
+/**
+ * @var Tag[]
+ *
+ * @Solr\Field(type="strings", getter="getName", fieldAlias="availableTags")
+ *
+ * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+ */
+private $tags;
+```
+
 ```
 
 [For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
