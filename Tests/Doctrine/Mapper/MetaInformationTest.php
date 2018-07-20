@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
  *
  * @group mapper
  */
-class MetaInformationTest extends \PHPUnit_Framework_TestCase
+class MetaInformationTest extends \PHPUnit\Framework\TestCase
 {
     private function createFieldObject($name, $value)
     {
