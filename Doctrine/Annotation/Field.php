@@ -38,6 +38,11 @@ class Field extends Annotation
     public $fieldModifier;
 
     /**
+     * @var string|bool
+     */
+    public $fieldAlias = false;
+    
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array();
@@ -82,6 +87,10 @@ class Field extends Annotation
      */
     public function getNameWithAlias()
     {
+        if($this->fieldAlias) {
+            return $this->normalizeName($this->fieldAlias) . $this->getTypeSuffix($this->type);
+        }
+        
         return $this->normalizeName($this->name) . $this->getTypeSuffix($this->type);
     }
 
