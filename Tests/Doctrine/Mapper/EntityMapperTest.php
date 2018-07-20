@@ -29,7 +29,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
  *
  * @group mapper
  */
-class EntityMapperTest extends \PHPUnit_Framework_TestCase
+class EntityMapperTest extends \PHPUnit\Framework\TestCase
 {
 
     private $doctrineHydrator = null;
