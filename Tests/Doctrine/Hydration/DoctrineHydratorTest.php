@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 /**
  * @group hydration
  */
-class DoctrineHydratorTest extends \PHPUnit_Framework_TestCase
+class DoctrineHydratorTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
