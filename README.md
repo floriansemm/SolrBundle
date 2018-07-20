@@ -287,8 +287,9 @@ class Tag
 }
 ```
 
-To define an alias field name for the database entry you can use the fieldAlias in the @Solr\Field tag. 
+### `fieldAlias' property
 
+To define an alias field name for the database entry you can use the fieldAlias in the @Solr\Field tag. 
 
 ```php
 /**
@@ -300,7 +301,15 @@ To define an alias field name for the database entry you can use the fieldAlias 
  */
 private $tags;
 ```
+The database record will now be saved with the availabele_tags property instead of tags:
 
+```json
+{
+    "id":"category_1",
+    "name_s": "Category",
+    "available_tags_ss":["tag1","tag2"]
+}
+```
 
 [For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
 
