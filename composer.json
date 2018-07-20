@@ -24,7 +24,7 @@
     "behat/behat": "^3.1",
     "doctrine/mongodb-odm-bundle": "*",
     "doctrine/orm": "^2.3",
-    "phpunit/phpunit": "^5.4"
+    "phpunit/phpunit": "^6"
   },
   "minimum-stability": "RC",
   "autoload": {
