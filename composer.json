@@ -25,7 +25,7 @@
     "doctrine/mongodb-odm-bundle": "*",
     "doctrine/orm": "^2.3",
     "phpunit/phpunit": "^6",
-    "codedungeon/phpunit-result-printer": "^0.8.3"
+    "codedungeon/phpunit-result-printer": "0.8.3"
   },
   "minimum-stability": "RC",
   "autoload": {
