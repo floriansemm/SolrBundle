@@ -16,7 +16,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
  *
  * @group mapper
  */
-class MetaInformationFactoryTest extends \PHPUnit_Framework_TestCase
+class MetaInformationFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AnnotationReader

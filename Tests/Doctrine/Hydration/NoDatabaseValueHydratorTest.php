@@ -9,7 +9,7 @@ use FS\SolrBundle\Tests\Doctrine\Mapper\SolrDocumentStub;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use Doctrine\Common\Annotations\AnnotationReader as DoctrineAnnotationReader;
 
-class NoDatabaseValueHydratorTest extends \PHPUnit_Framework_TestCase
+class NoDatabaseValueHydratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

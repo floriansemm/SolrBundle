@@ -8,7 +8,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
 /**
  * @group query
  */
-class FindByIdentifierQueryTest extends \PHPUnit_Framework_TestCase
+class FindByIdentifierQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testGetQuery_SearchInAllFields()
