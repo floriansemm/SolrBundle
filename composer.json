@@ -18,7 +18,8 @@
     "symfony/config": "^2.3|^3.0|^4.0",
     "symfony/doctrine-bridge": "^2.3|^3.0|^4.0",
     "minimalcode/search": "^1.0",
-    "ramsey/uuid": "^3.5"
+    "ramsey/uuid": "^3.5",
+    "alcaeus/mongo-php-adapter": "^1.1"
   },
   "require-dev": {
     "behat/behat": "^3.1",
@@ -33,7 +34,10 @@
     }
   },
   "config": {
-    "bin-dir": "bin"
+    "bin-dir": "bin",
+    "platform": {
+      "ext-mongo": "1.6.16"
+    }
   },
   "extras": {
     "branch-alias": {
