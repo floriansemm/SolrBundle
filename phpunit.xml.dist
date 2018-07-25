@@ -10,6 +10,7 @@
          stopOnFailure="false"
          syntaxCheck="false"
          bootstrap="Tests/bootstrap.php"
+         printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer"
         >
 
     <testsuites>
