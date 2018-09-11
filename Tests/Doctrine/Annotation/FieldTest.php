@@ -55,6 +55,11 @@ class FieldTest extends \PHPUnit_Framework_TestCase
     {
         $result = Field::removeParenthesis('test()');
         $this->assertEquals('test', $result);
+    
+    public function testGetNameWithFieldAlias_String()
+    {
+       $field = new Field(array('name' => 'test', 'type' => 'string', 'fieldAlias' => 'alias'));
+       $this->assertEquals('alias_s', $field->getNameWithAlias());
     }
     
     public function testNormalizeName_CamelCase()
