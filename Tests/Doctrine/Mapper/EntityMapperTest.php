@@ -21,7 +21,7 @@ use FS\SolrBundle\Tests\Fixtures\PartialUpdateEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
-
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFields;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
