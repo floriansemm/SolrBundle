@@ -63,6 +63,13 @@ class DocumentFactory
                 $document->addField($field->getNameWithAlias(), $this->mapCollection($field, $metaInformation->getClassName()), $field->getBoost());
             } elseif (is_object($fieldValue)) {
                 $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
+            }
+            else if($field->fieldsGetter && $fieldValue) {
+
+                $fieldsGetter = $field->fieldsGetter;
+                
+                $getterValue = $this->callGetterMethod($metaInformation->getEntity()->$fieldsGetter(), $field->getGetterName());
+                $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
             } else if ($field->getter && $fieldValue) {
                 $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());
                 $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
@@ -120,11 +127,8 @@ class DocumentFactory
      */
     private function callGetterMethod($object, $getter)
     {
-        $methodName = $getter;
-        if (strpos($getter, '(') !== false) {
-            $methodName = substr($getter, 0, strpos($getter, '('));
-        }
-
+        $methodName = Field::removeParenthesis($getter); 
+        
         if (!method_exists($object, $methodName)) {
             throw new SolrMappingException(sprintf('No method "%s()" found in class "%s"', $methodName, get_class($object)));
         }

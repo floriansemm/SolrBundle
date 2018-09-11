@@ -337,6 +337,26 @@ class SomeEntity
 The callback property specifies an callable function, which should return a boolean value, specifying whether a concrete 
 entity should be indexed.
 
+## `@Solr\Fields` annotation
+
+When you want to index multiple fields of a related entity you can use the @Solr\Fields annotation. You should specify the public `getter` function of the related entity.  
+
+```php
+    
+    /**
+     * @var Tag[] $tag
+     *
+     * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+     * @Solr\Fields(getter="getTags", fields={
+     *      @Solr\Field(type="integers", getter="getId", fieldAlias="id"),
+     *      @Solr\Field(type="strings", getter="getName", fieldAlias="name")
+     *      })
+     */
+    private $tags;
+```
+
+You can now nest multiple Tag getters in one single @Solr\Fields annotation. Fields are indexed by their fieldAlias property.
+
 ## Queries
 
 ### Query a field of a document
