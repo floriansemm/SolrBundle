@@ -287,6 +287,30 @@ class Tag
 }
 ```
 
+### `fieldAlias' property
+
+To define an alias field name for the database entry you can use the fieldAlias in the @Solr\Field tag. 
+
+```php
+/**
+ * @var Tag[]
+ *
+ * @Solr\Field(type="strings", getter="getName", fieldAlias="availableTags")
+ *
+ * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+ */
+private $tags;
+```
+The database record will now be saved with the availabele_tags property instead of tags:
+
+```json
+{
+    "id":"category_1",
+    "name_s": "Category",
+    "available_tags_ss":["tag1","tag2"]
+}
+```
+
 [For more information read the more detailed "How to index relation" guide](Resources/doc/index_relations.md)
 
 ### `@Solr\SynchronizationFilter(callback="shouldBeIndexed")` annotation
@@ -312,6 +336,26 @@ class SomeEntity
 
 The callback property specifies an callable function, which should return a boolean value, specifying whether a concrete 
 entity should be indexed.
+
+## `@Solr\Fields` annotation
+
+When you want to index multiple fields of a related entity you can use the @Solr\Fields annotation. You should specify the public `getter` function of the related entity.  
+
+```php
+    
+    /**
+     * @var Tag[] $tag
+     *
+     * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+     * @Solr\Fields(getter="getTags", fields={
+     *      @Solr\Field(type="integers", getter="getId", fieldAlias="id"),
+     *      @Solr\Field(type="strings", getter="getName", fieldAlias="name")
+     *      })
+     */
+    private $tags;
+```
+
+You can now nest multiple Tag getters in one single @Solr\Fields annotation. Fields are indexed by their fieldAlias property.
 
 ## Queries
 
