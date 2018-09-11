@@ -23,7 +23,7 @@ use FS\SolrBundle\Tests\Fixtures\NotIndexedEntity;
  *
  * @group annotation
  */
-class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
+class AnnotationReaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AnnotationReader

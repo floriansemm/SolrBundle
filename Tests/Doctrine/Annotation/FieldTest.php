@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
  *
  * @group annotation
  */
-class FieldTest extends \PHPUnit_Framework_TestCase
+class FieldTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetNameWithAlias_String()
     {

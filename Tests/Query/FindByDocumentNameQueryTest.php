@@ -8,7 +8,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
 /**
  * @group query
  */
-class FindByDocumentNameQueryTest extends \PHPUnit_Framework_TestCase
+class FindByDocumentNameQueryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @group query1

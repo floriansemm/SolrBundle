@@ -7,7 +7,7 @@ use Doctrine\ORM\Configuration as OrmConfiguration;
 use Doctrine\ODM\MongoDB\Configuration as OdmConfiguration;
 use FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases;
 
-class KnownNamespaceAliasesTest extends \PHPUnit_Framework_TestCase
+class KnownNamespaceAliasesTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
