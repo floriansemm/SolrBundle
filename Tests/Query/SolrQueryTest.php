@@ -268,7 +268,7 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $query = $this->createQueryWithFieldMapping();
         $query->setMappedFields($mapping);
-        $query->addSearchTerm('collection.name', 'test');
+        $query->addSearchTerm('collection.name', 'test*bar');
         $query->addSearchTerm('title', 'test post');
 
         $this->assertEquals('title_s:"test post" OR {!parent which="id:post_*"}name_s:test', $query->getQuery());

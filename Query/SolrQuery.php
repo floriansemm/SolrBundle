@@ -144,7 +144,10 @@ class SolrQuery extends AbstractQuery
 
             $documentName = $this->getMetaInformation()->getDocumentName();
             $documentFieldName = sprintf('{!parent which="id:%s_*"}%s', $documentName, $nestedField);
-            $this->childQueries[$documentFieldName] = $value;
+            $childFilterPhrase = str_replace('"', '*', $value);
+            $childFilterPhrase = str_replace(' ', '*', $value);
+            $childFilterPhrase = str_replace('\*', '*', $value);
+            $this->childQueries[$documentFieldName] = $childFilterPhrase;
         } else {
             $this->searchTerms[$documentFieldName] = $value;
         }
