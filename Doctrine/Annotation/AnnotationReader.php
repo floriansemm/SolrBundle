@@ -55,12 +55,10 @@ class AnnotationReader
                 continue;
             }
 
-            if($type == $this::FIELDS_CLASS) {
-                
+            if ($type == $this::FIELDS_CLASS) {
                 $fields = $this->processFieldsAnnotation($property, $annotation, $entity, $fields);
             }
             else {
-
                 $annotation->value = $property->getValue($entity);
                 $annotation->name = $property->getName();
 
@@ -85,53 +83,57 @@ class AnnotationReader
     {
 
         if (!$annotation->getter) {
-            throw new AnnotationReaderException('No getter defined for @Fields annotation');
+            throw new AnnotationReaderException(sprintf('No getter defined for @Fields annotation in class "%s"', get_class($entity)));
         }
 
         $fieldsGetter = Field::removeParenthesis($annotation->getter);
 
         if (method_exists($entity, $fieldsGetter)) {
             
-            $relation = $entity->$fieldsGetter();
+            $relations = $entity->$fieldsGetter();
 
-            if ($relation) {
-                
-                foreach ($annotation->fields as $field) {
+            if ($relations) {
 
-                    $field->name = $property->getName();
-                    
-                    if (!$field->fieldAlias) {
-                        throw new AnnotationReaderException(sprintf('No fieldAlias defined for field "%s"', $field->name));
-                    }
+                if (!(is_array($relations))) {
+                    $relations = array($relations);
+                }
 
-                    if ($field->getter) {
-                        
-                        $method = Field::removeParenthesis($field->getter);
+                foreach($relations as $relation) {
 
-                        if (method_exists($relation, $method)) {
-                           
-                           $field->fieldsGetter = $fieldsGetter;
-                           $field->value = $relation->$method();
-                           $field->getter = $method;
+                    foreach ($annotation->fields as $field) {
 
-                        } else {
-                            throw new AnnotationReaderException(sprintf('Unknown method "%s" configured', $method));
+                        $field->name = $property->getName();
+
+                        if (!$field->fieldAlias) {
+                            throw new AnnotationReaderException(sprintf('No fieldAlias defined for field "%s" in class "%s"', $field->name, get_class($entity)));
                         }
-                    } else {
-                        throw new AnnotationReaderException(sprintf('No getter defined for field "%s"', $field->name));
-                    }
 
-                    $fields[] = $field;
+                        if ($field->getter) {
+                            $method = Field::removeParenthesis($field->getter);
+
+                            if (method_exists($relation, $method)) {
+                                $field->fieldsGetter = $fieldsGetter;
+                                $field->value = $relation->$method();
+                                $field->getter = $method;
+                            } else {
+                                throw new AnnotationReaderException(sprintf('Unknown method defined "%s" in class "%s"', $method, get_class($entity)));
+                            }
+                        } else {
+                            throw new AnnotationReaderException(sprintf('No getter defined for fieldAlias "%s" in class "%s"', $field->fieldAlias, get_class($entity)));
+                        }
+
+                        $fields[] = $field;
+                    }
                 }
             }
         }
         else {
-            throw new AnnotationReaderException(sprintf('Unknown method defined "%s"', $fieldsGetter));
+            throw new AnnotationReaderException(sprintf('Unknown method defined "%s" in class "%s"', $fieldsGetter, get_class($entity)));
         }
         
         return $fields;
     }
-    
+
     /**
      * @param \ReflectionClass $reflectionClass
      *
