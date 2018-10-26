@@ -319,7 +319,7 @@ class EntityMapperTest extends \PHPUnit\Framework\TestCase
     public function mapRelationField_AllFields()
     {
         $entity2 = new ValidTestEntity();
-        $entity2->setTitle('embbeded object');
+        $entity2->setTitle('embedded object');
 
         $entity1 = new ValidTestEntityWithRelation();
         $entity1->setTitle('title 1');
@@ -390,7 +390,7 @@ class EntityMapperTest extends \PHPUnit\Framework\TestCase
         $entity1 = new ValidTestEntityWithMultipleFields();
         $entity1->setTitle('title 1');
         $entity1->setText('text 1');
-        $entity1->setRelation($entity2);
+        $entity1->setFields([$entity2]);
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation($entity1);
         $fields = $metaInformation->getFields();
