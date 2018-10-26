@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 /**
  * @Solr\Document(boost="1")
  */
-class ValidTestEntityWithMultipleFields
+class ValidTestEntityWithMultipleFieldsNoParentGetter
 {
 
     /**
@@ -46,7 +46,7 @@ class ValidTestEntityWithMultipleFields
     /**
      * @var array
      *
-     * @Solr\Fields(getter="getFields", fields={
+     * @Solr\Fields(fields={
      *      @Solr\Field(type="strings", getter="getTitle", fieldAlias="title"),
      *      @Solr\Field(type="integers", getter="getId", fieldAlias="id")
      * })
