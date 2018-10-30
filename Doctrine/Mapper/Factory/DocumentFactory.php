@@ -71,7 +71,6 @@ class DocumentFactory
                 $fieldsGetter = $field->fieldsGetter;
 
                 if ($metaInformation->getEntity()->$fieldsGetter() instanceof \Doctrine\ORM\PersistentCollection ) {
-
                     $results = array();
 
                     foreach ($metaInformation->getEntity()->$fieldsGetter() as $value) {
@@ -79,7 +78,6 @@ class DocumentFactory
                         foreach($metaInformation->getFields() as $matchingField) {
 
                             if ($matchingField->name == $field->name && $matchingField->getter == $field->getter) {
-
                                 $results[] = $this->callGetterMethod($value, $field->getter);
                                 break;
                             }
