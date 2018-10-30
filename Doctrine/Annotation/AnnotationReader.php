@@ -94,6 +94,10 @@ class AnnotationReader
 
             if ($relations) {
 
+                if($relations instanceof \Doctrine\ORM\PersistentCollection ) {
+                    $relations = $relations->getValues();
+                }
+
                 if (!(is_array($relations))) {
                     $relations = array($relations);
                 }

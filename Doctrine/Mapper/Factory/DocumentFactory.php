@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine\Mapper\Factory;
 
 use Doctrine\Common\Collections\Collection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\Fields;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
@@ -54,7 +55,8 @@ class DocumentFactory
         $document->setBoost($metaInformation->getBoost());
 
         foreach ($fields as $field) {
-            if (!$field instanceof Field) {
+
+            if (!$field instanceof Field && !$field instanceof Fields) {
                 continue;
             }
 
@@ -67,9 +69,31 @@ class DocumentFactory
             else if($field->fieldsGetter && $fieldValue) {
 
                 $fieldsGetter = $field->fieldsGetter;
-                
-                $getterValue = $this->callGetterMethod($metaInformation->getEntity()->$fieldsGetter(), $field->getGetterName());
-                $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
+
+                if ($metaInformation->getEntity()->$fieldsGetter() instanceof \Doctrine\ORM\PersistentCollection ) {
+
+                    $results = array();
+
+                    foreach ($metaInformation->getEntity()->$fieldsGetter() as $value) {
+
+                        foreach($metaInformation->getFields() as $matchingField) {
+
+                            if ($matchingField->name == $field->name && $matchingField->getter == $field->getter) {
+
+                                $results[] = $this->callGetterMethod($value, $field->getter);
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($results) {
+                        $document->setField($field->getNameWithAlias(), $results, $field->getBoost());
+                    }
+                }
+                else {
+                    $getterValue = $this->callGetterMethod($metaInformation->getEntity()->$fieldsGetter(), $field->getGetterName());
+                    $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
+                }
             } else if ($field->getter && $fieldValue) {
                 $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());
                 $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
