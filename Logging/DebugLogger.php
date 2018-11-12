@@ -33,7 +33,7 @@ class DebugLogger implements SolrLoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function startRequest($request)
+    public function startRequest(array $request)
     {
         $this->start = microtime(true);
         $this->queries[++$this->currentQuery] = [

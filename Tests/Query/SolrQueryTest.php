@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Tests\Query;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Doctrine\Annotation\Id;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
+use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Query\Exception\UnknownFieldException;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\SolrInterface;
@@ -251,5 +252,25 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $query->getQuery());
         $this->assertEquals('id:post_1', $query->getFilterQuery('id')->getQuery());
+    }
+
+    /**
+     * @test
+     */
+    public function generateQueryForNestedDocuments()
+    {
+        $mapping = [
+            'id' => 'id',
+            'title_s' => 'title',
+            'collection.id' => 'collection.id',
+            'collection.name_s' => 'collection.name'
+        ];
+
+        $query = $this->createQueryWithFieldMapping();
+        $query->setMappedFields($mapping);
+        $query->addSearchTerm('collection.name', 'test*bar');
+        $query->addSearchTerm('title', 'test post');
+
+        $this->assertEquals('title_s:"test post" OR {!parent which="id:post_*"}name_s:test*bar', $query->getQuery());
     }
 }

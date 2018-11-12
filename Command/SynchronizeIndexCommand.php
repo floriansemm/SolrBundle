@@ -95,7 +95,7 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
                     $i++;
                 }
 
-                $entities = $repository->findBy(array(), null, $batchSize, $offset);
+                $entities = $repository->findBy([], null, $batchSize, $offset);
 
                 try {
                     $solr->synchronizeIndex($entities);
@@ -141,16 +141,20 @@ class SynchronizeIndexCommand extends ContainerAwareCommand
     private function getIndexableEntities($entity = null)
     {
         if ($entity) {
-            return array($entity);
+            return [$entity];
         }
 
-        $entities = array();
+        $entities = [];
         $namespaces = $this->getContainer()->get('solr.doctrine.classnameresolver.known_entity_namespaces');
         $metaInformationFactory = $this->getContainer()->get('solr.meta.information.factory');
 
         foreach ($namespaces->getEntityClassnames() as $classname) {
             try {
                 $metaInformation = $metaInformationFactory->loadInformation($classname);
+                if ($metaInformation->isNested()) {
+                    continue;
+                }
+
                 array_push($entities, $metaInformation->getClassName());
             } catch (SolrMappingException $e) {
                 continue;

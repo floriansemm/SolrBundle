@@ -10,12 +10,17 @@ class SolrQuery extends AbstractQuery
     /**
      * @var array
      */
-    private $mappedFields = array();
+    private $mappedFields = [];
 
     /**
      * @var array
      */
-    private $searchTerms = array();
+    private $searchTerms = [];
+
+    /**
+     * @var array
+     */
+    private $childQueries = [];
 
     /**
      * @var bool
@@ -132,7 +137,20 @@ class SolrQuery extends AbstractQuery
         }
 
         $documentFieldName = $documentFieldsAsValues[$field];
-        $this->searchTerms[$documentFieldName] = $value;
+        if ($position = strpos($field, '.')) {
+            $nestedFieldMapping = $documentFieldsAsValues[$field];
+
+            $nestedField = substr($nestedFieldMapping, $position + 1);
+
+            $documentName = $this->getMetaInformation()->getDocumentName();
+            $documentFieldName = sprintf('{!parent which="id:%s_*"}%s', $documentName, $nestedField);
+            $childFilterPhrase = str_replace('"', '*', $value);
+            $childFilterPhrase = str_replace(' ', '*', $value);
+            $childFilterPhrase = str_replace('\*', '*', $value);
+            $this->childQueries[$documentFieldName] = $childFilterPhrase;
+        } else {
+            $this->searchTerms[$documentFieldName] = $value;
+        }
 
         return $this;
     }
@@ -169,6 +187,8 @@ class SolrQuery extends AbstractQuery
      */
     public function getQuery()
     {
+        $searchTerms = array_merge($this->searchTerms, $this->childQueries);
+
         $keyField = $this->getMetaInformation()->getDocumentKey();
 
         $documentLimitation = $this->createFilterQuery('id')->setQuery('id:'.$keyField.'*');
@@ -182,7 +202,7 @@ class SolrQuery extends AbstractQuery
 
         $term = '';
         // query all documents if no terms exists
-        if (count($this->searchTerms) == 0) {
+        if (count($searchTerms) == 0) {
             $query = '*:*';
             parent::setQuery($query);
 
@@ -195,7 +215,7 @@ class SolrQuery extends AbstractQuery
         }
 
         $termCount = 1;
-        foreach ($this->searchTerms as $fieldName => $fieldValue) {
+        foreach ($searchTerms as $fieldName => $fieldValue) {
 
             if ($fieldName == 'id') {
                 $this->getFilterQuery('id')->setQuery('id:' . $fieldValue);
@@ -209,7 +229,7 @@ class SolrQuery extends AbstractQuery
 
             $term .= $fieldName . ':' . $fieldValue;
 
-            if ($termCount < count($this->searchTerms)) {
+            if ($termCount < count($searchTerms)) {
                 $term .= ' ' . $logicOperator . ' ';
             }
 

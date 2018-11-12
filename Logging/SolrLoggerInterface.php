@@ -7,16 +7,12 @@ interface SolrLoggerInterface
     /**
      * Called when the request is started
      *
-     * @param string $request
-     *
-     * @return mixed
+     * @param array $request
      */
-    public function startRequest($request);
+    public function startRequest(array $request);
 
     /**
      * Called when the request has ended
-     *
-     * @return mixed
      */
     public function stopRequest();
 }

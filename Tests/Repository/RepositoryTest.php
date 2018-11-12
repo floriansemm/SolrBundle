@@ -10,6 +10,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\FindByDocumentNameQuery;
 use FS\SolrBundle\Query\FindByIdentifierQuery;
+use FS\SolrBundle\Tests\Fixtures\EntityNestedProperty;
 use FS\SolrBundle\Tests\SolrClientFake;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Tests\Util\CommandFactoryStub;
@@ -28,9 +29,15 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
      */
     private $metaInformationFactory;
 
+    private $mapper;
+
     protected function setUp()
     {
         $this->metaInformationFactory = new MetaInformationFactory($reader = new AnnotationReader(new \Doctrine\Common\Annotations\AnnotationReader()));
+        $this->mapper = $this->createMock(EntityMapperInterface::class);
+        $this->mapper->expects($this->once())
+            ->method('setHydrationMode')
+            ->with(HydrationModes::HYDRATE_DOCTRINE);
     }
 
     public function testFind_DocumentIsKnown()
@@ -41,15 +48,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
-        $mapper = $this->createMock(EntityMapperInterface::class);
-        $mapper->expects($this->once())
-            ->method('setHydrationMode')
-            ->with(HydrationModes::HYDRATE_DOCTRINE);
-
         $entity = new ValidTestEntity();
 
         $solr = new SolrClientFake();
-        $solr->mapper = $mapper;
+        $solr->mapper = $this->mapper;
         $solr->response = array($entity);
 
         $repo = new Repository($solr, $metaInformation);
@@ -66,15 +68,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
-        $mapper = $this->createMock(EntityMapperInterface::class);
-        $mapper->expects($this->once())
-            ->method('setHydrationMode')
-            ->with(HydrationModes::HYDRATE_DOCTRINE);
-
         $entity = new ValidTestEntity();
 
         $solr = new SolrClientFake();
-        $solr->mapper = $mapper;
+        $solr->mapper = $this->mapper;
         $solr->response = array($entity);
 
         $repo = new Repository($solr, $metaInformation);
@@ -96,15 +93,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
-        $mapper = $this->createMock(EntityMapperInterface::class);
-        $mapper->expects($this->once())
-            ->method('setHydrationMode')
-            ->with(HydrationModes::HYDRATE_DOCTRINE);
-
         $entity = new ValidTestEntity();
 
         $solr = new SolrClientFake();
-        $solr->mapper = $mapper;
+        $solr->mapper = $this->mapper;
         $solr->response = array($entity);
         $solr->metaFactory = $this->metaInformationFactory;
 
@@ -128,15 +120,10 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
         $metaInformation = MetaTestInformationFactory::getMetaInformation();
 
-        $mapper = $this->createMock(EntityMapperInterface::class);
-        $mapper->expects($this->once())
-            ->method('setHydrationMode')
-            ->with(HydrationModes::HYDRATE_DOCTRINE);
-
         $entity = new ValidTestEntity();
 
         $solr = new SolrClientFake();
-        $solr->mapper = $mapper;
+        $solr->mapper = $this->mapper;
         $solr->response = array($entity);
         $solr->metaFactory = $this->metaInformationFactory;
 
@@ -151,5 +138,27 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('id:validtestentity_*', $solr->query->getFilterQuery('id')->getQuery());
     }
 
+    /**
+     * @test
+     */
+    public function findOneByNestedField()
+    {
+        $metaInformation = $this->metaInformationFactory->loadInformation(EntityNestedProperty::class);
+
+        $entity = new ValidTestEntity();
+
+        $solr = new SolrClientFake();
+        $solr->mapper = $this->mapper;
+        $solr->response = array($entity);
+        $solr->metaFactory = $this->metaInformationFactory;
+
+        $repo = new Repository($solr, $metaInformation);
+
+        $found = $repo->findOneBy([
+            'collection.name' => '*test*test*'
+        ]);
+
+        $this->assertEquals('{!parent which="id:entitynestedproperty_*"}name_t:*test*test*', $solr->query->getQuery());
+    }
 }
 

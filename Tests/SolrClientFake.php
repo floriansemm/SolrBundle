@@ -6,6 +6,7 @@ use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Query\SolrQuery;
 use FS\SolrBundle\Repository\Repository;
+use FS\SolrBundle\Repository\RepositoryInterface;
 use FS\SolrBundle\SolrInterface;
 
 class SolrClientFake implements SolrInterface
@@ -36,8 +37,9 @@ class SolrClientFake implements SolrInterface
         return $this->metaFactory;
     }
 
-    public function addDocument($doc)
+    public function addDocument($doc): bool
     {
+        return true;
     }
 
     public function deleteByQuery($query)
@@ -54,7 +56,7 @@ class SolrClientFake implements SolrInterface
         return $this->commit;
     }
 
-    public function query(AbstractQuery $query)
+    public function query(AbstractQuery $query): array
     {
         $this->query = $query;
 
@@ -92,12 +94,12 @@ class SolrClientFake implements SolrInterface
         // TODO: Implement removeDocument() method.
     }
 
-    public function updateDocument($entity)
+    public function updateDocument($entity): bool
     {
         // TODO: Implement updateDocument() method.
     }
 
-    public function getRepository($entity)
+    public function getRepository($entity): RepositoryInterface
     {
         // TODO: Implement getRepository() method.
     }
@@ -107,7 +109,7 @@ class SolrClientFake implements SolrInterface
         // TODO: Implement computeChangeSet() method.
     }
 
-    public function createQueryBuilder($entity)
+    public function createQueryBuilder($entity): QueryBuilderInterface
     {
         // TODO: Implement createQueryBuilder() method.
     }

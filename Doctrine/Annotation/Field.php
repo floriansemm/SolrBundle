@@ -38,6 +38,11 @@ class Field extends Annotation
     public $fieldModifier;
 
     /**
+     * @var string
+     */
+    public $nestedClass;
+
+    /**
      * @var array
      */
     private static $TYP_MAPPING = array();
@@ -54,7 +59,8 @@ class Field extends Annotation
         'long' => '_l',
         'float' => '_f',
         'double' => '_d',
-        'datetime' => '_dt'
+        'datetime' => '_dt',
+        'point' => '_p'
     );
 
     /**
