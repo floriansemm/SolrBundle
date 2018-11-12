@@ -271,6 +271,6 @@ class SolrQueryTest extends \PHPUnit_Framework_TestCase
         $query->addSearchTerm('collection.name', 'test*bar');
         $query->addSearchTerm('title', 'test post');
 
-        $this->assertEquals('title_s:"test post" OR {!parent which="id:post_*"}name_s:test', $query->getQuery());
+        $this->assertEquals('title_s:"test post" OR {!parent which="id:post_*"}name_s:test*bar', $query->getQuery());
     }
 }
