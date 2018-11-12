@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="solr.client" class="%solr.class%">
+        <service id="solr.client" class="%solr.class%" public="true">
             <argument type="service" id="solr.client.adapter"/>
             <argument type="service" id="event_dispatcher"/>
             <argument type="service" id="solr.meta.information.factory"/>
@@ -36,7 +36,7 @@
         <service id="solr.data_collector" class="FS\SolrBundle\DataCollector\RequestCollector" public="false">
             <argument type="service" id="solr.client.logger.debug" />
 
-            <tag name="data_collector" template="FSSolrBundle:Profiler:solr" id="solr" />
+            <tag name="data_collector" template="@FSSolr/Profiler/solr.html.twig" id="solr" />
         </service>
 
         <service id="solr.debug.client_debugger" class="FS\SolrBundle\Client\Solarium\Plugin\RequestDebugger">
@@ -46,11 +46,11 @@
             <tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
         </service>
 
-        <service id="solr.meta.information.factory" class="FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory">
+        <service id="solr.meta.information.factory" class="FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory" public="true">
             <argument type="service" id="solr.doctrine.annotation.annotation_reader" />
         </service>
 
-        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases"/>
+        <service id="solr.doctrine.classnameresolver.known_entity_namespaces" class="FS\SolrBundle\Doctrine\ClassnameResolver\KnownNamespaceAliases" public="true"/>
 
         <service id="solr.doctrine.classnameresolver" class="FS\SolrBundle\Doctrine\ClassnameResolver\ClassnameResolver" public="false">
             <argument type="service" id="solr.doctrine.classnameresolver.known_entity_namespaces"/>
@@ -78,7 +78,7 @@
         <service id="solr.doctrine.hydration.no_database_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\NoDatabaseValueHydrator">
         </service>
 
-        <service id="solr.doctrine.hydration.doctrine_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator">
+        <service id="solr.doctrine.hydration.doctrine_value_hydrator" class="FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator" public="true">
         </service>
 
         <service id="solr.doctrine.hydration.index_hydrator" class="FS\SolrBundle\Doctrine\Hydration\IndexHydrator">
@@ -89,5 +89,16 @@
             <argument id="annotation_reader" type="service"/>
         </service>
 
+        <service id="solr.command.clear_index_command" class="FS\SolrBundle\Command\ClearIndexCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="solr.command.show_schema_command" class="FS\SolrBundle\Command\ShowSchemaCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="solr.command.synchronize_index_command" class="FS\SolrBundle\Command\SynchronizeIndexCommand">
+            <tag name="console.command"/>
+        </service>
     </services>
 </container>

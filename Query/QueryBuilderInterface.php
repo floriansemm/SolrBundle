@@ -166,8 +166,22 @@ interface QueryBuilderInterface
      *
      * @return QueryBuilderInterface
      */
+    public function greaterThan($value);
+    
+    /**
+     * @param string $value
+     *
+     * @return QueryBuilderInterface
+     */
     public function lessThanEqual($value);
 
+    /**
+     * @param string $value
+     *
+     * @return QueryBuilderInterface
+     */
+    public function lessThan($value);
+    
     /**
      * @param float $value
      *

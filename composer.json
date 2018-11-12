@@ -1,7 +1,7 @@
 {
   "name": "floriansemm/solr-bundle",
   "type": "symfony-bundle",
-  "description": "Symfony2 Solr integration bundle",
+  "description": "Symfony Solr integration bundle",
   "keywords": [
     "search",
     "index",
@@ -12,7 +12,7 @@
   "license": "MIT",
   "require": {
     "php": "^7.0",
-    "solarium/solarium": "^3.6",
+    "solarium/solarium": "^4.0",
     "symfony/dependency-injection": "^2.3|^3.0|^4.0",
     "symfony/http-kernel": "^2.3|^3.0|^4.0",
     "symfony/config": "^2.3|^3.0|^4.0",
@@ -28,7 +28,7 @@
     "doctrine/orm": "^2.3",
     "phpunit/phpunit": "^5.4"
   },
-  "minimum-stability": "beta",
+  "minimum-stability": "RC",
   "autoload": {
     "psr-0": {
       "FS\\SolrBundle": ""
