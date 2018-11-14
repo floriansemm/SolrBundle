@@ -127,33 +127,4 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
             $this->deletedRootEntities[] = $this->emptyCollections($entity);
         }
     }
-
-    /**
-     * @param object $object
-     *
-     * @return object
-     */
-    private function emptyCollections($object)
-    {
-        $deepcopy = new DeepCopy();
-        $deepcopy->addFilter(new DoctrineEmptyCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-
-        return $deepcopy->copy($object);
-    }
-
-    /**
-     * @param PostFlushEventArgs $eventArgs
-     */
-    public function postFlush(PostFlushEventArgs $eventArgs)
-    {
-        foreach ($this->persistedEntities as $entity) {
-            $this->solr->addDocument($entity);
-        }
-        $this->persistedEntities = [];
-
-        foreach ($this->deletedRootEntities as $entity) {
-            $this->solr->removeDocument($entity);
-        }
-        $this->deletedRootEntities = [];
-    }
 }
