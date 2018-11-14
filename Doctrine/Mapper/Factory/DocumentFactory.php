@@ -66,7 +66,7 @@ class DocumentFactory
             } elseif (is_object($fieldValue)) {
                 $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
             }
-            else if($field->fieldsGetter && $fieldValue) {
+            else if($field->fieldsGetter) {
 
                 $fieldsGetter = $field->fieldsGetter;
 

@@ -2,54 +2,68 @@
 
 namespace FS\SolrBundle\Doctrine\ORM\Listener;
 
+use DeepCopy\DeepCopy;
+use DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter;
+use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use FS\SolrBundle\Doctrine\AbstractIndexingListener;
-use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
-use FS\SolrBundle\SolrInterface;
-use Psr\Log\LoggerInterface;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 class EntityIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
+    /**
+     * @var array
+     */
+    private $persistedEntities = [];
+
+    /**
+     * @var array
+     */
+    private $updatedEntities = [];
+
+    /**
+     * @var array
+     */
+    private $deletedRootEntities = [];
+
+    /**
+     * @var array
+     */
+    private $deletedNestedEntities = [];
 
     /**
      * {@inheritdoc}
      */
     public function getSubscribedEvents()
     {
-        return array('postUpdate', 'postPersist', 'preRemove');
+        return ['preRemove', 'postFlush', 'onFlush'];
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param OnFlushEventArgs $args
      */
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+    public function onFlush(OnFlushEventArgs $args) {
 
-        $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-        try {
-            if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
-                return;
-            }
+        $em = $args->getEntityManager();
 
-            $this->solr->updateDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+        foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
+            $this->persistedEntities[] = $entity;
         }
-    }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postPersist(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+        foreach ($em->getUnitOfWork()->getScheduledEntityUpdates() as $entity) {
 
-        try {
-            $this->solr->addDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+            $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
+            try {
+                if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
+                    return;
+                }
+
+                $this->updatedEntities[] = $entity;
+            } catch (\Exception $e) {
+                $this->logger->debug($e->getMessage());
+            }
         }
     }
 
@@ -60,10 +74,55 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     {
         $entity = $args->getEntity();
 
-        try {
-            $this->solr->removeDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+        if ($this->isNested($entity)) {
+            $this->deletedNestedEntities[] = $this->emptyCollections($entity);
+        } else {
+            $this->deletedRootEntities[] = $this->emptyCollections($entity);
         }
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return object
+     */
+    private function emptyCollections($object)
+    {
+        $deepcopy = new DeepCopy();
+        $deepcopy->addFilter(new DoctrineEmptyCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+
+        return $deepcopy->copy($object);
+    }
+
+    /**
+     * @param PostFlushEventArgs $eventArgs
+     */
+    public function postFlush(PostFlushEventArgs $eventArgs)
+    {
+        foreach ($this->persistedEntities as $entity) {
+
+            try {
+                $this->solr->addDocument($entity);
+            } catch(\Exception $e) {
+                $this->logger->debug($e->getMessage());
+            }
+        }
+        $this->persistedEntities = [];
+
+        foreach ($this->updatedEntities as $entity) {
+            $this->solr->updateDocument($entity);
+        }
+
+        $this->updatedEntities = [];
+
+        foreach ($this->deletedRootEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedRootEntities = [];
+
+        foreach ($this->deletedNestedEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedNestedEntities = [];
     }
 }

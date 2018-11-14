@@ -96,6 +96,15 @@ class AnnotationReader
 
                 if($relations instanceof \Doctrine\ORM\PersistentCollection ) {
                     $relations = $relations->getValues();
+
+                    if (empty($relations)) {
+                        foreach ($annotation->fields as $field) {
+                             $field->name = $property->getName();
+                             $fields[] = $field;
+                        }
+
+                        return $fields;
+                    }
                 }
 
                 if (!(is_array($relations))) {
