@@ -121,10 +121,9 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
         }
         $this->deletedRootEntities = [];
 
-        if ($this->isNested($entity)) {
-            $this->deletedNestedEntities[] = $this->emptyCollections($entity);
-        } else {
-            $this->deletedRootEntities[] = $this->emptyCollections($entity);
+        foreach ($this->deletedNestedEntities as $entity) {
+            $this->solr->removeDocument($entity);
         }
+        $this->deletedNestedEntities = [];
     }
 }

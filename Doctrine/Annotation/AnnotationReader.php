@@ -47,8 +47,6 @@ class AnnotationReader
     {
         $properties = $this->readClassProperties($entity);
 
-        $fields = [];
-
         foreach ($properties as $property) {
 
             $property->setAccessible(true); 

@@ -61,10 +61,13 @@ class DocumentFactory
             }
 
             $fieldValue = $field->getValue();
-            if ($fieldValue instanceof Collection) {
-                $document->addField($field->getNameWithAlias(), $this->mapCollection($field, $metaInformation->getClassName()), $field->getBoost());
-            } elseif (is_object($fieldValue)) {
-                $document->addField($field->getNameWithAlias(), $this->mapObject($field), $field->getBoost());
+
+            if ($fieldValue instanceof Collection && $field->nestedClass) {
+                $this->mapCollectionField($document, $field, $metaInformation->getEntity());
+            } else if (is_object($fieldValue) && $field->nestedClass) { // index single object as nested child-document
+                $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
+            } else if (is_object($fieldValue) && !$field->nestedClass) { // index object as "flat" string, call getter
+                $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
             }
             else if($field->fieldsGetter) {
 

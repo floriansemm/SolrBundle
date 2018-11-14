@@ -16,7 +16,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
-class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
+class EntityMapperObjectRelationTest extends \PHPUnit\Framework\TestCase
 {
     private $doctrineHydrator = null;
     private $indexHydrator = null;
