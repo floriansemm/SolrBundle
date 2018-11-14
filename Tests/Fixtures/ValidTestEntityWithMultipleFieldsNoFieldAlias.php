@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 /**
  * @Solr\Document(boost="1")
  */
-class ValidTestEntityWithRelation
+class ValidTestEntityWithMultipleFieldsNoFieldAlias
 {
 
     /**
@@ -30,6 +30,13 @@ class ValidTestEntityWithRelation
     private $title;
 
     /**
+     * @Solr\Field()
+     *
+     * @var string
+     */
+    private $author;
+
+    /**
      * @Solr\Field(type="date")
      *
      * @var \DateTime
@@ -37,18 +44,14 @@ class ValidTestEntityWithRelation
     private $created_at;
 
     /**
-     * @Solr\Field(type="my_custom_fieldtype")
+     * @var array
      *
-     * @var string
+     * @Solr\Fields(getter="getFields", fields={
+     *      @Solr\Field(type="strings", getter="getTitle"),
+     *      @Solr\Field(type="integers", getter="getId", fieldAlias="id")
+     * })
      */
-    private $customField;
-
-    /**
-     * @var object
-     *
-     * @Solr\Field(type="strings", getter="getTitle")
-     */
-    private $relation;
+    private $fields;
 
     /**
      * @var object
@@ -68,35 +71,19 @@ class ValidTestEntityWithRelation
     }
 
     /**
-     * @param string $customField
+     * @return array
      */
-    public function setCustomField($customField)
+    public function getFields()
     {
-        $this->customField = $customField;
+        return $this->fields;
     }
 
     /**
-     * @return string
+     * @param array $fields
      */
-    public function getCustomField()
+    public function setFields($fields)
     {
-        return $this->customField;
-    }
-
-    /**
-     * @return object
-     */
-    public function getRelation()
-    {
-        return $this->relation;
-    }
-
-    /**
-     * @param object $relation
-     */
-    public function setRelation($relation)
-    {
-        $this->relation = $relation;
+        $this->fields = $fields;
     }
 
     /**
@@ -148,6 +135,28 @@ class ValidTestEntityWithRelation
     }
 
     /**
+     * Get Author
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set Author
+     *
+     * @param string $author
+     * @return $this
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -163,4 +172,3 @@ class ValidTestEntityWithRelation
         $this->created_at = $created_at;
     }
 }
-

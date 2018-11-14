@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @group extension
  */
-class FSSolrExtensionTest extends \PHPUnit_Framework_TestCase
+class FSSolrExtensionTest extends \PHPUnit\Framework\TestCase
 {
 
     /**

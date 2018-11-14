@@ -55,11 +55,11 @@ class ValidTestEntityWithCollection
     private $collectionNoGetter;
 
     /**
-     * @Solr\Field(type="my_costom_fieldtype")
+     * @Solr\Field(type="my_custom_fieldtype")
      *
      * @var string
      */
-    private $costomField;
+    private $customField;
 
     public function getId()
     {
@@ -72,19 +72,19 @@ class ValidTestEntityWithCollection
     }
 
     /**
-     * @param string $costomField
+     * @param string $customField
      */
-    public function setCostomField($costomField)
+    public function setCustomField($customField)
     {
-        $this->costomField = $costomField;
+        $this->customField = $customField;
     }
 
     /**
      * @return string
      */
-    public function getCostomField()
+    public function getCustomField()
     {
-        return $this->costomField;
+        return $this->customField;
     }
 
     /**

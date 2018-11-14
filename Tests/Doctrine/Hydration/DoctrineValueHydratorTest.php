@@ -8,7 +8,7 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Hydration\DoctrineValueHydrator;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 
-class DoctrineValueHydratorTest extends \PHPUnit_Framework_TestCase
+class DoctrineValueHydratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

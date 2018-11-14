@@ -5,7 +5,7 @@ namespace FS\SolrBundle\Tests\Client\Solarium;
 use FS\SolrBundle\Client\Solarium\SolariumClientBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SolariumClientBuilderTest extends \PHPUnit_Framework_TestCase
+class SolariumClientBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array

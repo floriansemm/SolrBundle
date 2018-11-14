@@ -17,7 +17,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Tests\Constraints\ValidTest;
 
-class EntityIndexerSubscriberTest extends \PHPUnit_Framework_TestCase
+class EntityIndexerSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var EntityIndexerSubscriber
@@ -82,38 +82,5 @@ class EntityIndexerSubscriberTest extends \PHPUnit_Framework_TestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->subscriber->postFlush(new PostFlushEventArgs($entityManager));
-    }
-
-    /**
-     * @test
-     */
-    public function indexOnlyModifiedEntites()
-    {
-        $changedEntity = new ValidTestEntityWithCollection();
-        $this->solr->expects($this->once())
-            ->method('updateDocument')
-            ->with($changedEntity);
-
-        $unitOfWork = $this->createMock(UnitOfWork::class);
-        $unitOfWork->expects($this->at(0))
-            ->method('getEntityChangeSet')
-            ->willReturn(['title' => 'value']);
-
-        $unitOfWork->expects($this->at(1))
-            ->method('getEntityChangeSet')
-            ->willReturn([]);
-
-        $objectManager = $this->createMock(EntityManagerInterface::class);
-        $objectManager->expects($this->any())
-            ->method('getUnitOfWork')
-            ->willReturn($unitOfWork);
-
-        $updateEntityEvent1 = new LifecycleEventArgs($changedEntity, $objectManager);
-
-        $unmodifiedEntity = new ValidTestEntityWithCollection();
-        $updateEntityEvent2 = new LifecycleEventArgs($unmodifiedEntity, $objectManager);
-
-        $this->subscriber->postUpdate($updateEntityEvent1);
-        $this->subscriber->postUpdate($updateEntityEvent2);
     }
 }

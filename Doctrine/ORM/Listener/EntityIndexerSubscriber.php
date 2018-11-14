@@ -9,6 +9,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use FS\SolrBundle\Doctrine\AbstractIndexingListener;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 class EntityIndexerSubscriber extends AbstractIndexingListener implements EventSubscriber
 {
@@ -16,6 +17,12 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
      * @var array
      */
     private $persistedEntities = [];
+
+    /**
+     * @var array
+     */
+
+    private $updatedEntities = [];
 
     /**
      * @var array
@@ -32,36 +39,33 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate', 'postPersist', 'preRemove', 'postFlush'];
+        return ['preRemove', 'postFlush', 'onFlush'];
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param OnFlushEventArgs $args
      */
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+    public function onFlush(OnFlushEventArgs $args) {
 
-        $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-        try {
-            if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
-                return;
-            }
+        $em = $args->getEntityManager();
 
-            $this->solr->updateDocument($entity);
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+        foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
+            $this->persistedEntities[] = $entity;
         }
-    }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postPersist(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
+        foreach ($em->getUnitOfWork()->getScheduledEntityUpdates() as $entity) {
 
-        $this->persistedEntities[] = $entity;
+            $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
+            try {
+                if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
+                    return;
+                }
+
+                $this->updatedEntities[] = $entity;
+            } catch (\Exception $e) {
+                $this->logger->debug($e->getMessage());
+            }
+        }
     }
 
     /**
@@ -97,9 +101,20 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     public function postFlush(PostFlushEventArgs $eventArgs)
     {
         foreach ($this->persistedEntities as $entity) {
-            $this->solr->addDocument($entity);
+
+            try {
+                $this->solr->addDocument($entity);
+            } catch(\Exception $e) {
+                $this->logger->debug($e->getMessage());
+            }
         }
         $this->persistedEntities = [];
+
+        foreach ($this->updatedEntities as $entity) {
+            $this->solr->updateDocument($entity);
+        }
+
+        $this->updatedEntities = [];
 
         foreach ($this->deletedRootEntities as $entity) {
             $this->solr->removeDocument($entity);

@@ -16,7 +16,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 /**
  * @group hydration
  */
-class ValueHydratorTest extends \PHPUnit_Framework_TestCase
+class ValueHydratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AnnotationReader

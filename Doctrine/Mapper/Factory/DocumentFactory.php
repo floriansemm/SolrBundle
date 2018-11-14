@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine\Mapper\Factory;
 
 use Doctrine\Common\Collections\Collection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
+use FS\SolrBundle\Doctrine\Annotation\Fields;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
 use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
@@ -54,21 +55,50 @@ class DocumentFactory
         $document->setBoost($metaInformation->getBoost());
 
         foreach ($fields as $field) {
-            if (!$field instanceof Field) {
+
+            if (!$field instanceof Field && !$field instanceof Fields) {
                 continue;
             }
 
             $fieldValue = $field->getValue();
+
             if ($fieldValue instanceof Collection && $field->nestedClass) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
-            } else if (is_object($fieldValue) && $field->nestedClass) { // index sinsgle object as nested child-document
+            } else if (is_object($fieldValue) && $field->nestedClass) { // index single object as nested child-document
                 $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
             } else if (is_object($fieldValue) && !$field->nestedClass) { // index object as "flat" string, call getter
                 $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
-            } else if ($field->getter && $fieldValue) { // call getter to transform data (json to array, etc.)
+            }
+            else if($field->fieldsGetter) {
+
+                $fieldsGetter = $field->fieldsGetter;
+
+                if ($metaInformation->getEntity()->$fieldsGetter() instanceof \Doctrine\ORM\PersistentCollection ) {
+                    $results = array();
+
+                    foreach ($metaInformation->getEntity()->$fieldsGetter() as $value) {
+
+                        foreach($metaInformation->getFields() as $matchingField) {
+
+                            if ($matchingField->name == $field->name && $matchingField->getter == $field->getter) {
+                                $results[] = $this->callGetterMethod($value, $field->getter);
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($results) {
+                        $document->setField($field->getNameWithAlias(), $results, $field->getBoost());
+                    }
+                }
+                else {
+                    $getterValue = $this->callGetterMethod($metaInformation->getEntity()->$fieldsGetter(), $field->getGetterName());
+                    $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
+                }
+            } else if ($field->getter && $fieldValue) {
                 $getterValue = $this->callGetterMethod($metaInformation->getEntity(), $field->getGetterName());
                 $document->addField($field->getNameWithAlias(), $getterValue, $field->getBoost());
-            } else { // field contains simple data-type
+            } else {
                 $document->addField($field->getNameWithAlias(), $fieldValue, $field->getBoost());
             }
 
@@ -114,11 +144,8 @@ class DocumentFactory
      */
     private function callGetterMethod($object, $getter)
     {
-        $methodName = $getter;
-        if (strpos($getter, '(') !== false) {
-            $methodName = substr($getter, 0, strpos($getter, '('));
-        }
-
+        $methodName = Field::removeParenthesis($getter); 
+        
         if (!method_exists($object, $methodName)) {
             throw new SolrMappingException(sprintf('No method "%s()" found in class "%s"', $methodName, get_class($object)));
         }

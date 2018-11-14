@@ -22,7 +22,7 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 /**
  * @group repository
  */
-class RepositoryTest extends \PHPUnit_Framework_TestCase
+class RepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MetaTestInformationFactory

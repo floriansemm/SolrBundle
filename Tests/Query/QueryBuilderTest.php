@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformation;
 use FS\SolrBundle\Query\QueryBuilder;
 use FS\SolrBundle\SolrInterface;
 
-class QueryBuilderTest extends \PHPUnit_Framework_TestCase
+class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     private $solr;
 

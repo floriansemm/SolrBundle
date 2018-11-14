@@ -21,6 +21,7 @@ use FS\SolrBundle\Tests\Fixtures\PartialUpdateEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidOdmTestDocument;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFields;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithRelation;
 use FS\SolrBundle\Tests\Util\MetaTestInformationFactory;
 use Solarium\QueryType\Update\Query\Document\Document;
@@ -29,7 +30,7 @@ use Solarium\QueryType\Update\Query\Document\Document;
  *
  * @group mapper
  */
-class EntityMapperTest extends \PHPUnit_Framework_TestCase
+class EntityMapperTest extends \PHPUnit\Framework\TestCase
 {
 
     private $doctrineHydrator = null;
@@ -260,3 +261,5 @@ class PlainObject
      */
     private $id;
 }
+
+

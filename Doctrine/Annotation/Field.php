@@ -35,12 +35,23 @@ class Field extends Annotation
     /**
      * @var string
      */
+    public $fieldsGetter;
+    
+    /**
+     * @var string
+     */
     public $fieldModifier;
 
+    /**
+     * @var string|bool
+     */
+    public $fieldAlias = false;
+  
     /**
      * @var string
      */
     public $nestedClass;
+
 
     /**
      * @var array
@@ -88,6 +99,10 @@ class Field extends Annotation
      */
     public function getNameWithAlias()
     {
+        if($this->fieldAlias) {
+            return $this->normalizeName($this->fieldAlias) . $this->getTypeSuffix($this->type);
+        }
+        
         return $this->normalizeName($this->name) . $this->getTypeSuffix($this->type);
     }
 
@@ -111,6 +126,21 @@ class Field extends Annotation
         return self::$TYP_MAPPING[$this->type];
     }
 
+     /**
+     * Remove parenthesis
+     * 
+     * @param $methodName
+     * @return string
+     */
+    static public function removeParenthesis($methodName) {
+        
+        if (strpos($methodName, '(') !== false) {
+            $methodName = substr($methodName, 0, strpos($methodName, '('));
+        }
+        
+        return $methodName;
+    } 
+    
     /**
      * Related object getter name
      *
@@ -122,6 +152,16 @@ class Field extends Annotation
     }
 
     /**
+     * Get fields getter
+     *
+     * @return string
+     */
+    public function getFieldsGetter()
+    {
+        return $this->fieldsGetter;    
+    }
+    
+    /**
      * @return string
      */
     public function getFieldModifier()
@@ -129,6 +169,14 @@ class Field extends Annotation
         return $this->fieldModifier;
     }
 
+    /**
+     * @return string
+     */
+    public function getFieldAlias()
+    {
+        return $this->fieldAlias;
+    }
+    
     /**
      * @return string
      */
@@ -173,7 +221,7 @@ class Field extends Annotation
      *
      * @return string normalized field name
      */
-    private function normalizeName($name)
+    public function normalizeName($name)
     {
         $words = preg_split('/(?=[A-Z])/', $name);
         $words = array_map(

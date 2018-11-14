@@ -15,7 +15,7 @@ use FS\SolrBundle\SolrQueryFacade;
  *
  * @group query
  */
-class SolrQueryTest extends \PHPUnit_Framework_TestCase
+class SolrQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     private function getFieldMapping()

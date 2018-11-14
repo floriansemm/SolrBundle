@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
+use FS\SolrBundle\Doctrine\Annotation\Fields;
 use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 
 class AnnotationReader
@@ -19,6 +20,7 @@ class AnnotationReader
     private $entityProperties;
 
     const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
+    const FIELDS_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Fields';
     const DOCUMENT_NESTED_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Nested';
     const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';
     const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
@@ -32,33 +34,117 @@ class AnnotationReader
         $this->reader = $reader;
     }
 
-    /**
+     /**
      * reads the entity and returns a set of annotations
      *
      * @param object $entity
      * @param string $type
+     * @param array $fields
      *
      * @return Annotation[]
      */
-    private function getPropertiesByType($entity, $type)
+    private function getPropertiesByType($entity, $type, $fields = array())
     {
         $properties = $this->readClassProperties($entity);
 
-        $fields = [];
         foreach ($properties as $property) {
-            $annotation = $this->reader->getPropertyAnnotation($property, $type);
 
+            $property->setAccessible(true); 
+            $annotation = $this->reader->getPropertyAnnotation($property, $type);
+            
             if (null === $annotation) {
                 continue;
             }
 
-            $property->setAccessible(true);
-            $annotation->value = $property->getValue($entity);
-            $annotation->name = $property->getName();
+            if ($type == $this::FIELDS_CLASS) {
+                $fields = $this->processFieldsAnnotation($property, $annotation, $entity, $fields);
+            }
+            else {
+                $annotation->value = $property->getValue($entity);
+                $annotation->name = $property->getName();
 
-            $fields[] = $annotation;
+                $fields[] = $annotation;
+            }
+        }
+        
+        return $fields;
+    }
+
+     /**
+     * Process fields annotation
+     * 
+     * @param \ReflectionProperty $property
+     * @param \FS\SolrBundle\Doctrine\Annotation\Fields $annotation
+     * @param object $entity
+     * @param array $fields
+     * @return array
+     * @throws AnnotationReaderException
+     */
+    private function processFieldsAnnotation(\ReflectionProperty $property, Fields $annotation, $entity, $fields = array())
+    {
+
+        if (!$annotation->getter) {
+            throw new AnnotationReaderException(sprintf('No getter defined for @Fields annotation in class "%s"', get_class($entity)));
         }
 
+        $fieldsGetter = Field::removeParenthesis($annotation->getter);
+
+        if (method_exists($entity, $fieldsGetter)) {
+            
+            $relations = $entity->$fieldsGetter();
+
+            if ($relations) {
+
+                if($relations instanceof \Doctrine\ORM\PersistentCollection ) {
+                    $relations = $relations->getValues();
+
+                    if (empty($relations)) {
+                        foreach ($annotation->fields as $field) {
+                             $field->name = $property->getName();
+                             $fields[] = $field;
+                        }
+
+                        return $fields;
+                    }
+                }
+
+                if (!(is_array($relations))) {
+                    $relations = array($relations);
+                }
+
+                foreach($relations as $relation) {
+
+                    foreach ($annotation->fields as $field) {
+
+                        $field->name = $property->getName();
+
+                        if (!$field->fieldAlias) {
+                            throw new AnnotationReaderException(sprintf('No fieldAlias defined for field "%s" in class "%s"', $field->name, get_class($entity)));
+                        }
+
+                        if ($field->getter) {
+                            $method = Field::removeParenthesis($field->getter);
+
+                            if (method_exists($relation, $method)) {
+                                $field->fieldsGetter = $fieldsGetter;
+                                $field->value = $relation->$method();
+                                $field->getter = $method;
+                            } else {
+                                throw new AnnotationReaderException(sprintf('Unknown method defined "%s" in class "%s"', $method, get_class($entity)));
+                            }
+                        } else {
+                            throw new AnnotationReaderException(sprintf('No getter defined for fieldAlias "%s" in class "%s"', $field->fieldAlias, get_class($entity)));
+                        }
+
+                        $fields[] = $field;
+                    }
+                }
+            }
+        }
+        else {
+            throw new AnnotationReaderException(sprintf('Unknown method defined "%s" in class "%s"', $fieldsGetter, get_class($entity)));
+        }
+        
         return $fields;
     }
 
@@ -84,7 +170,10 @@ class AnnotationReader
      */
     public function getFields($entity)
     {
-        return $this->getPropertiesByType($entity, self::FIELD_CLASS);
+        $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS);
+        $fields = $this->getPropertiesByType($entity, self::FIELDS_CLASS,$fields);
+
+        return $fields;
     }
 
     /**
@@ -210,6 +299,7 @@ class AnnotationReader
     public function getFieldMapping($entity)
     {
         $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS);
+        $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS, $fields);
 
         $mapping = [];
         foreach ($fields as $field) {

@@ -177,6 +177,60 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
     'tags' => 'tag #1'
 ));
 ```
+If you want to index multiple fields you can use the following syntax for defining multiple fields:
+
+```php
+
+    /**
+     * @var Tag[]
+     * 
+     * @Solr\Fields(getter="getTags", fields={
+     *      @Solr\Field(type="integers", getter="getId", fieldAlias="id"),
+     *      @Solr\Field(type="strings", getter="getName", fieldAlias="name")
+     *      })
+     * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+     */
+    private $tags;
+        
+```
+
+The fieldAlias is required in this format and will result in the following document:
+
+```json
+"docs": [
+  {
+    "id": "post_391",
+    "title_s": "post 25.03.2016",
+    "text_t": "relation",
+    "name_ss": [
+      "tag #1",
+      "tag #2",
+      "tag #3"
+    ],
+    "id_is": [
+      "1",
+      "2",
+      "3"
+    ]
+    "_version_": 1529771282767282200
+  }
+]
+```
+
+You can now search the repository with the name or id variable:
+
+```php
+$posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
+    'id' => '1'
+));
+
+$posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
+    'name' => 'tag #1'
+));
+```
+
+        
+=======
    
 ## Index full objects
 
@@ -235,4 +289,3 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
     'tags.name' => 'tag #1'
 ));
 ```
-

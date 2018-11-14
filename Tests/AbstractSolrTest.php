@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Solarium\QueryType\Update\Query\Query as UpdateQuery;
 use Solarium\QueryType\Select\Query\Query as SelectQuery;
 
-abstract class AbstractSolrTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSolrTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MetaInformationFactory

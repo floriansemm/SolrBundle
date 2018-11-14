@@ -18,12 +18,18 @@ use FS\SolrBundle\Tests\Fixtures\ValidTestEntity;
 use FS\SolrBundle\Doctrine\Annotation\AnnotationReader;
 use FS\SolrBundle\Tests\Fixtures\EntityWithRepository;
 use FS\SolrBundle\Tests\Fixtures\NotIndexedEntity;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFields;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoParentGetter;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsUnknownParentGetterMethod;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoFieldAlias;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoFieldGetter;
+use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsUnknownFieldGetter;
 
 /**
  *
  * @group annotation
  */
-class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
+class AnnotationReaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AnnotationReader
@@ -107,6 +113,104 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
         $boost = $this->reader->getEntityBoost(new ValidTestEntity());
 
         $this->assertEquals(1, $boost);
+    }
+
+    public function testReadPropertiesMultipleFields()
+    {
+        $entity = new ValidTestEntityWithMultipleFields();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 123');
+
+        $nested2 = new ValidTestEntity();
+        $nested2->setId(rand(1, 10000));
+        $nested2->setTitle('title 234');
+
+        $entity->setFields([$nested,$nested2]);
+        $fields = $this->reader->getFields($entity);
+
+        $this->assertEquals(9, count($fields), 'seven fields are mapped');
+    }
+
+    /**
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage No getter defined for @Fields annotation in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoParentGetter"
+     */
+    public function testGetFields_NoParentGetter()
+    {
+        $entity = new ValidTestEntityWithMultipleFieldsNoParentGetter();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 234');
+
+        $entity->setFields([$nested]);
+        $this->reader->getFields($entity);
+    }
+
+    /**
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage Unknown method defined "getUnknownMethod" in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsUnknownParentGetterMethod"
+     */
+    public function testGetFields_UnknownParentGetterMethod()
+    {
+        $entity = new ValidTestEntityWithMultipleFieldsUnknownParentGetterMethod();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 234');
+
+        $entity->setFields([$nested]);
+        $this->reader->getFields($entity);
+    }
+
+    /**
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage No fieldAlias defined for field "fields" in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoFieldAlias"
+     */
+    public function testGetFields_NoFieldAlias()
+    {
+        $entity = new ValidTestEntityWithMultipleFieldsNoFieldAlias();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 234');
+
+        $entity->setFields([$nested]);
+        $this->reader->getFields($entity);
+    }
+
+    /**
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage No getter defined for fieldAlias "title" in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsNoFieldGetter"
+     */
+    public function testGetFields_NoFieldGetter()
+    {
+        $entity = new ValidTestEntityWithMultipleFieldsNoFieldGetter();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 234');
+
+        $entity->setFields([$nested]);
+        $this->reader->getFields($entity);
+    }
+
+    /**
+     * @expectedException \FS\SolrBundle\Doctrine\Annotation\AnnotationReaderException
+     * @expectedExceptionMessage Unknown method defined "getUnknownMethod" in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithMultipleFieldsUnknownFieldGetter"
+     */
+    public function testGetFields_UnknownFieldGetter()
+    {
+        $entity = new ValidTestEntityWithMultipleFieldsUnknownFieldGetter();
+
+        $nested = new ValidTestEntity();
+        $nested->setId(rand(1, 10000));
+        $nested->setTitle('title 234');
+
+        $entity->setFields([$nested]);
+        $this->reader->getFields($entity);
     }
 
     /**

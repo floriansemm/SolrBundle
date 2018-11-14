@@ -7,7 +7,7 @@ use FS\SolrBundle\Doctrine\Annotation\Field;
  *
  * @group annotation
  */
-class FieldTest extends \PHPUnit_Framework_TestCase
+class FieldTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetNameWithAlias_String()
     {
@@ -45,6 +45,24 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test_i', $field->getNameWithAlias());
     }
 
+    public function testGetFieldsGetter()
+    {
+       $field = new Field(array('name' => 'test', 'type' => 'string_s', 'fieldsGetter' => 'getter'));
+       $this->assertEquals('getter', $field->getFieldsGetter());
+    }
+
+    public function testRemoveParenthesis()
+    {
+        $result = Field::removeParenthesis('test()');
+        $this->assertEquals('test', $result);
+    }
+    
+    public function testGetNameWithFieldAlias_String()
+    {
+       $field = new Field(array('name' => 'test', 'type' => 'string', 'fieldAlias' => 'alias'));
+       $this->assertEquals('alias_s', $field->getNameWithAlias());
+    }
+    
     public function testNormalizeName_CamelCase()
     {
         $field = new Field(array('name' => 'testCamelCase', 'type' => 'string'));
@@ -69,11 +87,11 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test_underscore', $result);
     }
 
-    public function testCostomFieldType()
+    public function testCustomFieldType()
     {
-        $field = new Field(array('name' => 'costumtype', 'type' => 'my_special_type'));
+        $field = new Field(array('name' => 'customtype', 'type' => 'my_special_type'));
 
-        $this->assertEquals('costumtype', $field->getNameWithAlias());
+        $this->assertEquals('customtype', $field->getNameWithAlias());
     }
 
 }
