@@ -5,6 +5,7 @@ namespace FS\SolrBundle;
 use FS\SolrBundle\Query\AbstractQuery;
 use FS\SolrBundle\Query\QueryBuilderInterface;
 use FS\SolrBundle\Repository\Repository;
+use FS\SolrBundle\Repository\RepositoryInterface;
 
 interface SolrInterface
 {
@@ -19,7 +20,7 @@ interface SolrInterface
      *
      * @return bool
      */
-    public function addDocument($entity);
+    public function addDocument($entity): bool;
 
     /**
      * @param AbstractQuery $query
@@ -28,28 +29,28 @@ interface SolrInterface
      *
      * @throws SolrException
      */
-    public function query(AbstractQuery $query);
+    public function query(AbstractQuery $query): array;
 
     /**
      * @param object|string $entity entity, entity-alias or classname
      *
      * @return bool
      */
-    public function updateDocument($entity);
+    public function updateDocument($entity): bool;
 
     /**
      * @param object|string $entity entity, entity-alias or classname
      *
-     * @return Repository
+     * @return RepositoryInterface
      *
-     * @throws \RuntimeException if repository of the given $entityAlias does not extend FS\SolrBundle\Repository\Repository
+     * @throws SolrException if repository of the given $entityAlias does not extend FS\SolrBundle\Repository\Repository
      */
-    public function getRepository($entity);
+    public function getRepository($entity): RepositoryInterface;
 
     /**
      * @param object|string $entity entity, entity-alias or classname
      *
      * @return QueryBuilderInterface
      */
-    public function createQueryBuilder($entity);
+    public function createQueryBuilder($entity): QueryBuilderInterface;
 }

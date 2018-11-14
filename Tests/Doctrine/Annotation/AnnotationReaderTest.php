@@ -302,6 +302,14 @@ class AnnotationReaderTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
+    public function readAnnotationsOfNestedObject()
+    {
+        $this->assertTrue($this->reader->hasDocumentDeclaration(new NestedObject()));
+    }
+
+    /**
+     * @test
+     */
     public function readAnnotationsFromMultipleClassHierarchy()
     {
         $fields = $this->reader->getFields(new ChildEntity2());
@@ -355,6 +363,15 @@ class AnnotationReaderTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->reader->isOdm(new ValidOdmTestDocument()), 'is a doctrine document');
     }
+
+    /**
+     * @test
+     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
+     */
+    public function methodWithAnnotationMustHaveAField()
+    {
+        $this->reader->getMethods(new EntityMissingNameProperty());
+    }
 }
 
 use FS\SolrBundle\Doctrine\Annotation as Solr;
@@ -404,4 +421,19 @@ class EntityWithObject
      * @Solr\Field(type="datetime", getter="format('d.m.Y')")
      */
     private $object;
+}
+
+/**
+ * @Solr\Nested()
+ */
+class NestedObject {}
+
+/** @Solr\Document() */
+class EntityMissingNameProperty {
+
+    /** @Solr\Field(type="string") */
+    public function getPropertyValue2()
+    {
+        return 1234;
+    }
 }

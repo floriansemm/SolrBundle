@@ -76,6 +76,11 @@ class MetaInformation implements MetaInformationInterface
     private $doctrineMapperType;
 
     /**
+     * @var bool
+     */
+    private $nested;
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityId()
@@ -379,5 +384,21 @@ class MetaInformation implements MetaInformationInterface
         }
 
         return $this->identifier->generateId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isNested()
+    {
+        return $this->nested;
+    }
+
+    /**
+     * @param bool $nested
+     */
+    public function setNested(bool $nested)
+    {
+        $this->nested = $nested;
     }
 }

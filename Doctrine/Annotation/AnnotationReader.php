@@ -5,6 +5,7 @@ namespace FS\SolrBundle\Doctrine\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
 use FS\SolrBundle\Doctrine\Annotation\Fields;
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 
 class AnnotationReader
 {
@@ -20,9 +21,9 @@ class AnnotationReader
 
     const DOCUMENT_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const FIELDS_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Fields';
+    const DOCUMENT_NESTED_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Nested';
     const FIELD_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Field';
     const FIELD_IDENTIFIER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Id';
-    const DOCUMENT_INDEX_CLASS = 'FS\SolrBundle\Doctrine\Annotation\Document';
     const SYNCHRONIZATION_FILTER_CLASS = 'FS\SolrBundle\Doctrine\Annotation\SynchronizationFilter';
 
     /**
@@ -45,6 +46,8 @@ class AnnotationReader
     private function getPropertiesByType($entity, $type, $fields = array())
     {
         $properties = $this->readClassProperties($entity);
+
+        $fields = [];
 
         foreach ($properties as $property) {
 
@@ -177,6 +180,38 @@ class AnnotationReader
 
     /**
      * @param object $entity
+     * 
+     * @return array
+     *
+     * @throws \ReflectionException
+     */
+    public function getMethods($entity)
+    {
+        $reflectionClass = new \ReflectionClass($entity);
+
+        $methods = [];
+        foreach ($reflectionClass->getMethods() as $method) {
+            /** @var Field $annotation */
+            $annotation = $this->reader->getMethodAnnotation($method, self::FIELD_CLASS);
+
+            if ($annotation === null) {
+                continue;
+            }
+
+            $annotation->value = $method->invoke($entity);
+            
+            if ($annotation->name == '') {
+                throw new SolrMappingException(sprintf('Please configure a field-name for method "%s" with field-annotation in class "%s"', $method->getName(), get_class($entity)));
+            }
+
+            $methods[] = $annotation;
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @param object $entity
      *
      * @return number
      *
@@ -184,7 +219,7 @@ class AnnotationReader
      */
     public function getEntityBoost($entity)
     {
-        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
+        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS);
 
         if (!$annotation instanceof Document) {
             return 0;
@@ -209,9 +244,9 @@ class AnnotationReader
      */
     public function getDocumentIndex($entity)
     {
-        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
+        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS);
         if (!$annotation instanceof Document) {
-            return '';
+            return null;
         }
 
         $indexHandler = $annotation->indexHandler;
@@ -268,11 +303,9 @@ class AnnotationReader
         $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS);
         $fields = $this->getPropertiesByType($entity, self::FIELD_CLASS, $fields);
 
-        $mapping = array();
+        $mapping = [];
         foreach ($fields as $field) {
-            if ($field instanceof Field) {
-                $mapping[$field->getNameWithAlias()] = $field->name;
-            }
+            $mapping[$field->getNameWithAlias()] = $field->name;
         }
 
         $id = $this->getIdentifier($entity);
@@ -288,9 +321,15 @@ class AnnotationReader
      */
     public function hasDocumentDeclaration($entity)
     {
-        $annotation = $this->getClassAnnotation($entity, self::DOCUMENT_INDEX_CLASS);
+        if ($rootDocument = $this->getClassAnnotation($entity, self::DOCUMENT_CLASS)) {
+            return true;
+        }
 
-        return $annotation !== null;
+        if ($this->isNested($entity)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -342,6 +381,20 @@ class AnnotationReader
     }
 
     /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isNested($entity)
+    {
+        if ($nestedDocument = $this->getClassAnnotation($entity, self::DOCUMENT_NESTED_CLASS)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param string $entity
      * @param string $annotationName
      *
@@ -375,7 +428,7 @@ class AnnotationReader
         $reflectionClass = new \ReflectionClass($entity);
         $inheritedProperties = array_merge($this->getParentProperties($reflectionClass), $reflectionClass->getProperties());
 
-        $properties = array();
+        $properties = [];
         foreach ($inheritedProperties as $property) {
             $properties[$property->getName()] = $property;
         }

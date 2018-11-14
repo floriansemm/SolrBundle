@@ -192,115 +192,6 @@ class EntityMapperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     */
-    public function mapRelationFieldByGetter()
-    {
-        $entity1 = new ValidTestEntity();
-        $entity1->setTitle('title 1');
-
-        $entity2 = new ValidTestEntity();
-        $entity2->setTitle('title 2');
-
-        $collection = new ArrayCollection();
-        $collection->add($entity1);
-        $collection->add($entity2);
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'getTitle'));
-        $metaInformation->setFields($fields);
-
-        $document = $this->mapper->toDocument($metaInformation);
-
-        $this->assertArrayHasKey('collection_ss', $document->getFields());
-        $collectionField = $document->getFields()['collection_ss'];
-
-        $this->assertEquals(2, count($collectionField));
-    }
-
-    /**
-     * @test
-     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
-     * @expectedExceptionMessage No method "unknown()" found in class "DateTime"
-     */
-    public function throwExceptionIfConfiguredGetterDoesNotExists()
-    {
-        $entity1 = new \DateTime('+2 days');
-
-        $entity2 = new \DateTime('+1 day');
-
-        $collection = new ArrayCollection();
-        $collection->add($entity1);
-        $collection->add($entity2);
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection, 'getter'=>'unknown(\'d.m.Y\')'));
-        $metaInformation->setFields($fields);
-
-        $this->mapper->toDocument($metaInformation);
-    }
-
-    /**
-     * @test
-     */
-    public function mapRelationFieldAllFields()
-    {
-        $this->markTestSkipped('sub-documents not yet supported');
-
-        $entity1 = new ValidTestEntity();
-        $entity1->setId(uniqid());
-        $entity1->setTitle('title 1');
-        $entity1->setText('text 1');
-
-        $entity2 = new ValidTestEntity();
-        $entity2->setId(uniqid());
-        $entity2->setTitle('title 2');
-        $entity2->setText('text 2');
-
-        $collection = new ArrayCollection();
-        $collection->add($entity1);
-        $collection->add($entity2);
-
-        $entity = new ValidTestEntityWithCollection();
-        $entity->setId(uniqid());
-        $entity->setCollectionNoGetter($collection);
-
-        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
-
-        $document = $this->mapper->toDocument($metaInformation);
-
-        $this->assertArrayHasKey('collection_no_getter_ss', $document->getFields());
-        $collectionField = $document->getFields()['collection_no_getter_ss'];
-
-        $this->assertEquals(2, count($collectionField), 'collection contains 2 fields');
-        $this->assertEquals(3, count($collectionField[0]), 'field has 2 properties');
-    }
-
-    /**
-     * @test
-     * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
-     * @expectedExceptionMessage No getter method for property "collection" configured in class "FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection"
-     */
-    public function throwExceptionIfEmbbededObjectsHasNoGetter()
-    {
-        $entity2 = new ValidTestEntity();
-        $entity2->setTitle('title 2');
-        $entity2->setText('text 2');
-
-        $collection = new ArrayCollection();
-        $collection->add($entity2);
-
-        $metaInformation = MetaTestInformationFactory::getMetaInformation(new ValidTestEntityWithCollection());
-        $fields = $metaInformation->getFields();
-        $fields[] = new Field(array('name' => 'collection', 'type' => 'strings', 'boost' => '1', 'value' => $collection));
-        $metaInformation->setFields($fields);
-
-        $this->mapper->toDocument($metaInformation);
-    }
-
-    /**
-     * @test
      * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
      * @expectedExceptionMessage No entity id set for "FS\SolrBundle\Tests\Fixtures\ValidTestEntity"
      */
@@ -547,3 +438,6 @@ class TestObject {
         return $this;
     }
 }
+
+}
+

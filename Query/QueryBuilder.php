@@ -257,7 +257,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         return $this;
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -271,6 +271,15 @@ class QueryBuilder implements QueryBuilderInterface
     /**
      * {@inheritdoc}
      */
+    public function greaterThan($value)
+    {
+        $this->criteria = $this->criteria->greaterThan($value);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
     public function lessThanEqual($value)
     {
         $this->criteria = $this->criteria->lessThanEqual($value);
@@ -278,6 +287,15 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function lessThan($value)
+    {
+        $this->criteria = $this->criteria->lessThan($value);
+        return $this;
+    }
+    
     /**
      * {@inheritdoc}
      */

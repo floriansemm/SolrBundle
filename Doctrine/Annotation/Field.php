@@ -46,7 +46,13 @@ class Field extends Annotation
      * @var string|bool
      */
     public $fieldAlias = false;
-    
+  
+    /**
+     * @var string
+     */
+    public $nestedClass;
+
+
     /**
      * @var array
      */
@@ -64,7 +70,8 @@ class Field extends Annotation
         'long' => '_l',
         'float' => '_f',
         'double' => '_d',
-        'datetime' => '_dt'
+        'datetime' => '_dt',
+        'point' => '_p'
     );
 
     /**

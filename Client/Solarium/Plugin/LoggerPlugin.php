@@ -42,11 +42,18 @@ class LoggerPlugin extends AbstractPlugin
     public function preExecuteRequest(PreExecuteRequest $event)
     {
         $endpoint = $event->getEndpoint();
-        $uri = $event->getRequest()->getUri();
+        $request = $event->getRequest();
+        $uri = $request->getUri();
 
         $path = sprintf('%s://%s:%s%s/%s', $endpoint->getScheme(), $endpoint->getHost(), $endpoint->getPort(), $endpoint->getPath(), urldecode($uri));
 
-        $this->logger->startRequest($path);
+        $requestInformation = [
+            'uri' => $path,
+            'method' => $request->getMethod(),
+            'raw_data' => $request->getRawData()
+        ];
+
+        $this->logger->startRequest($requestInformation);
     }
 
     /**

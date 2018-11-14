@@ -10,8 +10,6 @@ Given you have the following entity with a ManyToOne relation to `Category`.
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
- * Post
- *
  * @Solr\Document()
  *
  * @ORM\Table()
@@ -22,9 +20,7 @@ class Post
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * orm stuff
      *
      * @Solr\Id
      */
@@ -53,6 +49,13 @@ class Post
 }
 ```
 
+You have now different ways to index the `category` relation:
+
+- flat string representation
+- full object
+
+## Flat string representation
+
 The important configuration is `@Solr\Field(type="string", getter="getTitle")`. This tells Solr to call `Category::getTitle()` when the `Post` is indexed.
  
 ```php
@@ -69,20 +72,7 @@ $em->persist($post);
 $em->flush();
 ```
 
-The index data would look something like this:
-
-```json
-"docs": [
-  {
-    "id": "post_1",
-    "title_s": "a post title",
-    "category_s": "post category #1",
-    "_version_": 1529771282767282200
-  }
-]
-```
-
-The result of search-queries like this 
+### Quering the relation 
 
 ```php
 $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
@@ -90,11 +80,16 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
 ));
 ```
 
-contain a `Post` entity with a `Category` entity. The indexed data `post category #1` was replaced by DB reference.
-
 # Index OneToMany relation
 
 Given you have the following `Post` entity with a OneToMany relation to `Tag`.
+
+Again you can index the collection in two ways:
+
+- flat strings representation
+- full objects
+
+## flat strings representation
 
 ```php
 <?php
@@ -114,19 +109,13 @@ use FS\SolrBundle\Doctrine\Annotation as Solr;
 class Post
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * // orm stuff
      *
      * @Solr\Id
      */
     private $id;
 
     /**
-     * @var string
-     *
      * @Solr\Field(type="string")
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -134,9 +123,8 @@ class Post
     private $title;
 
     /**
-     * @var Tag[]
-     *
      * @Solr\Field(type="strings", getter="getName")
+     * 
      * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
      */
     private $tags;
@@ -179,6 +167,8 @@ Which will result in a document like this:
   }
 ]
 ```
+
+### Quering the strings collection
 
 Now `Post` can be searched like this
 
@@ -240,3 +230,62 @@ $posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOn
 ```
 
         
+=======
+   
+## Index full objects
+
+Post entity:
+
+```php
+    /**
+     * @Solr\Field(type="strings", nestedClass="Acme\DemoBundle\Entity\Tag")
+     * 
+     * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
+     */
+    private $tags;
+```
+
+Mark the `Tag` entity as Nested
+
+```php
+/**
+ * Tag
+ *
+ * @Solr\Nested()
+ *
+ * @ORM\Table()
+ * @ORM\Entity
+ */
+class Tag
+{
+    /**
+     * @var integer
+     *
+     * @Solr\Id
+     *
+     * orm stuff
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @Solr\Field(type="string")
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
+    
+    // getter and setter
+}
+```
+
+## Querying the collection
+
+Now `Post` can be searched like this
+
+```php
+$posts = $this->get('solr.client')->getRepository('AcmeDemoBundle:Post')->findOneBy(array(
+    'tags.name' => 'tag #1'
+));
+```

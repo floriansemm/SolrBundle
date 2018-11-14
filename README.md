@@ -52,6 +52,7 @@ Finally, configure the bundle:
 fs_solr:
     endpoints:
         core0:
+            schema: http
             host: host
             port: 8983
             path: /solr/core0
@@ -59,10 +60,29 @@ fs_solr:
             timeout: 5
 ```
 
+Default values will be used for any option left out.
+
+#### With DSN
+
+``` yaml
+# app/config/config.yml
+fs_solr:
+    endpoints:
+        core0:
+            dsn: http://host:8983/solr
+            core: core0
+            timeout: 5
+```
+
+Any values in `schema`, `host`, `port` and `path` option, will be ignored if you use the `dsn` option.
+
 ### Step 4: Configure your entities
 
 To make an entity indexed, you must add some annotations to your entity. Basic configuration requires two annotations: 
-`@Solr\Document()`, `@Solr\Id()`. To index data add `@Solr\Field()` to your properties.
+`@Solr\Document()`, `@Solr\Id()`. To index data add `@Solr\Field()` to your properties. 
+
+If you want to index documents without any database, then you have to use the same annotations. Make sure you have set a Id or
+set `@Solr\Id(generateId=true)`.
 
 ```php
 // ....
@@ -222,70 +242,13 @@ Solr supports partial updates of fields in an existing document. Supported value
 - remove (multivalue field only, removes a value(s) from existing list)
 - inc (integer field only)
    
+### `nestedClass` property
+
+Set this property if you want to index collections with nested Objects.
+
+
 
 ### Object relations
-
-Indexing relations works in simplified way. Related entities will not be indexed as a new document, but only as a searchable value.
-Related entities do not need a `@Solr\Document` annotation.
-
-#### ManyToOne relation
-
-```php
-/**
- * @var Category
- *
- * @Solr\Field(type="string", getter="getTitle")
- *
- * @ORM\ManyToOne(targetEntity="Acme\DemoBundle\Entity\Category", inversedBy="posts", cascade={"persist"})
- * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
- */
-private $category;
-```
-
-Related entity:
-
-```php
-class Category
-{
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-}
-```
-
-#### OneToMany relation
-
-To index a set of objects it is important to use the fieldtype `strings`.
-
-```php
-/**
- * @var Tag[]
- *
- * @Solr\Field(type="strings", getter="getName")
- *
- * @ORM\OneToMany(targetEntity="Acme\DemoBundle\Entity\Tag", mappedBy="post", cascade={"persist"})
- */
-private $tags;
-```
-
-Related entity:
-
-```php
-class Tag
-{
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-}
-```
 
 ### `fieldAlias' property
 
@@ -438,29 +401,6 @@ class YourRepository extends Repository
 
 ```
 
-
-### Define Result-Mapping
-
-To narrow the mapping, you can use the `addField()` method.
-
-```php
-$query = $this->get('solr.client')->createQuery('AcmeDemoBundle:Post');
-$query->addSearchTerm('title', 'my title');
-$query->addField('id');
-$query->addField('text');
-
-$result = $query->getResult();
-```
-
-In this case, only the `id` and `text` fields will be mapped (addField()), `title` and created_at` fields will be
-empty. If nothing was found $result is empty.
-
-By default, the result set contains 10 rows. You can increase this value:
-
-```php
-$query->setRows(1000000);
-```
-
 ### Configure HydrationModes
 
 HydrationMode tells the bundle how to create an entity from a document.
@@ -533,4 +473,13 @@ To hook into the [Solarium events](http://solarium.readthedocs.io/en/stable/cust
 
 ```xml
 <tag name="kernel.event_listener" event="solarium.core.preExecuteRequest" method="preExecuteRequest" />
+```
+
+## Document helper
+
+### Retrieve the last insert entity-id
+
+```php
+$helper = $this->get('solr.client')->getDocumentHelper();
+$id = $helper->getLastInsertDocumentId();
 ```

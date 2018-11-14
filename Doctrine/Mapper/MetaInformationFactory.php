@@ -58,12 +58,14 @@ class MetaInformationFactory
             throw new SolrMappingException(sprintf('no declaration for document found in entity %s', $className));
         }
 
+        $fields = array_merge($this->annotationReader->getFields($entity), $this->annotationReader->getMethods($entity));
+
         $metaInformation = new MetaInformation();
         $metaInformation->setEntity($entity);
         $metaInformation->setClassName($className);
         $metaInformation->setDocumentName($this->getDocumentName($className));
         $metaInformation->setFieldMapping($this->annotationReader->getFieldMapping($entity));
-        $metaInformation->setFields($this->annotationReader->getFields($entity));
+        $metaInformation->setFields($fields);
         $metaInformation->setRepository($this->annotationReader->getRepository($entity));
         $metaInformation->setIdentifier($this->annotationReader->getIdentifier($entity));
         $metaInformation->setBoost($this->annotationReader->getEntityBoost($entity));
@@ -71,6 +73,27 @@ class MetaInformationFactory
         $metaInformation->setIndex($this->annotationReader->getDocumentIndex($entity));
         $metaInformation->setIsDoctrineEntity($this->isDoctrineEntity($entity));
         $metaInformation->setDoctrineMapperType($this->getDoctrineMapperType($entity));
+        $metaInformation->setNested($this->annotationReader->isNested($entity));
+
+        $fields = $this->annotationReader->getFields($entity);
+        foreach ($fields as $field) {
+            if (!$field->nestedClass) {
+                continue;
+            }
+
+            $nestedObjectMetainformation = $this->loadInformation($field->nestedClass);
+
+            $subentityMapping = [];
+            $nestedFieldName = $field->name;
+            foreach ($nestedObjectMetainformation->getFieldMapping() as $documentName => $fieldName) {
+                $subentityMapping[$nestedFieldName . '.' . $documentName] = $nestedFieldName . '.' . $fieldName;
+            }
+
+            $rootEntityMapping = $metaInformation->getFieldMapping();
+            $subentityMapping = array_merge($subentityMapping, $rootEntityMapping);
+            unset($subentityMapping[$field->name]);
+            $metaInformation->setFieldMapping($subentityMapping);
+        }
 
         return $metaInformation;
     }

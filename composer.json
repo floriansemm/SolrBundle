@@ -20,6 +20,8 @@
     "minimalcode/search": "^1.0",
     "ramsey/uuid": "^3.5",
     "alcaeus/mongo-php-adapter": "^1.1"
+    "myclabs/deep-copy": "^1.6",
+    "doctrine/annotations": "^1.4"
   },
   "require-dev": {
     "behat/behat": "^3.1",
