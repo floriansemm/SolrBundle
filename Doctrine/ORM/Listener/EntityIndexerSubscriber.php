@@ -96,19 +96,24 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
      */
     public function postFlush(PostFlushEventArgs $eventArgs)
     {
-        foreach ($this->persistedEntities as $entity) {
-            $this->solr->addDocument($entity);
-        }
-        $this->persistedEntities = [];
+        try {
 
-        foreach ($this->deletedRootEntities as $entity) {
-            $this->solr->removeDocument($entity);
-        }
-        $this->deletedRootEntities = [];
+            foreach ($this->persistedEntities as $entity) {
+                $this->solr->addDocument($entity);
+            }
+            $this->persistedEntities = [];
 
-        foreach ($this->deletedNestedEntities as $entity) {
-            $this->solr->removeDocument($entity);
+            foreach ($this->deletedRootEntities as $entity) {
+                $this->solr->removeDocument($entity);
+            }
+            $this->deletedRootEntities = [];
+
+            foreach ($this->deletedNestedEntities as $entity) {
+                $this->solr->removeDocument($entity);
+            }
+            $this->deletedNestedEntities = [];
+        } catch (\Exception $e) {
+            $this->logger->debug($e->getMessage());
         }
-        $this->deletedNestedEntities = [];
     }
 }
