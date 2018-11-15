@@ -4,6 +4,7 @@ namespace FS\SolrBundle\Doctrine;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
+use FS\SolrBundle\Doctrine\Mapper\SolrMappingException;
 use FS\SolrBundle\SolrInterface;
 use Psr\Log\LoggerInterface;
 
@@ -72,5 +73,21 @@ class AbstractIndexingListener
         $metaInformation = $this->metaInformationFactory->loadInformation($entity);
 
         return $metaInformation->isNested();
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    protected function isAbleToIndex($entity)
+    {
+        try {
+            $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+        } catch (SolrMappingException $e) {
+            return false;
+        }
+
+        return true;
     }
 }

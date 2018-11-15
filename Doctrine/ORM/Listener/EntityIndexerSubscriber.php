@@ -42,6 +42,10 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     {
         $entity = $args->getEntity();
 
+        if ($this->isAbleToIndex($entity) === false) {
+            return;
+        }
+
         $doctrineChangeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
         try {
             if ($this->hasChanged($doctrineChangeSet, $entity) === false) {
@@ -61,6 +65,10 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     {
         $entity = $args->getEntity();
 
+        if ($this->isAbleToIndex($entity) === false) {
+            return;
+        }
+
         $this->persistedEntities[] = $entity;
     }
 
@@ -70,6 +78,10 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
+
+        if ($this->isAbleToIndex($entity) === false) {
+            return;
+        }
 
         if ($this->isNested($entity)) {
             $this->deletedNestedEntities[] = $this->emptyCollections($entity);
@@ -96,24 +108,19 @@ class EntityIndexerSubscriber extends AbstractIndexingListener implements EventS
      */
     public function postFlush(PostFlushEventArgs $eventArgs)
     {
-        try {
-
-            foreach ($this->persistedEntities as $entity) {
-                $this->solr->addDocument($entity);
-            }
-            $this->persistedEntities = [];
-
-            foreach ($this->deletedRootEntities as $entity) {
-                $this->solr->removeDocument($entity);
-            }
-            $this->deletedRootEntities = [];
-
-            foreach ($this->deletedNestedEntities as $entity) {
-                $this->solr->removeDocument($entity);
-            }
-            $this->deletedNestedEntities = [];
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+        foreach ($this->persistedEntities as $entity) {
+            $this->solr->addDocument($entity);
         }
+        $this->persistedEntities = [];
+
+        foreach ($this->deletedRootEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedRootEntities = [];
+
+        foreach ($this->deletedNestedEntities as $entity) {
+            $this->solr->removeDocument($entity);
+        }
+        $this->deletedNestedEntities = [];
     }
 }

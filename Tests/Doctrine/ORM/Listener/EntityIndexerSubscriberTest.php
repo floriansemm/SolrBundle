@@ -13,6 +13,7 @@ use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\ORM\Listener\EntityIndexerSubscriber;
 use FS\SolrBundle\SolrInterface;
 use FS\SolrBundle\Tests\Fixtures\NestedEntity;
+use FS\SolrBundle\Tests\Fixtures\NotIndexedEntity;
 use FS\SolrBundle\Tests\Fixtures\ValidTestEntityWithCollection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Tests\Constraints\ValidTest;
@@ -115,5 +116,30 @@ class EntityIndexerSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->subscriber->postUpdate($updateEntityEvent1);
         $this->subscriber->postUpdate($updateEntityEvent2);
+    }
+
+    /**
+     * @test
+     */
+    public function doNotFailHardIfNormalEntityIsPersisted()
+    {
+        $this->solr->expects($this->never())
+            ->method('addDocument');
+
+        $this->solr->expects($this->never())
+            ->method('removeDocument');
+
+        $entity = new NotIndexedEntity();
+
+        $objectManager = $this->createMock(EntityManagerInterface::class);
+
+        $lifecycleEventArgs = new LifecycleEventArgs($entity, $objectManager);
+
+        $this->subscriber->postPersist($lifecycleEventArgs);
+        $this->subscriber->preRemove($lifecycleEventArgs);
+
+
+
+        $this->subscriber->postFlush(new PostFlushEventArgs($objectManager));
     }
 }
