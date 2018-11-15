@@ -71,6 +71,24 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function doNotIndexEmptyNestedCollection()
+    {
+        $collection = new ArrayCollection([]);
+
+        $entity = new EntityNestedProperty();
+        $entity->setId(uniqid());
+        $entity->setCollectionValidGetter($collection);
+
+        $metaInformation = $this->metaInformationFactory->loadInformation($entity);
+
+        $document = $this->mapper->toDocument($metaInformation);
+
+        $this->assertArrayNotHasKey('_childDocuments_', $document->getFields());
+    }
+
+    /**
+     * @test
      * @expectedException \FS\SolrBundle\Doctrine\Mapper\SolrMappingException
      * @expectedExceptionMessage No method "unknown()" found in class "FS\SolrBundle\Tests\Fixtures\EntityNestedProperty"
      */

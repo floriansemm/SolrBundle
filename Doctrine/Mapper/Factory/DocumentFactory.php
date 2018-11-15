@@ -147,24 +147,30 @@ class DocumentFactory
      */
     private function mapCollectionField($document, Field $field, $sourceTargetObject)
     {
-        /** @var Collection $value */
-        $value = $field->getValue();
+        /** @var Collection $collection */
+        $collection = $field->getValue();
         $getter = $field->getGetterName();
 
         if ($getter != '') {
-            $value = $this->callGetterMethod($sourceTargetObject, $getter);
+            $collection = $this->callGetterMethod($sourceTargetObject, $getter);
+
+            $collection = array_filter($collection, function ($value) {
+                return $value !== null;
+            });
         }
 
         $values = [];
-        foreach ($value as $relatedObj) {
-            if (is_object($relatedObj)) {
-                $values[] = $this->objectToDocument($relatedObj);
-            } else {
-                $values[] = $relatedObj;
+        if (count($collection)) {
+            foreach ($collection as $relatedObj) {
+                if (is_object($relatedObj)) {
+                    $values[] = $this->objectToDocument($relatedObj);
+                } else {
+                    $values[] = $relatedObj;
+                }
             }
-        }
 
-        $document->addField('_childDocuments_', $values, $field->getBoost());
+            $document->addField('_childDocuments_', $values, $field->getBoost());
+        }
 
         return $values;
     }
