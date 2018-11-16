@@ -118,7 +118,7 @@ class EntityMapperObjectRelationTest extends \PHPUnit_Framework_TestCase
         $collectionItem2->setId(uniqid());
         $collectionItem2->setName('title 2');
 
-        $collection = new ArrayCollection([$collectionItem1, $collectionItem2]);
+        $collection = [$collectionItem1, $collectionItem2];
 
         $entity = new EntityNestedProperty();
         $entity->setId(uniqid());

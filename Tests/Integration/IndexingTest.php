@@ -232,7 +232,7 @@ class IndexingTest extends \PHPUnit_Framework_TestCase
         $tag2 = new Tag('tag indexEntityWithOneToMany 2');
         $tag2->setId(2);
 
-        $post->setTags(new ArrayCollection([$tag1, $tag2]));
+        $post->setTags([$tag1, $tag2]);
 
         $objectManager = $this->createMock(EntityManagerInterface::class);
 
