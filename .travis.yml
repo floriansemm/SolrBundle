@@ -4,6 +4,7 @@ sudo: false
 php:
   - 7.0
   - 7.1
+  - 7.2
 
 before_script:
     - curl -sSL https://raw.githubusercontent.com/floriansemm/travis-solr/master/travis-solr.sh | SOLR_CORE=core0 DEBUG=1 SOLR_VERSION=4.8.0 SOLR_CONFS="Tests/Resources/config/schema.xml" bash
@@ -17,4 +18,3 @@ install:
 
 script:
     - ./bin/phpunit
-    - ./bin/behat

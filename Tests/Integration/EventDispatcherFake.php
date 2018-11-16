@@ -20,6 +20,11 @@ class EventDispatcherFake implements EventDispatcherInterface
      */
     private $events = array();
 
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
     /**
      * Dispatches an event to all registered listeners.
      *
