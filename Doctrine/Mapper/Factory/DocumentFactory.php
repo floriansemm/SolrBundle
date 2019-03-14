@@ -61,8 +61,13 @@ class DocumentFactory
             $fieldValue = $field->getValue();
             if (($fieldValue instanceof Collection || is_array($fieldValue)) && $field->nestedClass) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
-            } else if (is_object($fieldValue) && $field->nestedClass) { // index sinsgle object as nested child-document
-                $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
+            } else if (is_object($fieldValue) && $field->nestedClass) { // index single object as nested child-document
+                $fields = $document->getFields();
+                $value = $this->objectToDocument($fieldValue);
+                if (false === isset($fields['_childDocuments_'])) {
+                    $value = [$value];
+                }
+                $document->addField('_childDocuments_', $value, $field->getBoost());
             } else if (is_object($fieldValue) && !$field->nestedClass) { // index object as "flat" string, call getter
                 $document->addField($field->getNameWithAlias(), $this->mapObjectField($field), $field->getBoost());
             } else if ($field->getter && $fieldValue) { // call getter to transform data (json to array, etc.)
@@ -169,7 +174,14 @@ class DocumentFactory
                 }
             }
 
-            $document->addField('_childDocuments_', $values, $field->getBoost());
+            $fields = $document->getFields();
+            if (isset($fields['_childDocuments_']) && is_array($fields['_childDocuments_'])) {
+                foreach ($values as $value) {
+                    $document->addField('_childDocuments_', $value, $field->getBoost());
+                }
+            } else {
+                $document->addField('_childDocuments_', $values, $field->getBoost());
+            }
         }
 
         return $values;
