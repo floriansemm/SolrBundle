@@ -336,6 +336,11 @@ class AnnotationReader
         $reflectionClass = new \ReflectionClass($entity);
         $inheritedProperties = array_merge($this->getParentProperties($reflectionClass), $reflectionClass->getProperties());
 
+        $traits = $reflectionClass->getTraits();
+        foreach ($traits as $trait) {
+            $inheritedProperties = array_merge($inheritedProperties, $trait->getProperties());
+        }
+
         $properties = [];
         foreach ($inheritedProperties as $property) {
             $properties[$property->getName()] = $property;
