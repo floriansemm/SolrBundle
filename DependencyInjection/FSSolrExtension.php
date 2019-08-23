@@ -117,7 +117,7 @@ class FSSolrExtension extends Extension
      */
     private function isODMConfigured(ContainerBuilder $container)
     {
-        return $container->hasParameter('doctrine_mongodb.odm.document_managers');
+        return false;
     }
 
     /**
