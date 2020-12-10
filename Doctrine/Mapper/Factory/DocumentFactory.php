@@ -3,6 +3,7 @@
 namespace FS\SolrBundle\Doctrine\Mapper\Factory;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
 use FS\SolrBundle\Doctrine\Annotation\Field;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationFactory;
 use FS\SolrBundle\Doctrine\Mapper\MetaInformationInterface;
@@ -59,7 +60,9 @@ class DocumentFactory
             }
 
             $fieldValue = $field->getValue();
-            if (($fieldValue instanceof Collection || is_array($fieldValue)) && $field->nestedClass) {
+            if (($fieldValue instanceof Collection || is_array($fieldValue)) && !$field->nestedClass) {
+                $this->mapCollectionField($document, $field, $metaInformation->getEntity());
+            } elseif (($fieldValue instanceof Collection || is_array($fieldValue)) && $field->nestedClass) {
                 $this->mapCollectionField($document, $field, $metaInformation->getEntity());
             } else if (is_object($fieldValue) && $field->nestedClass) { // index sinsgle object as nested child-document
                 $document->addField('_childDocuments_', [$this->objectToDocument($fieldValue)], $field->getBoost());
@@ -94,7 +97,7 @@ class DocumentFactory
         if (empty($getter)) {
             throw new SolrMappingException(sprintf('Please configure a getter for property "%s" in class "%s"', $field->name, get_class($value)));
         }
-        
+
         $getterReturnValue = $this->callGetterMethod($value, $getter);
 
         if (is_object($getterReturnValue)) {
@@ -152,11 +155,28 @@ class DocumentFactory
         $getter = $field->getGetterName();
 
         if ($getter != '') {
-            $collection = $this->callGetterMethod($sourceTargetObject, $getter);
 
-            $collection = array_filter($collection, function ($value) {
-                return $value !== null;
-            });
+            if (method_exists($sourceTargetObject, $getter)) {
+                $collection = $this->callGetterMethod($sourceTargetObject, $getter);
+
+                $collection = array_filter($collection, function ($value) {
+                    return $value !== null;
+                });
+            }
+            else {
+
+                if ($collection->count()) {
+                    foreach ($collection->getIterator() as $item) {
+                        $items[] = $this->callGetterMethod($item, $getter);
+                    }
+
+                    $collection = array_filter($items, function ($value) {
+                        return $value !== null;
+                    });
+                }
+
+            }
+
         }
 
         $values = [];
@@ -169,7 +189,15 @@ class DocumentFactory
                 }
             }
 
-            $document->addField('_childDocuments_', $values, $field->getBoost());
+            if (!method_exists($sourceTargetObject, $getter)) {
+                foreach ($values as $value) {
+                    $document->addField($field->getNameWithAlias(), $value, $field->getBoost());
+                }
+            }
+            else {
+                $document->addField('_childDocuments_', $values, $field->getBoost());
+            }
+
         }
 
         return $values;
